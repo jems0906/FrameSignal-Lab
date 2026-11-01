@@ -1,0 +1,16 @@
+{
+  "study_id": "framesignal-observational-oracle-overlap-audit-v1",
+  "source_config": "observational_robustness_stress.json",
+  "source_study_id": "framesignal-observational-positivity-misspecification-v1",
+  "reuse_source_seed_grid": true,
+  "oracle_usage": "Diagnostic comparison only; never an estimator or AIPW input.",
+  "confidence_level": 0.95,
+  "familywise_cells": 8,
+  "monte_carlo_uncertainty": "Bonferroni familywise 95% intervals across eight paired cells; Clopper-Pearson for false/missed warning rates and Student-t intervals for fitted-minus-oracle diagnostic differences.",
+  "interpretation": "Exploratory synthetic audit only. Oracle propensity is known only because the data are simulated; comparisons do not support real-world identification.",
+  "prohibited_changes": [
+    "Do not pass oracle propensity into the AIPW estimator.",
+    "Do not treat oracle overlap as observable in real observational data.",
+    "Do not rewrite or combine this audit with the source stress report."
+  ]
+}

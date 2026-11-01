@@ -65,6 +65,11 @@ def observational_robustness():
     return _read_extension_report("observational_robustness_stress.json")
 
 
+@app.get("/api/observational-overlap-audit")
+def observational_overlap_audit():
+    return _read_extension_report("observational_overlap_oracle_audit.json")
+
+
 @app.get("/api/learned-proxy")
 def learned_proxy_extension():
     return _read_extension_report("learned_proxy_extension.json")

@@ -41,6 +41,7 @@ python backend/run_calibration_exact_followup.py
 python backend/run_observational_extension.py
 python backend/run_observational_replication.py
 python backend/run_observational_robustness_stress.py
+python backend/run_observational_overlap_oracle_audit.py
 python backend/run_learned_proxy.py
 python backend/export_metricsteward.py
 python -m pytest -q
@@ -62,6 +63,8 @@ Two isolated, post-baseline extensions are also predeclared. The observational s
 The single-run observational table is illustrative, not evidence of an average sensitivity trend. A separate `configs/observational_replication.json` study runs 200 independent replicates in each of nine scenario/confounding cells. It reports mean AIPW bias, RMSE, influence-function Wald interval coverage, overlap, and ESS with Bonferroni familywise Monte Carlo intervals. Its Wald intervals are distinct from the household-bootstrap intervals in the illustrative report; all results remain specific to the synthetic generator.
 
 `configs/observational_robustness_stress.json` separately crosses moderate/weak measured overlap with four nuisance-model profiles across 300 replicates per cell. Hidden confounding remains zero to isolate positivity from propensity/outcome misspecification. The report is exploratory and does not establish performance beyond this constructed generator.
+
+`configs/observational_overlap_oracle_audit.json` replays the exact stress-study seeds and compares fitted-propensity overlap diagnostics with known assignment-probability diagnostics. Oracle probabilities are audit-only and never enter AIPW; they are unavailable in real observational data. This replay does not alter or replace the source stress report.
 
 For interactive notebooks, select the same environment as the installed dependencies. Both notebooks locate the root from their current working directory and run without pre-existing report files. Full execution can take a few minutes on slower systems; the UI caches bounded analysis results in the local process.
 
@@ -110,6 +113,7 @@ Open http://localhost:5174. FrameSignal remains at http://localhost:5173. See [h
 | Observational sensitivity extension | [Predeclared config](configs/observational_extension.json), [report](docs/observational_extension_report.md) |
 | Replicated observational sensitivity | [Predeclared config](configs/observational_replication.json), [report](docs/observational_replication_report.md) |
 | Positivity and nuisance-model stress | [Predeclared config](configs/observational_robustness_stress.json), [report](docs/observational_robustness_stress_report.md) |
+| Paired oracle-overlap diagnostic audit | [Predeclared config](configs/observational_overlap_oracle_audit.json), [report](docs/observational_overlap_oracle_audit_report.md) |
 | Train/validate/frozen-heldout learned score | [Predeclared config](configs/learned_proxy_extension.json), [report](docs/learned_proxy_report.md) |
 | Honest self-review and revision history | [Scientific review](docs/methodology_review.md) |
 | Independent statistician review request | [Invitation draft](docs/peer_review_invitation.md), [review packet](docs/peer_review_packet.md); feedback status remains pending until received |
@@ -124,7 +128,7 @@ Open http://localhost:5174. FrameSignal remains at http://localhost:5173. See [h
 
 `GET /api/analysis?scenario=misleading&n=2000&seed=20261031` returns metric effects, intervals, predictive association, sensitivity, SQL checks, known truth, and memo. `/api/validation` runs the frozen split design; `/api/operating` reports target operating characteristics. `/api/export` downloads all synthetic source tables, household aggregates, run analysis, and provenance as a ZIP. Inputs are bounded and validated. This is a local research app, not a multi-user authenticated production service.
 
-`/api/observational`, `/api/observational-replication`, `/api/observational-robustness`, and `/api/learned-proxy` serve separately generated exploratory reports; the Extensions view exposes overlap/sensitivity diagnostics, replicated AIPW bias/coverage summaries, factorial robustness results, and held-out score agreement. They do not replace the randomized baseline or authorize real-world use.
+`/api/observational`, `/api/observational-replication`, `/api/observational-robustness`, `/api/observational-overlap-audit`, and `/api/learned-proxy` serve separately generated exploratory reports; the Extensions view exposes overlap/sensitivity diagnostics, paired oracle comparisons, replicated AIPW summaries, and held-out score agreement. Oracle values are diagnostic-only; none of these reports replaces randomized ITT or authorizes real-world use.
 
 ## Containers and CI
 

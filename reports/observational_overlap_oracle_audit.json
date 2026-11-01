@@ -1,0 +1,362 @@
+{
+  "config": {
+    "study_id": "framesignal-observational-oracle-overlap-audit-v1",
+    "source_config": "observational_robustness_stress.json",
+    "source_study_id": "framesignal-observational-positivity-misspecification-v1",
+    "reuse_source_seed_grid": true,
+    "oracle_usage": "Diagnostic comparison only; never an estimator or AIPW input.",
+    "confidence_level": 0.95,
+    "familywise_cells": 8,
+    "monte_carlo_uncertainty": "Bonferroni familywise 95% intervals across eight paired cells; Clopper-Pearson for false/missed warning rates and Student-t intervals for fitted-minus-oracle diagnostic differences.",
+    "interpretation": "Exploratory synthetic audit only. Oracle propensity is known only because the data are simulated; comparisons do not support real-world identification.",
+    "prohibited_changes": [
+      "Do not pass oracle propensity into the AIPW estimator.",
+      "Do not treat oracle overlap as observable in real observational data.",
+      "Do not rewrite or combine this audit with the source stress report."
+    ]
+  },
+  "config_sha256": "8b785f2820525a90fdec0c5d8222a8f1a12683820a3a5aa669ca4a67c60d09e1",
+  "source_config_sha256": "e43970a71de45826c56b4ca33318afa4c1ed76a8e1caf38562bfc40cb9f3ea63",
+  "runtime": {
+    "python": "3.13.3",
+    "numpy": "2.2.6",
+    "pandas": "2.2.3",
+    "scipy": "1.15.3",
+    "framesignal_metrics": "1.0.0"
+  },
+  "results": {
+    "study_id": "framesignal-observational-oracle-overlap-audit-v1",
+    "seed": 66752021,
+    "scenario": "helpful",
+    "n_per_replicate": 2000,
+    "replicates_per_cell": 300,
+    "number_of_cells": 8,
+    "same_seed_replay_of": "framesignal-observational-positivity-misspecification-v1",
+    "same_seed_replay": true,
+    "unmeasured_confounding": 0.0,
+    "oracle_usage": "Diagnostic comparison only; oracle fields are not estimator or AIPW inputs.",
+    "forbidden_estimator_inputs": [
+      "assignment_probability_oracle",
+      "return_probability",
+      "latent_loyalty_oracle"
+    ],
+    "familywise_mc_interval_scope": "Bonferroni familywise intervals across the fixed eight cells; exact Clopper-Pearson intervals for warning rates and Student-t intervals for paired fitted-minus-oracle diagnostic differences.",
+    "rows": [
+      {
+        "overlap_profile": "moderate",
+        "nuisance_profile": "correct_both",
+        "replicates": 300,
+        "estimated_overlap_pass_rate": 1.0,
+        "oracle_overlap_pass_rate": 1.0,
+        "false_warning_count": 0,
+        "false_warning_rate": 0.0,
+        "false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "missed_warning_count": 0,
+        "missed_warning_rate": 0.0,
+        "missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "mean_estimated_fraction_outside_0_05_0_95": 0.0,
+        "mean_oracle_fraction_outside_0_05_0_95": 0.0,
+        "mean_fitted_minus_oracle_outside_difference": 0.0,
+        "fitted_minus_oracle_outside_difference_familywise_mc_interval": [
+          0.0,
+          0.0
+        ],
+        "mean_fitted_minus_oracle_common_support_difference": -7.333333333333635e-05,
+        "fitted_minus_oracle_common_support_difference_familywise_mc_interval": [
+          -0.00025547342245281935,
+          0.00010880675578614664
+        ],
+        "mean_estimated_ess_by_arm": {
+          "0": 1110.7991073206797,
+          "1": 779.6988039712736
+        },
+        "mean_oracle_ess_by_arm": {
+          "0": 1111.3553703604418,
+          "1": 780.1378894173033
+        }
+      },
+      {
+        "overlap_profile": "moderate",
+        "nuisance_profile": "propensity_misspecified",
+        "replicates": 300,
+        "estimated_overlap_pass_rate": 1.0,
+        "oracle_overlap_pass_rate": 1.0,
+        "false_warning_count": 0,
+        "false_warning_rate": 0.0,
+        "false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "missed_warning_count": 0,
+        "missed_warning_rate": 0.0,
+        "missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "mean_estimated_fraction_outside_0_05_0_95": 2.4999999999999998e-05,
+        "mean_oracle_fraction_outside_0_05_0_95": 0.0,
+        "mean_fitted_minus_oracle_outside_difference": 2.4999999999999998e-05,
+        "fitted_minus_oracle_outside_difference_familywise_mc_interval": [
+          -2.680404592691579e-06,
+          5.2680404592691575e-05
+        ],
+        "mean_fitted_minus_oracle_common_support_difference": 1.0000000000001119e-05,
+        "fitted_minus_oracle_common_support_difference_familywise_mc_interval": [
+          -0.0004067718002505966,
+          0.0004267718002505988
+        ],
+        "mean_estimated_ess_by_arm": {
+          "0": 987.2216601601565,
+          "1": 623.0929010114548
+        },
+        "mean_oracle_ess_by_arm": {
+          "0": 950.3507731119796,
+          "1": 664.2351495416783
+        }
+      },
+      {
+        "overlap_profile": "moderate",
+        "nuisance_profile": "outcome_misspecified",
+        "replicates": 300,
+        "estimated_overlap_pass_rate": 1.0,
+        "oracle_overlap_pass_rate": 1.0,
+        "false_warning_count": 0,
+        "false_warning_rate": 0.0,
+        "false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "missed_warning_count": 0,
+        "missed_warning_rate": 0.0,
+        "missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "mean_estimated_fraction_outside_0_05_0_95": 0.0,
+        "mean_oracle_fraction_outside_0_05_0_95": 0.0,
+        "mean_fitted_minus_oracle_outside_difference": 0.0,
+        "fitted_minus_oracle_outside_difference_familywise_mc_interval": [
+          0.0,
+          0.0
+        ],
+        "mean_fitted_minus_oracle_common_support_difference": -6.166666666666801e-05,
+        "fitted_minus_oracle_common_support_difference_familywise_mc_interval": [
+          -0.00022617862770894646,
+          0.00010284529437561043
+        ],
+        "mean_estimated_ess_by_arm": {
+          "0": 1111.9378728518302,
+          "1": 777.6723764549254
+        },
+        "mean_oracle_ess_by_arm": {
+          "0": 1112.7357144931527,
+          "1": 778.7933176400957
+        }
+      },
+      {
+        "overlap_profile": "moderate",
+        "nuisance_profile": "both_misspecified",
+        "replicates": 300,
+        "estimated_overlap_pass_rate": 1.0,
+        "oracle_overlap_pass_rate": 1.0,
+        "false_warning_count": 0,
+        "false_warning_rate": 0.0,
+        "false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "missed_warning_count": 0,
+        "missed_warning_rate": 0.0,
+        "missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "mean_estimated_fraction_outside_0_05_0_95": 3.3333333333333335e-05,
+        "mean_oracle_fraction_outside_0_05_0_95": 0.0,
+        "mean_fitted_minus_oracle_outside_difference": 3.3333333333333335e-05,
+        "fitted_minus_oracle_outside_difference_familywise_mc_interval": [
+          1.2607288358570145e-06,
+          6.540593783080966e-05
+        ],
+        "mean_fitted_minus_oracle_common_support_difference": 0.00028666666666666543,
+        "fitted_minus_oracle_common_support_difference_familywise_mc_interval": [
+          -0.0001410554086188734,
+          0.0007143887419522043
+        ],
+        "mean_estimated_ess_by_arm": {
+          "0": 986.7164744633532,
+          "1": 623.584964437947
+        },
+        "mean_oracle_ess_by_arm": {
+          "0": 949.6161736748305,
+          "1": 664.8448492034715
+        }
+      },
+      {
+        "overlap_profile": "weak",
+        "nuisance_profile": "correct_both",
+        "replicates": 300,
+        "estimated_overlap_pass_rate": 0.8466666666666667,
+        "oracle_overlap_pass_rate": 0.96,
+        "false_warning_count": 36,
+        "false_warning_rate": 0.12,
+        "false_warning_familywise_mc_interval": [
+          0.07414246360898848,
+          0.17978767254132672
+        ],
+        "missed_warning_count": 2,
+        "missed_warning_rate": 0.006666666666666667,
+        "missed_warning_familywise_mc_interval": [
+          0.0002711456510879124,
+          0.032414611634265955
+        ],
+        "mean_estimated_fraction_outside_0_05_0_95": 0.03687,
+        "mean_oracle_fraction_outside_0_05_0_95": 0.03495166666666666,
+        "mean_fitted_minus_oracle_outside_difference": 0.0019183333333333337,
+        "fitted_minus_oracle_outside_difference_familywise_mc_interval": [
+          0.00010637797886621243,
+          0.003730288687800455
+        ],
+        "mean_fitted_minus_oracle_common_support_difference": 0.0001333333333333353,
+        "fitted_minus_oracle_common_support_difference_familywise_mc_interval": [
+          -0.00018791949991590044,
+          0.000454586166582571
+        ],
+        "mean_estimated_ess_by_arm": {
+          "0": 748.3363291606844,
+          "1": 424.80947447697787
+        },
+        "mean_oracle_ess_by_arm": {
+          "0": 754.2283744368192,
+          "1": 427.35035575294125
+        }
+      },
+      {
+        "overlap_profile": "weak",
+        "nuisance_profile": "propensity_misspecified",
+        "replicates": 300,
+        "estimated_overlap_pass_rate": 0.0,
+        "oracle_overlap_pass_rate": 0.0,
+        "false_warning_count": 0,
+        "false_warning_rate": 0.0,
+        "false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "missed_warning_count": 0,
+        "missed_warning_rate": 0.0,
+        "missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "mean_estimated_fraction_outside_0_05_0_95": 0.13190833333333332,
+        "mean_oracle_fraction_outside_0_05_0_95": 0.123425,
+        "mean_fitted_minus_oracle_outside_difference": 0.008483333333333332,
+        "fitted_minus_oracle_outside_difference_familywise_mc_interval": [
+          0.004804701493630629,
+          0.012161965173036035
+        ],
+        "mean_fitted_minus_oracle_common_support_difference": -0.00027999999999999987,
+        "fitted_minus_oracle_common_support_difference_familywise_mc_interval": [
+          -0.0012683364952257301,
+          0.0007083364952257304
+        ],
+        "mean_estimated_ess_by_arm": {
+          "0": 567.2517491801741,
+          "1": 258.37143378906876
+        },
+        "mean_oracle_ess_by_arm": {
+          "0": 492.5671545355821,
+          "1": 312.95300619726333
+        }
+      },
+      {
+        "overlap_profile": "weak",
+        "nuisance_profile": "outcome_misspecified",
+        "replicates": 300,
+        "estimated_overlap_pass_rate": 0.7966666666666666,
+        "oracle_overlap_pass_rate": 0.9566666666666667,
+        "false_warning_count": 49,
+        "false_warning_rate": 0.16333333333333333,
+        "false_warning_familywise_mc_interval": [
+          0.10972088700915597,
+          0.22923157241367847
+        ],
+        "missed_warning_count": 1,
+        "missed_warning_rate": 0.0033333333333333335,
+        "missed_warning_familywise_mc_interval": [
+          1.0432922273113434e-05,
+          0.026231677844171113
+        ],
+        "mean_estimated_fraction_outside_0_05_0_95": 0.03651833333333333,
+        "mean_oracle_fraction_outside_0_05_0_95": 0.034508333333333335,
+        "mean_fitted_minus_oracle_outside_difference": 0.0020099999999999996,
+        "fitted_minus_oracle_outside_difference_familywise_mc_interval": [
+          -9.290620565646258e-05,
+          0.004112906205656462
+        ],
+        "mean_fitted_minus_oracle_common_support_difference": -1.66666666666652e-05,
+        "fitted_minus_oracle_common_support_difference_familywise_mc_interval": [
+          -0.00034620154693684914,
+          0.0003128682136035187
+        ],
+        "mean_estimated_ess_by_arm": {
+          "0": 745.9047659651714,
+          "1": 423.76366435417583
+        },
+        "mean_oracle_ess_by_arm": {
+          "0": 753.9496648959043,
+          "1": 425.77606592099613
+        }
+      },
+      {
+        "overlap_profile": "weak",
+        "nuisance_profile": "both_misspecified",
+        "replicates": 300,
+        "estimated_overlap_pass_rate": 0.0,
+        "oracle_overlap_pass_rate": 0.0,
+        "false_warning_count": 0,
+        "false_warning_rate": 0.0,
+        "false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "missed_warning_count": 0,
+        "missed_warning_rate": 0.0,
+        "missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "mean_estimated_fraction_outside_0_05_0_95": 0.130975,
+        "mean_oracle_fraction_outside_0_05_0_95": 0.12270666666666669,
+        "mean_fitted_minus_oracle_outside_difference": 0.008268333333333332,
+        "fitted_minus_oracle_outside_difference_familywise_mc_interval": [
+          0.004901285470229852,
+          0.011635381196436813
+        ],
+        "mean_fitted_minus_oracle_common_support_difference": 0.0004050000000000035,
+        "fitted_minus_oracle_common_support_difference_familywise_mc_interval": [
+          -0.0005248726074910573,
+          0.0013348726074910644
+        ],
+        "mean_estimated_ess_by_arm": {
+          "0": 572.7649183745061,
+          "1": 249.13832366768185
+        },
+        "mean_oracle_ess_by_arm": {
+          "0": 496.5094952361542,
+          "1": 304.8532703528126
+        }
+      }
+    ],
+    "status": "exploratory_oracle_overlap_diagnostic_audit_not_randomized_itt",
+    "warning": "Oracle assignment probabilities are used only to audit overlap diagnostics under this known synthetic generator. Results do not validate real-world identification or proxy approval."
+  },
+  "review_status": "Self-review only; no independent peer review has occurred."
+}

@@ -46,23 +46,13 @@ def _nuisance_predictions(frame: pd.DataFrame) -> tuple[np.ndarray, np.ndarray, 
     return propensity_raw, propensity, outcome_control, outcome_treatment
 
 
-def _aipw_effect(frame: pd.DataFrame) -> tuple[float, dict]:
-    assignment = frame.assignment.to_numpy(dtype=float)
-    outcome = frame.returned_d29_56.to_numpy(dtype=float)
-    propensity_raw, propensity, outcome_control, outcome_treatment = _nuisance_predictions(frame)
-    pseudo_outcome = (
-        outcome_treatment - outcome_control
-        + assignment * (outcome - outcome_treatment) / propensity
-        - (1 - assignment) * (outcome - outcome_control) / (1 - propensity)
-    )
-    effect = float(pseudo_outcome.mean())
-    influence_se = float(np.std(pseudo_outcome, ddof=1) / np.sqrt(len(pseudo_outcome)))
+def _overlap_diagnostics(propensity_raw: np.ndarray, propensity: np.ndarray, assignment: np.ndarray) -> dict:
     weights = np.where(assignment == 1, 1 / propensity, 1 / (1 - propensity))
-    effective_sample_size = float(weights.sum() ** 2 / np.square(weights).sum())
     by_arm = [propensity_raw[assignment == arm] for arm in (0, 1)]
     common_lower = max(float(values.min()) for values in by_arm)
     common_upper = min(float(values.max()) for values in by_arm)
     common = (propensity_raw >= common_lower) & (propensity_raw <= common_upper)
+    effective_sample_size = float(weights.sum() ** 2 / np.square(weights).sum())
     diagnostics = {
         "propensity_quantiles": {str(q): float(np.quantile(propensity_raw, q)) for q in (0.01, 0.05, 0.5, 0.95, 0.99)},
         "propensity_range_by_arm": {str(arm): [float(values.min()), float(values.max())] for arm, values in enumerate(by_arm)},
@@ -75,13 +65,28 @@ def _aipw_effect(frame: pd.DataFrame) -> tuple[float, dict]:
             str(arm): float(weights[assignment == arm].sum() ** 2 / np.square(weights[assignment == arm]).sum())
             for arm in (0, 1)
         },
-        "aipw_influence_function_se": influence_se,
     }
     diagnostics["overlap_check_passed"] = (
         diagnostics["fraction_inside_common_support"] >= 0.95
         and diagnostics["fraction_outside_overlap_range_0_05_0_95"] <= 0.05
         and min(diagnostics["ipw_effective_sample_size_by_arm"].get(str(arm), 0) for arm in (0, 1)) >= 50
     )
+    return diagnostics
+
+
+def _aipw_effect(frame: pd.DataFrame) -> tuple[float, dict]:
+    assignment = frame.assignment.to_numpy(dtype=float)
+    outcome = frame.returned_d29_56.to_numpy(dtype=float)
+    propensity_raw, propensity, outcome_control, outcome_treatment = _nuisance_predictions(frame)
+    pseudo_outcome = (
+        outcome_treatment - outcome_control
+        + assignment * (outcome - outcome_treatment) / propensity
+        - (1 - assignment) * (outcome - outcome_control) / (1 - propensity)
+    )
+    effect = float(pseudo_outcome.mean())
+    influence_se = float(np.std(pseudo_outcome, ddof=1) / np.sqrt(len(pseudo_outcome)))
+    diagnostics = _overlap_diagnostics(propensity_raw, propensity, assignment)
+    diagnostics["aipw_influence_function_se"] = influence_se
     return effect, diagnostics
 
 
@@ -432,4 +437,146 @@ def observational_robustness_stress(
         "rows": rows,
         "status": "exploratory_synthetic_positivity_and_model_robustness_stress_not_randomized_itt",
         "warning": "The truth and model-correctness labels are exact only under this constructed generator. Monte Carlo summaries do not establish external validity or real-world identification.",
+    }
+
+
+def observational_overlap_oracle_audit(
+    seed: int = 66752021,
+    n: int = 2000,
+    replicates: int = 300,
+    scenario: str = "helpful",
+    overlap_profiles: tuple[dict, ...] = (
+        {"name": "moderate", "measured_selection_strength": 1.0},
+        {"name": "weak", "measured_selection_strength": 3.0},
+    ),
+    nuisance_profiles: tuple[dict, ...] = (
+        {"name": "correct_both", "propensity_nonlinearity": 0.0, "outcome_nonlinearity": 0.0},
+        {"name": "propensity_misspecified", "propensity_nonlinearity": 2.0, "outcome_nonlinearity": 0.0},
+        {"name": "outcome_misspecified", "propensity_nonlinearity": 0.0, "outcome_nonlinearity": 0.3},
+        {"name": "both_misspecified", "propensity_nonlinearity": 2.0, "outcome_nonlinearity": 0.3},
+    ),
+    confidence_level: float = 0.95,
+) -> dict:
+    if n < 100 or n > 20000 or replicates < 30:
+        raise ValueError("Use 100-20000 households and at least 30 paired replicates per cell.")
+    if not 0 < confidence_level < 1:
+        raise ValueError("confidence_level must be between zero and one.")
+    if scenario not in SCENARIOS or not overlap_profiles or not nuisance_profiles:
+        raise ValueError("Oracle audit requires a registered scenario and nonempty stress profiles.")
+
+    cells = len(overlap_profiles) * len(nuisance_profiles)
+    family_alpha = 1 - confidence_level
+    per_cell_alpha = family_alpha / cells
+    difference_critical = float(student_t.ppf(1 - per_cell_alpha / 2, replicates - 1))
+    rows = []
+
+    def binomial_interval(successes: int) -> list[float]:
+        lower = 0.0 if successes == 0 else float(beta.ppf(per_cell_alpha / 2, successes, replicates - successes + 1))
+        upper = 1.0 if successes == replicates else float(beta.ppf(1 - per_cell_alpha / 2, successes + 1, replicates - successes))
+        return [lower, upper]
+
+    def mean_interval(values: list[float]) -> list[float]:
+        array = np.asarray(values, dtype=float)
+        mean = float(array.mean())
+        standard_error = float(array.std(ddof=1) / np.sqrt(replicates))
+        return [mean - difference_critical * standard_error, mean + difference_critical * standard_error]
+
+    for overlap_index, overlap_profile in enumerate(overlap_profiles):
+        for nuisance_index, nuisance_profile in enumerate(nuisance_profiles):
+            estimated_pass = []
+            oracle_pass = []
+            false_warnings = []
+            missed_warnings = []
+            outside_differences = []
+            support_differences = []
+            estimated_outside = []
+            oracle_outside = []
+            estimated_ess = {"0": [], "1": []}
+            oracle_ess = {"0": [], "1": []}
+
+            for replicate in range(replicates):
+                replicate_seed = int(np.random.SeedSequence(
+                    [seed, overlap_index, nuisance_index, replicate]
+                ).generate_state(1)[0])
+                data = simulate(
+                    scenario=scenario,
+                    n=n,
+                    seed=replicate_seed,
+                    experiment_id=f"robust-{overlap_index}-{nuisance_index}-{replicate:04d}",
+                    split="observational-robustness-stress",
+                    assignment_mode="observational",
+                    unmeasured_confounding=0.0,
+                    generate_events=False,
+                    measured_selection_strength=overlap_profile["measured_selection_strength"],
+                    propensity_nonlinearity=nuisance_profile["propensity_nonlinearity"],
+                    outcome_nonlinearity=nuisance_profile["outcome_nonlinearity"],
+                )
+                frame = data.households
+                _, fitted_diagnostics = _aipw_effect(frame)
+                oracle_propensity = frame.assignment_probability_oracle.to_numpy(dtype=float)
+                assignment = frame.assignment.to_numpy(dtype=float)
+                oracle_diagnostics = _overlap_diagnostics(
+                    oracle_propensity,
+                    np.clip(oracle_propensity, *PROPENSITY_CLIP),
+                    assignment,
+                )
+                fitted_ok = fitted_diagnostics["overlap_check_passed"]
+                oracle_ok = oracle_diagnostics["overlap_check_passed"]
+                estimated_pass.append(fitted_ok)
+                oracle_pass.append(oracle_ok)
+                false_warnings.append(not fitted_ok and oracle_ok)
+                missed_warnings.append(fitted_ok and not oracle_ok)
+                fitted_outside = fitted_diagnostics["fraction_outside_overlap_range_0_05_0_95"]
+                oracle_outside_value = oracle_diagnostics["fraction_outside_overlap_range_0_05_0_95"]
+                estimated_outside.append(fitted_outside)
+                oracle_outside.append(oracle_outside_value)
+                outside_differences.append(fitted_outside - oracle_outside_value)
+                support_differences.append(
+                    fitted_diagnostics["fraction_inside_common_support"]
+                    - oracle_diagnostics["fraction_inside_common_support"]
+                )
+                for arm in ("0", "1"):
+                    estimated_ess[arm].append(fitted_diagnostics["ipw_effective_sample_size_by_arm"][arm])
+                    oracle_ess[arm].append(oracle_diagnostics["ipw_effective_sample_size_by_arm"][arm])
+
+            false_warning_count = int(np.sum(false_warnings))
+            missed_warning_count = int(np.sum(missed_warnings))
+            rows.append({
+                "overlap_profile": overlap_profile["name"],
+                "nuisance_profile": nuisance_profile["name"],
+                "replicates": replicates,
+                "estimated_overlap_pass_rate": float(np.mean(estimated_pass)),
+                "oracle_overlap_pass_rate": float(np.mean(oracle_pass)),
+                "false_warning_count": false_warning_count,
+                "false_warning_rate": false_warning_count / replicates,
+                "false_warning_familywise_mc_interval": binomial_interval(false_warning_count),
+                "missed_warning_count": missed_warning_count,
+                "missed_warning_rate": missed_warning_count / replicates,
+                "missed_warning_familywise_mc_interval": binomial_interval(missed_warning_count),
+                "mean_estimated_fraction_outside_0_05_0_95": float(np.mean(estimated_outside)),
+                "mean_oracle_fraction_outside_0_05_0_95": float(np.mean(oracle_outside)),
+                "mean_fitted_minus_oracle_outside_difference": float(np.mean(outside_differences)),
+                "fitted_minus_oracle_outside_difference_familywise_mc_interval": mean_interval(outside_differences),
+                "mean_fitted_minus_oracle_common_support_difference": float(np.mean(support_differences)),
+                "fitted_minus_oracle_common_support_difference_familywise_mc_interval": mean_interval(support_differences),
+                "mean_estimated_ess_by_arm": {arm: float(np.mean(values)) for arm, values in estimated_ess.items()},
+                "mean_oracle_ess_by_arm": {arm: float(np.mean(values)) for arm, values in oracle_ess.items()},
+            })
+
+    return {
+        "study_id": "framesignal-observational-oracle-overlap-audit-v1",
+        "seed": seed,
+        "scenario": scenario,
+        "n_per_replicate": n,
+        "replicates_per_cell": replicates,
+        "number_of_cells": cells,
+        "same_seed_replay_of": "framesignal-observational-positivity-misspecification-v1",
+        "same_seed_replay": True,
+        "unmeasured_confounding": 0.0,
+        "oracle_usage": "Diagnostic comparison only; oracle fields are not estimator or AIPW inputs.",
+        "forbidden_estimator_inputs": ["assignment_probability_oracle", "return_probability", "latent_loyalty_oracle"],
+        "familywise_mc_interval_scope": "Bonferroni familywise intervals across the fixed eight cells; exact Clopper-Pearson intervals for warning rates and Student-t intervals for paired fitted-minus-oracle diagnostic differences.",
+        "rows": rows,
+        "status": "exploratory_oracle_overlap_diagnostic_audit_not_randomized_itt",
+        "warning": "Oracle assignment probabilities are used only to audit overlap diagnostics under this known synthetic generator. Results do not validate real-world identification or proxy approval.",
     }

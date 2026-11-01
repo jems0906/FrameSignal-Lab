@@ -25,7 +25,7 @@
 | Dockerfiles, lockfile, CI, README | Both Dockerfiles, Compose/Nginx, npm lockfile, GitHub Actions, setup/reproduction instructions |
 | Research grounding without internal-metric claims | Two verified official publication pages cited in research plan; synthetic disclaimer throughout |
 | Learned composite extension | Implemented separately: train-only household prediction weights, validation-only ridge tuning, frozen-before-heldout scoring, held-out treatment-effect agreement and uncertainty; exploratory only |
-| Observational causal extensions | Implemented separately: illustrative AIPW/bootstrap, replicated hidden-confounding sensitivity, and factorial positivity/nuisance-misspecification stress with bias, coverage, overlap, ESS, and familywise Monte Carlo intervals; exploratory, not randomized ITT |
+| Observational causal extensions | Implemented separately: illustrative AIPW/bootstrap, replicated hidden-confounding sensitivity, factorial positivity/nuisance-misspecification stress, and paired oracle-vs-fitted overlap diagnostics; all exploratory, not randomized ITT, with oracle values diagnostic-only |
 | Shared calculation library across dashboard and notebooks | Installable `packages/framesignal-metrics`; FrameSignal wrapper delegates; exact-parity notebook cells and independent CSV-export recomputation tests |
 | Portable MetricSteward educational handoff | Versioned wheel, report/plan/wheel hashes, fail-closed consumer validator, preserved rejected/descriptive statuses; `docs/metricsteward_handoff.md` |
 | Actual integration in MetricSteward | Separate `metricsteward/` app in this monorepo; validated persistent catalog, import history, review log, export and shared calculation endpoint; cross-app parity tests for all scenarios/windows |

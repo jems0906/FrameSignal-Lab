@@ -1,10 +1,12 @@
 import numpy as np
 import pytest
+import app.analysis.observational as observational
 
 from app.analysis.observational import (
     estimate_observational_effect,
     _aipw_effect,
     observational_replicated_sensitivity,
+    observational_overlap_oracle_audit,
     observational_robustness_stress,
     observational_sensitivity,
 )
@@ -163,6 +165,41 @@ def test_robustness_stress_emits_all_eight_factorial_cells():
         coverage_lower, coverage_upper = row["aipw_wald_coverage_familywise_mc_interval"]
         assert 0 <= coverage_lower <= row["aipw_wald_interval_coverage"] <= coverage_upper <= 1
         assert row["overlap_check_pass_rate"] in (0, 1) or 0 < row["overlap_check_pass_rate"] < 1
+
+
+def test_oracle_audit_replays_exact_stress_simulation_seeds(monkeypatch):
+    real_simulate = observational.simulate
+    call_signatures = []
+
+    def tracked_simulate(*args, **kwargs):
+        call_signatures.append((
+            kwargs["seed"], kwargs["experiment_id"], kwargs["split"],
+            kwargs["measured_selection_strength"], kwargs["propensity_nonlinearity"],
+            kwargs["outcome_nonlinearity"],
+        ))
+        return real_simulate(*args, **kwargs)
+
+    monkeypatch.setattr(observational, "simulate", tracked_simulate)
+    overlap_profiles = ({"name": "moderate", "measured_selection_strength": 1.0},)
+    nuisance_profiles = ({"name": "propensity_misspecified", "propensity_nonlinearity": 2.0, "outcome_nonlinearity": 0.0},)
+    observational_robustness_stress(
+        seed=712, n=300, replicates=30, overlap_profiles=overlap_profiles, nuisance_profiles=nuisance_profiles,
+    )
+    stress_calls = call_signatures.copy()
+    call_signatures.clear()
+    result = observational_overlap_oracle_audit(
+        seed=712, n=300, replicates=30, overlap_profiles=overlap_profiles, nuisance_profiles=nuisance_profiles,
+    )
+
+    assert call_signatures == stress_calls
+    assert result["same_seed_replay"]
+    assert result["unmeasured_confounding"] == 0
+    assert "assignment_probability_oracle" in result["forbidden_estimator_inputs"]
+    assert len(result["rows"]) == 1
+    row = result["rows"][0]
+    assert 0 <= row["false_warning_rate"] <= 1
+    assert 0 <= row["missed_warning_rate"] <= 1
+    assert row["false_warning_familywise_mc_interval"][0] <= row["false_warning_rate"] <= row["false_warning_familywise_mc_interval"][1]
 
 
 def test_observational_estimator_requires_both_assignment_groups():

@@ -93,6 +93,22 @@ export type ObservationalRobustnessReport = {
     }[];
   };
 };
+export type ObservationalOverlapAuditReport = {
+  config: { study_id: string; source_config: string; confidence_level: number; familywise_cells: number };
+  results: {
+    status: string; warning: string; oracle_usage: string; same_seed_replay: boolean;
+    number_of_cells: number; familywise_mc_interval_scope: string;
+    rows: {
+      overlap_profile: string; nuisance_profile: string; replicates: number;
+      estimated_overlap_pass_rate: number; oracle_overlap_pass_rate: number;
+      false_warning_rate: number; false_warning_familywise_mc_interval: [number, number];
+      missed_warning_rate: number; missed_warning_familywise_mc_interval: [number, number];
+      mean_fitted_minus_oracle_outside_difference: number;
+      fitted_minus_oracle_outside_difference_familywise_mc_interval: [number, number];
+      mean_estimated_ess_by_arm: Record<string, number>; mean_oracle_ess_by_arm: Record<string, number>;
+    }[];
+  };
+};
 export type LearnedProxyReport = {
   config: { study_id: string; seed: number; households_per_experiment: number; experiments_per_split: number };
   results: {
@@ -108,5 +124,6 @@ export type ExtensionReports = {
   observational: ObservationalReport;
   observationalReplication: ObservationalReplicationReport;
   observationalRobustness: ObservationalRobustnessReport;
+  observationalOverlapAudit: ObservationalOverlapAuditReport;
   learned: LearnedProxyReport;
 };
