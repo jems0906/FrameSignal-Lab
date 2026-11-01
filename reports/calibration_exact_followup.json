@@ -1,0 +1,169 @@
+{
+  "study_id": "framesignal-return-coverage-exact-20261103-v1",
+  "config": {
+    "study_id": "framesignal-return-coverage-exact-20261103-v1",
+    "trigger": "The simultaneous Wilson grid found no familywise signal, but Wilson intervals are approximate. This follow-up uses exact binomial intervals for Monte Carlo coverage rates.",
+    "seed": 20261103,
+    "prior_seeds": [
+      20261031,
+      20261101,
+      20261102
+    ],
+    "households_per_repetition": 2000,
+    "repetitions_per_effect": 10000,
+    "effect_grid": [
+      0.0,
+      0.02,
+      0.04,
+      0.06,
+      0.1
+    ],
+    "primary_effect": 0.04,
+    "per_effect_confidence_level": 0.99,
+    "familywise_confidence_level_lower_bound": 0.95,
+    "monte_carlo_interval_method": "Clopper-Pearson exact binomial interval for the repeated-simulation target interval coverage proportion",
+    "multiplicity": "Bonferroni across five fixed effect sizes. Each marginal exact interval has coverage at least 99%; the union bound gives simultaneous familywise coverage at least 95% under independent simulation repetitions.",
+    "target_estimator": "Unchanged household difference-in-means with two-sided Welch 95% target intervals.",
+    "dgp": "Unchanged Bernoulli household return DGP from backend/app/analysis/workbench.py.",
+    "decision_rule": {
+      "any_exact_simultaneous_interval_excludes_0.95": "Evidence of an off-nominal target-interval coverage point in this specified synthetic DGP; preserve the estimator and investigate a separate method study.",
+      "all_exact_simultaneous_intervals_include_0.95": "No familywise signal detected; this is not proof of calibration."
+    },
+    "prohibited_changes": [
+      "Do not reuse baseline or prior follow-up seeds.",
+      "Do not change the DGP, sample size, effect grid, target estimator, target interval, or primary effect after observing this study.",
+      "Do not describe these exact Monte Carlo intervals as making the target Welch interval itself exact."
+    ]
+  },
+  "config_sha256": "eb0ac2d8e94c160640a3c9cad2cff86a6eac8d622b7ffb511d5639c4ae471209",
+  "source_report_hashes": {
+    "latest.json": "a9780837d836eb6f299b8a480fae1e575a4b5ce1707bc438321b2fcb705f8e3b",
+    "calibration_followup.json": "4e037d8f0bd6ad0db99aae13cb200622ded177694f2ab29d208507ff378f234b",
+    "calibration_grid_followup.json": "d1a1ad36851cf202414b56733dfc7ba72e9f3a02c8de3e461b42476d4960d22e"
+  },
+  "results": {
+    "seed": 20261103,
+    "repetitions": 10000,
+    "n": 2000,
+    "rate_confidence_level": 0.99,
+    "rows": [
+      {
+        "true_effect": 0.0,
+        "coverage": {
+          "rate": 0.9484,
+          "lower": 0.9424348539057062,
+          "upper": 0.9539335225771246
+        },
+        "rejection_rate": {
+          "rate": 0.0516,
+          "lower": 0.04606647742287538,
+          "upper": 0.057565146094293744
+        },
+        "practical_success": {
+          "rate": 0.0026,
+          "lower": 0.0014748151040936373,
+          "upper": 0.0042216618545568374
+        },
+        "bias": 0.00020629999999999997,
+        "bias_mc_se": 0.00022287166982171825,
+        "sampling_variance": 0.00049671781209121,
+        "mean_interval_width": 0.08759572765847146
+      },
+      {
+        "true_effect": 0.02,
+        "coverage": {
+          "rate": 0.9489,
+          "lower": 0.942960761366488,
+          "upper": 0.9544071104206153
+        },
+        "rejection_rate": {
+          "rate": 0.146,
+          "lower": 0.13702509587492093,
+          "upper": 0.15531415716799185
+        },
+        "practical_success": {
+          "rate": 0.0252,
+          "lower": 0.021339703043681265,
+          "upper": 0.029519524683781773
+        },
+        "bias": -8.819999999999661e-05,
+        "bias_mc_se": 0.000222002456259066,
+        "sampling_variance": 0.000492850905850585,
+        "mean_interval_width": 0.08747138306037656
+      },
+      {
+        "true_effect": 0.04,
+        "coverage": {
+          "rate": 0.9498,
+          "lower": 0.9439077750730205,
+          "upper": 0.9552591872401557
+        },
+        "rejection_rate": {
+          "rate": 0.4432,
+          "lower": 0.4303838334327217,
+          "upper": 0.4560704824597963
+        },
+        "practical_success": {
+          "rate": 0.1488,
+          "lower": 0.13975204169202154,
+          "upper": 0.15818450831472775
+        },
+        "bias": 0.00034969999999997364,
+        "bias_mc_se": 0.00022187727225516876,
+        "sampling_variance": 0.0004922952394339428,
+        "mean_interval_width": 0.08727561761752216
+      },
+      {
+        "true_effect": 0.06,
+        "coverage": {
+          "rate": 0.9472,
+          "lower": 0.9411732771771679,
+          "upper": 0.9527963089891391
+        },
+        "rejection_rate": {
+          "rate": 0.7687,
+          "lower": 0.7576617387535323,
+          "upper": 0.7794810680484
+        },
+        "practical_success": {
+          "rate": 0.4373,
+          "lower": 0.4245049399094153,
+          "upper": 0.4501550184103823
+        },
+        "bias": -3.750000000004444e-05,
+        "bias_mc_se": 0.0002235689774628144,
+        "sampling_variance": 0.0004998308768376841,
+        "mean_interval_width": 0.08701338692482032
+      },
+      {
+        "true_effect": 0.1,
+        "coverage": {
+          "rate": 0.9546,
+          "lower": 0.9489672813539891,
+          "upper": 0.9597948058127533
+        },
+        "rejection_rate": {
+          "rate": 0.9966,
+          "lower": 0.9947939737441769,
+          "upper": 0.9979130586409065
+        },
+        "practical_success": {
+          "rate": 0.9546,
+          "lower": 0.9489672813539891,
+          "upper": 0.9597948058127533
+        },
+        "bias": -0.00013170000000001236,
+        "bias_mc_se": 0.0002180701973496087,
+        "sampling_variance": 0.0004755461097209729,
+        "mean_interval_width": 0.08627015113683627
+      }
+    ],
+    "calibration_flags": [],
+    "scope": "Target inference only, using the same household return DGP. Null rejection is false-positive rate; non-null rejection is two-sided power. Wilson intervals quantify Monte Carlo uncertainty. Candidate-surrogacy certification is not implied."
+  },
+  "off_nominal_effects": [],
+  "status": "no_familywise_signal_detected",
+  "interpretation": "No familywise signal detected; this is not proof of calibration.",
+  "coverage_guarantee_scope": "Bonferroni familywise lower bound applies to the five Monte Carlo coverage proportions under independent repetitions; it does not make the target Welch intervals exact.",
+  "review_status": "Self-review only; no independent peer review has occurred."
+}

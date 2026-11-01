@@ -15,6 +15,7 @@ The frozen baseline uses 2,000 households per randomized experiment, a household
 - Baseline target coverage at +4 pp was 93.10%, with 95% Wilson Monte Carlo interval [91.36%, 94.51%], after 1,000 repetitions per effect.
 - Fresh-seed +4 pp follow-up coverage was 94.76%, interval [94.31%, 95.18%], after 10,000 repetitions. This interval includes nominal 95%; the baseline shortfall was not reproduced as a decisive primary finding.
 - A separately predeclared simultaneous grid study used seed 20261102, 10,000 repetitions per effect, and nominal 99% Wilson intervals at five effects to form a nominal Bonferroni familywise 95% interval family. Wilson intervals are approximate for discrete Monte Carlo counts. None excluded 95%; this is no detected familywise signal for this DGP, not proof of calibration.
+- A third fresh-seed study used exact Clopper-Pearson 99% intervals with Bonferroni across five effect sizes. All intervals included 95%. Its finite-sample simultaneous guarantee concerns Monte Carlo coverage proportions under independent repetitions only; it does not guarantee validity of the target Welch intervals or general calibration.
 - Held-out candidate sign agreement was 44.4% across nine experiments, with experiment-bootstrap interval [11.1%, 77.8%]. The simulated harmful-proxy counterexample includes three held-out experiments where starts rose while oracle return effects were negative.
 - A separate 80% interval launch/agreement screen is not met. The study does not authorize either short-term candidate as a general real-world surrogate.
 

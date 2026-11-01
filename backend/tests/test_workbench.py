@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import numpy as np
+from scipy import stats
 from fastapi.testclient import TestClient
 
 from app.analysis.inference import completion_comparison
@@ -101,6 +102,31 @@ def test_monte_carlo_wilson_interval_confidence_level():
     simultaneous = proportion_interval(950, 1000, confidence_level=0.99)
     assert simultaneous["lower"] < standard["lower"]
     assert simultaneous["upper"] > standard["upper"]
+
+
+def test_exact_monte_carlo_interval_is_conservative_and_method_is_validated():
+    exact = proportion_interval(950, 1000, confidence_level=0.99, method="exact")
+    expected = stats.binomtest(950, 1000).proportion_ci(confidence_level=0.99, method="exact")
+    assert exact["lower"] == expected.low
+    assert exact["upper"] == expected.high
+    assert exact["lower"] <= 0.95 <= exact["upper"]
+    import pytest
+    with pytest.raises(ValueError, match="method must be wilson or exact"):
+        proportion_interval(950, 1000, method="invalid")
+
+
+def test_exact_followup_protocol_is_fresh_and_uses_exact_intervals():
+    root = Path(__file__).resolve().parents[2]
+    baseline = json.loads((root / "configs" / "analysis_plan.json").read_text())
+    followup = json.loads((root / "configs" / "calibration_followup.json").read_text())
+    grid = json.loads((root / "configs" / "calibration_grid_followup.json").read_text())
+    exact = json.loads((root / "configs" / "calibration_exact_followup.json").read_text())
+    assert exact["seed"] not in (baseline["seed"], followup["seed"], grid["seed"])
+    assert exact["effect_grid"] == grid["effect_grid"]
+    assert exact["repetitions_per_effect"] == 10000
+    assert exact["per_effect_confidence_level"] == 0.99
+    assert "Clopper-Pearson exact" in exact["monte_carlo_interval_method"]
+    assert exact["prohibited_changes"][2].startswith("Do not describe these exact Monte Carlo intervals")
 
 
 def test_noisy_agreement_includes_experiment_uncertainty():

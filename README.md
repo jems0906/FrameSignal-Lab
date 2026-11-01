@@ -37,6 +37,7 @@ python -m pip wheel --no-deps ./packages/framesignal-metrics --wheel-dir dist
 python backend/run_analysis.py
 python backend/run_calibration_followup.py
 python backend/run_calibration_grid_followup.py
+python backend/run_calibration_exact_followup.py
 python backend/export_metricsteward.py
 python -m pytest -q
 python backend/execute_notebooks.py
@@ -49,6 +50,8 @@ The report command generates 27 independently populated experiments, 54,000 uniq
 The separate calibration follow-up is predeclared in `configs/calibration_followup.json`; it uses a fresh seed and 10,000 repetitions per effect without changing the original report or estimator. It writes `reports/calibration_followup.json` and `docs/calibration_followup_report.md`.
 
 A second fresh-seed study in `configs/calibration_grid_followup.json` uses nominal 99% Wilson Monte Carlo intervals at each of five effects to form a nominal Bonferroni familywise 95% interval family. Wilson coverage is approximate for discrete Monte Carlo counts, not a strict finite-sample guarantee. It writes `reports/calibration_grid_followup.json` and `docs/calibration_grid_followup_report.md`. No familywise coverage deviation was detected in this synthetic run; that is not proof of calibration.
+
+A third predeclared study in `configs/calibration_exact_followup.json` uses exact Clopper-Pearson intervals for Monte Carlo coverage proportions, with 99% per-effect intervals and a Bonferroni simultaneous familywise lower bound of 95% across five effects. This guarantee applies only under independent simulation repetitions and only to Monte Carlo coverage proportions, not the Welch intervals themselves. It writes `reports/calibration_exact_followup.json` and `docs/calibration_exact_followup_report.md`.
 
 For interactive notebooks, select the same environment as the installed dependencies. Both notebooks locate the root from their current working directory and run without pre-existing report files. Full execution can take a few minutes on slower systems; the UI caches bounded analysis results in the local process.
 
@@ -93,6 +96,7 @@ Open http://localhost:5174. FrameSignal remains at http://localhost:5173. See [h
 | Variance, bias, agreement, uncertainty, failure modes | [Validation report](docs/validation_report.md), [numeric evidence](reports/latest.json) |
 | Fresh-seed interval-coverage follow-up | [Predeclared config](configs/calibration_followup.json), [follow-up report](docs/calibration_followup_report.md) |
 | Simultaneous grid-coverage follow-up | [Predeclared config](configs/calibration_grid_followup.json), [follow-up report](docs/calibration_grid_followup_report.md) |
+| Exact Monte Carlo coverage follow-up | [Predeclared config](configs/calibration_exact_followup.json), [follow-up report](docs/calibration_exact_followup_report.md) |
 | Honest self-review and revision history | [Scientific review](docs/methodology_review.md) |
 | Independent statistician review request | [Invitation draft](docs/peer_review_invitation.md), [review packet](docs/peer_review_packet.md); feedback status remains pending until received |
 | Fictional stakeholder recommendation and non-conclusions | [Executive memo](docs/executive_memo.md) |

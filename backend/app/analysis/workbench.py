@@ -208,19 +208,24 @@ def validation_suite(seed: int = 20261031) -> dict:
             "decision": "Reject qualified starts as a universal surrogate; viewing days also requires independent validation. No candidate is authorized to replace the target."}
 
 
-def proportion_interval(successes: int, total: int, confidence_level: float = 0.95) -> dict:
+def proportion_interval(successes: int, total: int, confidence_level: float = 0.95, method: str = "wilson") -> dict:
     if not 0 < confidence_level < 1:
         raise ValueError("confidence_level must be strictly between 0 and 1.")
-    interval = stats.binomtest(successes, total).proportion_ci(confidence_level=confidence_level, method="wilson")
+    if method not in ("wilson", "exact"):
+        raise ValueError("method must be wilson or exact.")
+    interval = stats.binomtest(successes, total).proportion_ci(confidence_level=confidence_level, method=method)
     return {"rate": successes / total, "lower": float(interval.low), "upper": float(interval.high)}
 
 
 @lru_cache(maxsize=4)
-def operating_characteristics(seed: int = 20261031, repetitions: int = 1000, n: int = 2000, rate_confidence_level: float = 0.95) -> dict:
+def operating_characteristics(seed: int = 20261031, repetitions: int = 1000, n: int = 2000,
+                              rate_confidence_level: float = 0.95, rate_interval_method: str = "wilson") -> dict:
     if not 50 <= repetitions <= 10000 or not 100 <= n <= 20000:
         raise ValueError("Use 50-10000 repetitions and 100-20000 households.")
     if not 0 < rate_confidence_level < 1:
         raise ValueError("rate_confidence_level must be strictly between 0 and 1.")
+    if rate_interval_method not in ("wilson", "exact"):
+        raise ValueError("rate_interval_method must be wilson or exact.")
     rows = []
     for effect_index, true_effect in enumerate((0.0, 0.02, 0.04, 0.06, 0.10)):
         rng = np.random.default_rng(np.random.SeedSequence([seed, effect_index, 800]))
@@ -236,8 +241,9 @@ def operating_characteristics(seed: int = 20261031, repetitions: int = 1000, n: 
             practical += estimate["lower"] > PLAN["practical_target_effect"]
             estimates.append(estimate["effect"])
             widths.append(estimate["upper"] - estimate["lower"])
-        rows.append({"true_effect": true_effect, "coverage": proportion_interval(covered, repetitions, rate_confidence_level),
-                 "rejection_rate": proportion_interval(rejected, repetitions, rate_confidence_level), "practical_success": proportion_interval(practical, repetitions, rate_confidence_level),
+        rows.append({"true_effect": true_effect, "coverage": proportion_interval(covered, repetitions, rate_confidence_level, rate_interval_method),
+                 "rejection_rate": proportion_interval(rejected, repetitions, rate_confidence_level, rate_interval_method),
+                 "practical_success": proportion_interval(practical, repetitions, rate_confidence_level, rate_interval_method),
                      "bias": float(np.mean(estimates) - true_effect), "bias_mc_se": float(np.std(estimates, ddof=1) / np.sqrt(repetitions)),
                      "sampling_variance": float(np.var(estimates, ddof=1)), "mean_interval_width": float(np.mean(widths))})
     calibration_flags = [

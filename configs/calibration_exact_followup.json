@@ -1,0 +1,25 @@
+{
+  "study_id": "framesignal-return-coverage-exact-20261103-v1",
+  "trigger": "The simultaneous Wilson grid found no familywise signal, but Wilson intervals are approximate. This follow-up uses exact binomial intervals for Monte Carlo coverage rates.",
+  "seed": 20261103,
+  "prior_seeds": [20261031, 20261101, 20261102],
+  "households_per_repetition": 2000,
+  "repetitions_per_effect": 10000,
+  "effect_grid": [0.0, 0.02, 0.04, 0.06, 0.10],
+  "primary_effect": 0.04,
+  "per_effect_confidence_level": 0.99,
+  "familywise_confidence_level_lower_bound": 0.95,
+  "monte_carlo_interval_method": "Clopper-Pearson exact binomial interval for the repeated-simulation target interval coverage proportion",
+  "multiplicity": "Bonferroni across five fixed effect sizes. Each marginal exact interval has coverage at least 99%; the union bound gives simultaneous familywise coverage at least 95% under independent simulation repetitions.",
+  "target_estimator": "Unchanged household difference-in-means with two-sided Welch 95% target intervals.",
+  "dgp": "Unchanged Bernoulli household return DGP from backend/app/analysis/workbench.py.",
+  "decision_rule": {
+    "any_exact_simultaneous_interval_excludes_0.95": "Evidence of an off-nominal target-interval coverage point in this specified synthetic DGP; preserve the estimator and investigate a separate method study.",
+    "all_exact_simultaneous_intervals_include_0.95": "No familywise signal detected; this is not proof of calibration."
+  },
+  "prohibited_changes": [
+    "Do not reuse baseline or prior follow-up seeds.",
+    "Do not change the DGP, sample size, effect grid, target estimator, target interval, or primary effect after observing this study.",
+    "Do not describe these exact Monte Carlo intervals as making the target Welch interval itself exact."
+  ]
+}

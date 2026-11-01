@@ -16,6 +16,7 @@ jobs:
       - run: python backend/run_analysis.py
       - run: python backend/run_calibration_followup.py
       - run: python backend/run_calibration_grid_followup.py
+      - run: python backend/run_calibration_exact_followup.py
       - run: python backend/export_metricsteward.py
       - run: python -m pytest -q
       - run: python backend/execute_notebooks.py
@@ -26,6 +27,7 @@ jobs:
             reports/latest.json
             reports/calibration_followup.json
             reports/calibration_grid_followup.json
+            reports/calibration_exact_followup.json
             reports/metricsteward_handoff.json
             reports/cve-report-1.json
             reports/cve-report-2.json
@@ -34,8 +36,10 @@ jobs:
             docs/cve-fix-summary.md
             docs/calibration_followup_report.md
             docs/calibration_grid_followup_report.md
+            docs/calibration_exact_followup_report.md
             configs/calibration_followup.json
             configs/calibration_grid_followup.json
+            configs/calibration_exact_followup.json
             docs/validation_report.md
             docs/executive_memo.md
             notebooks/*.ipynb
