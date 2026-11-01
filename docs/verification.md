@@ -41,7 +41,7 @@ Baseline FrameSignal checks ran locally on 2026-10-31. MetricSteward integration
 | Live MetricSteward UI | Rejected-status filter returns two rows; inspector shows 44.4% held-out agreement, three known-truth harmful reversals, calibration flag, and approval block; 390px mobile viewport has no horizontal page overflow |
 | Notebook source diagnostics | Both current user-edited notebooks are Pylance-clean. Sources were inspected before path configuration; originals were not rewritten for the diagnostic fix. |
 | Independent review preparation | Reviewer packet prepared with estimand, methods, results, limitations, and focused questions; no reviewer feedback is claimed |
-| GitHub Actions readiness | `gh` can access the private FrameSignal repository, but the local directory has no `.git`, the remote reports no default branch, and there are no Actions runs |
+| Remote GitHub Actions | Run [41321264883](https://github.com/jems0906/FrameSignal-Lab/actions/runs/41321264883) completed successfully on `main` commit `0c763e2a46edbec76824d24a71522406a5d106df`; `scientific-baseline`, `frontend`, and `metricsteward-frontend` all passed |
 
 Local execution used Python 3.13.3 with pinned direct scientific dependencies. The notebook environment contains the same pinned packages. Other Python versions are not certified by this local run.
 
@@ -66,9 +66,9 @@ The earlier backend download failure (`IncompleteRead`) was resolved when contai
 
 The complete Compose stack is running locally: FrameSignal UI at http://localhost:8080, MetricSteward UI at http://localhost:8082, with APIs on ports 8000 and 8001. Nginx health, import, metric-list, calculation, and export routes were verified. Both backends report healthy. Both frontend images were rebuilt after Vite remediation, and the MetricSteward frontend was force-recreated after image-ID comparison showed its prior container still used the older image.
 
-These are local container checks, not cloud deployment or remote CI evidence. Native development servers may also still be running on ports 5173/5174 where available.
+These are local container checks, not cloud deployment. Native development servers may also still be running on ports 5173/5174 where available.
 
-No remote GitHub Actions run, cloud deployment, production security audit, real-data validation, external peer review, or real stakeholder feedback is claimed. The local workspace has no `.git` directory; the private GitHub repository currently reports no default branch and no Actions runs. No initial commit or push was created. The workflow is ready, but publishing this full workspace as the repository's first commit requires explicit confirmation.
+The initial repository commit has been published to the private GitHub repository, and the linked Actions run completed successfully. No production application security audit, real-data validation, external peer review, or real stakeholder feedback is claimed. CI status applies to the cited commit; later changes require their own workflow result.
 
 ## MetricSteward Integration and Dependency Security
 
