@@ -39,6 +39,7 @@ Self-review by the project implementation only, 2026-10-31. No external peer rev
 | v1.7 positivity and nuisance-model stress | Added an eight-cell factorial design with 300 outcome-only replicates per cell, varying measured-overlap strength and propensity/outcome misspecification independently while fixing hidden confounding at zero | Separates overlap stress from nuisance-model robustness under this generator. Finite-sample results do not prove the general double-robustness theorem or external identification. |
 | v1.8 paired oracle-overlap audit | Replayed the exact stress-study seeds and compared fitted-propensity diagnostics with known assignment propensities without changing estimator inputs | Quantifies disagreement for this known synthetic DGP only. Oracle propensity is unavailable in real observational data and remains diagnostic-only. |
 | v1.9 cross-fitted overlap audit | Added five-fold out-of-fold propensity diagnostics on the same simulated seeds and compared warning rates with in-sample and oracle diagnostics | Tests whether warning disagreement changes when each household is excluded from nuisance fitting. This is diagnostic only, not a cross-fitted AIPW effect or general calibration claim. |
+| v2.0 overlap-threshold operating study | Compared six predeclared propensity-range/ESS rules on a fresh seed across all eight stress profiles | Reports operating tradeoffs without selecting or recommending a threshold; any real threshold requires a justified operational loss and external evidence. |
 
 ## External Review Needs
 

@@ -82,7 +82,17 @@ def _nuisance_predictions(frame: pd.DataFrame) -> tuple[np.ndarray, np.ndarray, 
     return propensity_raw, propensity, outcome_control, outcome_treatment
 
 
-def _overlap_diagnostics(propensity_raw: np.ndarray, propensity: np.ndarray, assignment: np.ndarray) -> dict:
+def _overlap_diagnostics(
+    propensity_raw: np.ndarray,
+    propensity: np.ndarray,
+    assignment: np.ndarray,
+    propensity_range: tuple[float, float] = OVERLAP_RANGE,
+    minimum_effective_sample_size: float = 50,
+) -> dict:
+    if not 0 <= propensity_range[0] < propensity_range[1] <= 1:
+        raise ValueError("propensity_range must be an increasing interval within [0, 1].")
+    if minimum_effective_sample_size < 0:
+        raise ValueError("minimum_effective_sample_size cannot be negative.")
     weights = np.where(assignment == 1, 1 / propensity, 1 / (1 - propensity))
     by_arm = [propensity_raw[assignment == arm] for arm in (0, 1)]
     common_lower = max(float(values.min()) for values in by_arm)
@@ -94,6 +104,9 @@ def _overlap_diagnostics(propensity_raw: np.ndarray, propensity: np.ndarray, ass
         "propensity_range_by_arm": {str(arm): [float(values.min()), float(values.max())] for arm, values in enumerate(by_arm)},
         "common_support": [common_lower, common_upper],
         "fraction_inside_common_support": float(common.mean()),
+        "configured_propensity_range": list(propensity_range),
+        "minimum_effective_sample_size": minimum_effective_sample_size,
+        "fraction_outside_configured_propensity_range": float(((propensity_raw < propensity_range[0]) | (propensity_raw > propensity_range[1])).mean()),
         "fraction_outside_overlap_range_0_05_0_95": float(((propensity_raw < OVERLAP_RANGE[0]) | (propensity_raw > OVERLAP_RANGE[1])).mean()),
         "fraction_clipped_for_stability": float((propensity_raw != propensity).mean()),
         "ipw_effective_sample_size": effective_sample_size,
@@ -104,8 +117,8 @@ def _overlap_diagnostics(propensity_raw: np.ndarray, propensity: np.ndarray, ass
     }
     diagnostics["overlap_check_passed"] = (
         diagnostics["fraction_inside_common_support"] >= 0.95
-        and diagnostics["fraction_outside_overlap_range_0_05_0_95"] <= 0.05
-        and min(diagnostics["ipw_effective_sample_size_by_arm"].get(str(arm), 0) for arm in (0, 1)) >= 50
+        and diagnostics["fraction_outside_configured_propensity_range"] <= 0.05
+        and min(diagnostics["ipw_effective_sample_size_by_arm"].get(str(arm), 0) for arm in (0, 1)) >= minimum_effective_sample_size
     )
     return diagnostics
 
@@ -773,4 +786,243 @@ def observational_crossfit_overlap_audit(
         "rows": rows,
         "status": "exploratory_crossfit_overlap_diagnostic_audit_not_randomized_itt",
         "warning": "Cross-fitted and oracle propensity diagnostics are compared only under this known synthetic generator. Oracle probabilities are unavailable in real observational data; the audit does not validate real-world identification.",
+    }
+
+
+def observational_overlap_threshold_stress(
+    seed: int = 9158021,
+    n: int = 2000,
+    replicates: int = 300,
+    folds: int = 5,
+    scenario: str = "helpful",
+    overlap_profiles: tuple[dict, ...] = (
+        {"name": "moderate", "measured_selection_strength": 1.0},
+        {"name": "weak", "measured_selection_strength": 3.0},
+    ),
+    nuisance_profiles: tuple[dict, ...] = (
+        {"name": "correct_both", "propensity_nonlinearity": 0.0, "outcome_nonlinearity": 0.0},
+        {"name": "propensity_misspecified", "propensity_nonlinearity": 2.0, "outcome_nonlinearity": 0.0},
+        {"name": "outcome_misspecified", "propensity_nonlinearity": 0.0, "outcome_nonlinearity": 0.3},
+        {"name": "both_misspecified", "propensity_nonlinearity": 2.0, "outcome_nonlinearity": 0.3},
+    ),
+    threshold_rules: tuple[dict, ...] = (
+        {"name": "wide_02_98_ess50", "propensity_range": [0.02, 0.98], "minimum_effective_sample_size": 50},
+        {"name": "reference_05_95_ess50", "propensity_range": [0.05, 0.95], "minimum_effective_sample_size": 50},
+        {"name": "tight_10_90_ess50", "propensity_range": [0.10, 0.90], "minimum_effective_sample_size": 50},
+        {"name": "wide_02_98_ess100", "propensity_range": [0.02, 0.98], "minimum_effective_sample_size": 100},
+        {"name": "reference_05_95_ess100", "propensity_range": [0.05, 0.95], "minimum_effective_sample_size": 100},
+        {"name": "tight_10_90_ess100", "propensity_range": [0.10, 0.90], "minimum_effective_sample_size": 100},
+    ),
+    confidence_level: float = 0.95,
+) -> dict:
+    if n < 100 or n > 20000 or replicates < 30:
+        raise ValueError("Use 100-20000 households and at least 30 independent replicates per cell.")
+    if folds < 2 or folds > n:
+        raise ValueError("Use at least two cross-fitting folds and no more folds than households.")
+    if not 0 < confidence_level < 1:
+        raise ValueError("confidence_level must be between zero and one.")
+    if scenario not in SCENARIOS or not overlap_profiles or not nuisance_profiles or not threshold_rules:
+        raise ValueError("Threshold stress requires a registered scenario and nonempty rule/profile grids.")
+    for rule in threshold_rules:
+        value_range = tuple(rule["propensity_range"])
+        if len(value_range) != 2 or not 0 <= value_range[0] < value_range[1] <= 1:
+            raise ValueError("Each propensity range must be an increasing interval within [0, 1].")
+        if rule["minimum_effective_sample_size"] < 0:
+            raise ValueError("ESS thresholds must be nonnegative.")
+
+    profile_cells = len(overlap_profiles) * len(nuisance_profiles)
+    family_cells = profile_cells * len(threshold_rules)
+    family_alpha = 1 - confidence_level
+    per_cell_alpha = family_alpha / family_cells
+    difference_critical = float(student_t.ppf(1 - per_cell_alpha / 2, replicates - 1))
+    rows = []
+    aggregates = {
+        rule["name"]: {method: [] for method in ("in_sample", "crossfit", "oracle")}
+        for rule in threshold_rules
+    }
+    aggregate_false_differences = {rule["name"]: [] for rule in threshold_rules}
+
+    def binomial_interval(successes: int) -> list[float]:
+        lower = 0.0 if successes == 0 else float(beta.ppf(per_cell_alpha / 2, successes, replicates - successes + 1))
+        upper = 1.0 if successes == replicates else float(beta.ppf(1 - per_cell_alpha / 2, successes + 1, replicates - successes))
+        return [lower, upper]
+
+    def paired_interval(values: list[float]) -> list[float]:
+        array = np.asarray(values, dtype=float)
+        mean = float(array.mean())
+        standard_error = float(array.std(ddof=1) / np.sqrt(replicates))
+        return [mean - difference_critical * standard_error, mean + difference_critical * standard_error]
+
+    for overlap_index, overlap_profile in enumerate(overlap_profiles):
+        for nuisance_index, nuisance_profile in enumerate(nuisance_profiles):
+            samples = {rule["name"]: {method: [] for method in ("in_sample", "crossfit", "oracle")} for rule in threshold_rules}
+            for replicate in range(replicates):
+                replicate_seed = int(np.random.SeedSequence(
+                    [seed, overlap_index, nuisance_index, replicate]
+                ).generate_state(1)[0])
+                data = simulate(
+                    scenario=scenario,
+                    n=n,
+                    seed=replicate_seed,
+                    experiment_id=f"threshold-{overlap_index}-{nuisance_index}-{replicate:04d}",
+                    split="observational-overlap-threshold-stress",
+                    assignment_mode="observational",
+                    unmeasured_confounding=0.0,
+                    generate_events=False,
+                    measured_selection_strength=overlap_profile["measured_selection_strength"],
+                    propensity_nonlinearity=nuisance_profile["propensity_nonlinearity"],
+                    outcome_nonlinearity=nuisance_profile["outcome_nonlinearity"],
+                )
+                frame = data.households
+                in_sample_raw, in_sample_clipped, _, _ = _nuisance_predictions(frame)
+                crossfit_raw, crossfit_clipped = cross_fitted_propensity_predictions(
+                    frame,
+                    folds=folds,
+                    seed=replicate_seed ^ 0x5F3759DF,
+                )
+                oracle_raw = frame.assignment_probability_oracle.to_numpy(dtype=float)
+                oracle_clipped = np.clip(oracle_raw, *PROPENSITY_CLIP)
+                assignment = frame.assignment.to_numpy(dtype=float)
+                propensities = {
+                    "in_sample": (in_sample_raw, in_sample_clipped),
+                    "crossfit": (crossfit_raw, crossfit_clipped),
+                    "oracle": (oracle_raw, oracle_clipped),
+                }
+                for rule in threshold_rules:
+                    diagnostics_by_method = {
+                        method: _overlap_diagnostics(
+                            raw,
+                            clipped,
+                            assignment,
+                            propensity_range=tuple(rule["propensity_range"]),
+                            minimum_effective_sample_size=rule["minimum_effective_sample_size"],
+                        )
+                        for method, (raw, clipped) in propensities.items()
+                    }
+                    oracle_pass = diagnostics_by_method["oracle"]["overlap_check_passed"]
+                    for method in ("in_sample", "crossfit", "oracle"):
+                        diagnostics = diagnostics_by_method[method]
+                        estimated_pass = diagnostics["overlap_check_passed"]
+                        observation = {
+                            "passed": diagnostics["overlap_check_passed"],
+                            "false_warning": bool(method != "oracle" and not estimated_pass and oracle_pass),
+                            "missed_warning": bool(method != "oracle" and estimated_pass and not oracle_pass),
+                        }
+                        samples[rule["name"]][method].append(observation)
+                        aggregates[rule["name"]][method].append(observation)
+
+            for rule in threshold_rules:
+                method_results = samples[rule["name"]]
+                oracle_pass = np.asarray([item["passed"] for item in method_results["oracle"]], dtype=bool)
+                method_rates = {}
+                for method in ("in_sample", "crossfit"):
+                    predictions = method_results[method]
+                    false_count = int(sum(item["false_warning"] for item in predictions))
+                    missed_count = int(sum(item["missed_warning"] for item in predictions))
+                    method_rates[method] = {
+                        "false_count": false_count,
+                        "false_rate": false_count / replicates,
+                        "false_interval": binomial_interval(false_count),
+                        "missed_count": missed_count,
+                        "missed_rate": missed_count / replicates,
+                        "missed_interval": binomial_interval(missed_count),
+                        "pass_rate": float(np.mean([item["passed"] for item in predictions])),
+                    }
+                false_differences = [
+                    float(cross["false_warning"]) - float(in_sample["false_warning"])
+                    for in_sample, cross in zip(method_results["in_sample"], method_results["crossfit"])
+                ]
+                aggregate_false_differences[rule["name"]].extend(false_differences)
+                rows.append({
+                    "overlap_profile": overlap_profile["name"],
+                    "nuisance_profile": nuisance_profile["name"],
+                    "threshold_rule": rule["name"],
+                    "propensity_range": rule["propensity_range"],
+                    "minimum_effective_sample_size": rule["minimum_effective_sample_size"],
+                    "replicates": replicates,
+                    "oracle_pass_rate": float(oracle_pass.mean()),
+                    "in_sample_pass_rate": method_rates["in_sample"]["pass_rate"],
+                    "crossfit_pass_rate": method_rates["crossfit"]["pass_rate"],
+                    "in_sample_false_warning_rate": method_rates["in_sample"]["false_rate"],
+                    "in_sample_false_warning_familywise_mc_interval": method_rates["in_sample"]["false_interval"],
+                    "crossfit_false_warning_rate": method_rates["crossfit"]["false_rate"],
+                    "crossfit_false_warning_familywise_mc_interval": method_rates["crossfit"]["false_interval"],
+                    "in_sample_missed_warning_rate": method_rates["in_sample"]["missed_rate"],
+                    "in_sample_missed_warning_familywise_mc_interval": method_rates["in_sample"]["missed_interval"],
+                    "crossfit_missed_warning_rate": method_rates["crossfit"]["missed_rate"],
+                    "crossfit_missed_warning_familywise_mc_interval": method_rates["crossfit"]["missed_interval"],
+                    "crossfit_minus_in_sample_false_warning_rate": float(np.mean(false_differences)),
+                    "crossfit_minus_in_sample_false_warning_familywise_mc_interval": paired_interval(false_differences),
+                })
+
+    threshold_family_alpha = family_alpha / len(threshold_rules)
+    total_replicates = profile_cells * replicates
+
+    def aggregate_binomial_interval(successes: int) -> list[float]:
+        lower = 0.0 if successes == 0 else float(beta.ppf(threshold_family_alpha / 2, successes, total_replicates - successes + 1))
+        upper = 1.0 if successes == total_replicates else float(beta.ppf(1 - threshold_family_alpha / 2, successes + 1, total_replicates - successes))
+        return [lower, upper]
+
+    threshold_summaries = []
+    for rule in threshold_rules:
+        method_summary = {}
+        for method in ("in_sample", "crossfit", "oracle"):
+            observations = aggregates[rule["name"]][method]
+            passed = int(sum(item["passed"] for item in observations))
+            summary = {
+                "pass_rate": passed / total_replicates,
+                "pass_familywise_mc_interval": aggregate_binomial_interval(passed),
+            }
+            if method != "oracle":
+                false_count = int(sum(item["false_warning"] for item in observations))
+                missed_count = int(sum(item["missed_warning"] for item in observations))
+                summary.update({
+                    "false_warning_rate": false_count / total_replicates,
+                    "false_warning_familywise_mc_interval": aggregate_binomial_interval(false_count),
+                    "missed_warning_rate": missed_count / total_replicates,
+                    "missed_warning_familywise_mc_interval": aggregate_binomial_interval(missed_count),
+                })
+            method_summary[method] = summary
+        paired = np.asarray(aggregate_false_differences[rule["name"]], dtype=float)
+        paired_mean = float(paired.mean())
+        paired_se = float(paired.std(ddof=1) / np.sqrt(len(paired)))
+        paired_critical = float(student_t.ppf(1 - threshold_family_alpha / 2, len(paired) - 1))
+        threshold_summaries.append({
+            "threshold_rule": rule["name"],
+            "propensity_range": rule["propensity_range"],
+            "minimum_effective_sample_size": rule["minimum_effective_sample_size"],
+            "profile_cells_equally_weighted": profile_cells,
+            "replicates_per_profile_cell": replicates,
+            "total_paired_replicates": total_replicates,
+            "in_sample": method_summary["in_sample"],
+            "crossfit": method_summary["crossfit"],
+            "oracle": method_summary["oracle"],
+            "crossfit_minus_in_sample_false_warning_rate": paired_mean,
+            "crossfit_minus_in_sample_false_warning_familywise_mc_interval": [
+                paired_mean - paired_critical * paired_se,
+                paired_mean + paired_critical * paired_se,
+            ],
+        })
+
+    return {
+        "study_id": "framesignal-observational-overlap-threshold-stress-v1",
+        "seed": seed,
+        "scenario": scenario,
+        "n_per_replicate": n,
+        "replicates_per_cell": replicates,
+        "cross_fitting_folds": folds,
+        "unmeasured_confounding": 0.0,
+        "overlap_profiles": list(overlap_profiles),
+        "nuisance_profiles": list(nuisance_profiles),
+        "threshold_rules": list(threshold_rules),
+        "number_of_profile_cells": profile_cells,
+        "number_of_threshold_rules": len(threshold_rules),
+        "number_of_familywise_cells": family_cells,
+        "balanced_profile_summary_scope": "Each threshold summary pools replicates while weighting the fixed overlap-by-nuisance cells equally.",
+        "threshold_summaries": threshold_summaries,
+        "oracle_usage": "Diagnostic-only reference for false/missed warning rates; never an estimator input.",
+        "familywise_mc_interval_scope": "Bonferroni familywise intervals across the fixed profile-by-threshold cells; Clopper-Pearson for warning rates and Student-t intervals for paired crossfit-minus-in-sample false-warning differences.",
+        "rows": rows,
+        "status": "exploratory_synthetic_overlap_threshold_operating_study_not_randomized_itt",
+        "warning": "Threshold performance is specific to the prespecified synthetic generator and rule grid. No threshold is selected or recommended for real observational data.",
     }

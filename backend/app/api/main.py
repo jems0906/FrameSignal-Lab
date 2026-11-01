@@ -75,6 +75,11 @@ def observational_crossfit_audit():
     return _read_extension_report("observational_crossfit_overlap_audit.json")
 
 
+@app.get("/api/observational-threshold-stress")
+def observational_threshold_stress():
+    return _read_extension_report("observational_overlap_threshold_stress.json")
+
+
 @app.get("/api/learned-proxy")
 def learned_proxy_extension():
     return _read_extension_report("learned_proxy_extension.json")

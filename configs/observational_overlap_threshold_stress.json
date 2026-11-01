@@ -1,0 +1,38 @@
+{
+  "study_id": "framesignal-observational-overlap-threshold-stress-v1",
+  "seed": 9158021,
+  "scenario": "helpful",
+  "households_per_replicate": 2000,
+  "replicates_per_profile_cell": 300,
+  "cross_fitting_folds": 5,
+  "unmeasured_confounding": 0.0,
+  "overlap_profiles": [
+    {"name": "moderate", "measured_selection_strength": 1.0},
+    {"name": "weak", "measured_selection_strength": 3.0}
+  ],
+  "nuisance_profiles": [
+    {"name": "correct_both", "propensity_nonlinearity": 0.0, "outcome_nonlinearity": 0.0},
+    {"name": "propensity_misspecified", "propensity_nonlinearity": 2.0, "outcome_nonlinearity": 0.0},
+    {"name": "outcome_misspecified", "propensity_nonlinearity": 0.0, "outcome_nonlinearity": 0.3},
+    {"name": "both_misspecified", "propensity_nonlinearity": 2.0, "outcome_nonlinearity": 0.3}
+  ],
+  "threshold_rules": [
+    {"name": "wide_02_98_ess50", "propensity_range": [0.02, 0.98], "minimum_effective_sample_size": 50},
+    {"name": "reference_05_95_ess50", "propensity_range": [0.05, 0.95], "minimum_effective_sample_size": 50},
+    {"name": "tight_10_90_ess50", "propensity_range": [0.1, 0.9], "minimum_effective_sample_size": 50},
+    {"name": "wide_02_98_ess100", "propensity_range": [0.02, 0.98], "minimum_effective_sample_size": 100},
+    {"name": "reference_05_95_ess100", "propensity_range": [0.05, 0.95], "minimum_effective_sample_size": 100},
+    {"name": "tight_10_90_ess100", "propensity_range": [0.1, 0.9], "minimum_effective_sample_size": 100}
+  ],
+  "confidence_level": 0.95,
+  "profile_cells": 8,
+  "familywise_cells": 48,
+  "design": "Fresh-seed paired simulations; each generated dataset is reused across all six diagnostic rules. Compare in-sample, five-fold cross-fitted, and oracle overlap pass/warning rates. Hidden confounding remains zero.",
+  "monte_carlo_uncertainty": "Bonferroni familywise 95% intervals across 48 profile-by-rule cells; threshold summaries provide six-rule familywise intervals with overlap/nuisance profile cells weighted equally.",
+  "interpretation": "Exploratory synthetic operating study only. No threshold is selected or recommended; oracle propensities are diagnostic-only and unavailable in real observational data.",
+  "prohibited_changes": [
+    "Do not tune or select a threshold from the previously inspected seeds.",
+    "Do not feed oracle assignment probabilities into AIPW or cross-fitted propensity models.",
+    "Do not treat this synthetic threshold grid as a production recommendation."
+  ]
+}

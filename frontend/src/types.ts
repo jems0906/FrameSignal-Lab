@@ -124,6 +124,22 @@ export type ObservationalCrossfitAuditReport = {
     }[];
   };
 };
+export type ObservationalThresholdStressReport = {
+  config: { study_id: string; seed: number; households_per_replicate: number; replicates_per_profile_cell: number; cross_fitting_folds: number };
+  results: {
+    status: string; warning: string; oracle_usage: string; number_of_profile_cells: number;
+    number_of_threshold_rules: number; number_of_familywise_cells: number; familywise_mc_interval_scope: string;
+    threshold_summaries: {
+      threshold_rule: string; propensity_range: [number, number]; minimum_effective_sample_size: number;
+      total_paired_replicates: number;
+      in_sample: { pass_rate: number; false_warning_rate: number; false_warning_familywise_mc_interval: [number, number] };
+      crossfit: { pass_rate: number; false_warning_rate: number; false_warning_familywise_mc_interval: [number, number] };
+      oracle: { pass_rate: number };
+      crossfit_minus_in_sample_false_warning_rate: number;
+      crossfit_minus_in_sample_false_warning_familywise_mc_interval: [number, number];
+    }[];
+  };
+};
 export type LearnedProxyReport = {
   config: { study_id: string; seed: number; households_per_experiment: number; experiments_per_split: number };
   results: {
@@ -141,5 +157,6 @@ export type ExtensionReports = {
   observationalRobustness: ObservationalRobustnessReport;
   observationalOverlapAudit: ObservationalOverlapAuditReport;
   observationalCrossfitAudit: ObservationalCrossfitAuditReport;
+  observationalThresholdStress: ObservationalThresholdStressReport;
   learned: LearnedProxyReport;
 };

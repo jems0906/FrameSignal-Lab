@@ -8,6 +8,8 @@ from app.analysis.observational import (
     observational_replicated_sensitivity,
     observational_overlap_oracle_audit,
     observational_crossfit_overlap_audit,
+    observational_overlap_threshold_stress,
+    _overlap_diagnostics,
     observational_robustness_stress,
     observational_sensitivity,
     cross_fitted_propensity_predictions,
@@ -234,6 +236,40 @@ def test_cross_fitted_propensities_use_disjoint_training_folds(monkeypatch):
     assert len(set(fold_members)) == len(frame)
     assert propensity_raw.shape == propensity.shape == (len(frame),)
     np.testing.assert_allclose(propensity, np.clip(propensity_raw, 0.01, 0.99))
+
+
+def test_more_permissive_overlap_rule_cannot_turn_a_pass_into_a_fail():
+    propensity = np.linspace(0.01, 0.99, 1000)
+    assignment = np.tile([0, 1], 500)
+    clipped = np.clip(propensity, 0.01, 0.99)
+    permissive = _overlap_diagnostics(
+        propensity, clipped, assignment,
+        propensity_range=(0.02, 0.98), minimum_effective_sample_size=20,
+    )
+    restrictive = _overlap_diagnostics(
+        propensity, clipped, assignment,
+        propensity_range=(0.10, 0.90), minimum_effective_sample_size=100,
+    )
+    assert permissive["overlap_check_passed"]
+    assert not restrictive["overlap_check_passed"]
+
+
+def test_threshold_study_reports_all_rules_against_oracle():
+    result = observational_overlap_threshold_stress(
+        seed=915, n=300, replicates=30,
+        overlap_profiles=({"name": "weak", "measured_selection_strength": 3.0},),
+        nuisance_profiles=({"name": "correct_both", "propensity_nonlinearity": 0.0, "outcome_nonlinearity": 0.0},),
+        threshold_rules=(
+            {"name": "wide", "propensity_range": [0.02, 0.98], "minimum_effective_sample_size": 50},
+            {"name": "tight", "propensity_range": [0.10, 0.90], "minimum_effective_sample_size": 100},
+        ),
+    )
+    assert result["number_of_threshold_rules"] == 2
+    assert result["number_of_familywise_cells"] == 2
+    assert result["unmeasured_confounding"] == 0
+    assert len(result["rows"]) == 2
+    assert {row["threshold_rule"] for row in result["rows"]} == {"wide", "tight"}
+    assert all(0 <= row["oracle_pass_rate"] <= 1 for row in result["rows"])
 
 
 def test_observational_estimator_requires_both_assignment_groups():
