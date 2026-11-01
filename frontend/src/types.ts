@@ -44,3 +44,36 @@ export type Operating = {
   n: number; seed: number; repetitions: number; scope: string; calibration_flags: string[];
   rows: { true_effect: number; coverage: Rate; rejection_rate: Rate; practical_success: Rate; bias: number; bias_mc_se: number; sampling_variance: number; mean_interval_width: number }[];
 };
+
+export type ObservationalEstimate = {
+  effect: number; lower: number; upper: number; bootstrap_se: number;
+  naive_unadjusted_difference_descriptive_only: number;
+  overlap: {
+    propensity_quantiles: Record<string, number>;
+    fraction_inside_common_support: number;
+    fraction_outside_overlap_range_0_05_0_95: number;
+    fraction_clipped_for_stability: number;
+    ipw_effective_sample_size_by_arm: Record<string, number>;
+    overlap_check_passed: boolean;
+  };
+  assumptions: string[]; warning: string;
+};
+export type ObservationalReport = {
+  config: { study_id: string; seed: number; households_per_run: number; household_bootstrap_draws: number };
+  results: {
+    status: string; warning: string; measured_covariates: string[];
+    rows: { scenario: string; unmeasured_confounding_strength: number; n: number; known_population_ate: number; assignment_rate: number; observational_estimate: ObservationalEstimate }[];
+  };
+};
+export type LearnedProxyReport = {
+  config: { study_id: string; seed: number; households_per_experiment: number; experiments_per_split: number };
+  results: {
+    status: string; warning: string; interval_scope: string; unique_households: number;
+    weight_freeze_before_heldout: boolean; forbidden_features: string[];
+    model: { intercept: number; selected_alpha: number; standardized_coefficients: Record<Candidate, number>; validation_brier_scores: { alpha: number; brier_score: number }[] };
+    household_prediction: Record<string, { n_households: number; brier_score: number; pooled_correlation: number; within_assignment_correlations: Record<string, number> }>;
+    heldout_experiments: { id: string; scenario: string; strength: number; truth_return_effect: number; effects: Record<Candidate | 'learned_proxy' | 'returned_d29_56', Effect> }[];
+    heldout_agreement: Agreement;
+  };
+};
+export type ExtensionReports = { observational: ObservationalReport; learned: LearnedProxyReport };

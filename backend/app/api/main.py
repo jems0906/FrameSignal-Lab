@@ -1,8 +1,9 @@
 import io
 import json
 import zipfile
+from pathlib import Path
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from framesignal_metrics import __version__ as metrics_version
@@ -39,6 +40,24 @@ def validation():
 @app.get("/api/operating")
 def operating():
     return operating_characteristics()
+
+
+def _read_extension_report(name: str) -> dict:
+    report_path = Path(__file__).resolve().parents[3] / "reports" / name
+    try:
+        return json.loads(report_path.read_bytes())
+    except FileNotFoundError as error:
+        raise HTTPException(503, "Generate the predeclared extension report before requesting it.") from error
+
+
+@app.get("/api/observational")
+def observational_extension():
+    return _read_extension_report("observational_extension.json")
+
+
+@app.get("/api/learned-proxy")
+def learned_proxy_extension():
+    return _read_extension_report("learned_proxy_extension.json")
 
 
 @app.get("/api/export")

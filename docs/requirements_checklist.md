@@ -9,7 +9,7 @@
 | Completion among starters explicitly limited | Descriptive ratio and complete-household bootstrap; no causal label or p-value |
 | Household-matched uncertainty | Welch household inference; household and experiment resampling, not event tests |
 | Prediction versus causal surrogacy | Household association, within-arm correlations, held-out effect scatter, experiment agreement |
-| Leakage prevention | Independent populations and seeds by split; frozen predefined candidates, no learned weights |
+| Leakage prevention | Independent populations and seeds by split; predefined baseline candidates plus a separate train/validate/freeze learned-score extension |
 | Uncertainty in experiment comparisons | Experiment bootstrap and separately labeled correlated effect-noise sensitivity |
 | Outliers, sampling, runtime, genre, window, exposure | Nine sensitivity variants, household-bootstrap variability, genre mix, exposure summaries |
 | Known-truth coverage, null FPR, power by effect size | 1,000 repeated target simulations per effect with Wilson Monte Carlo intervals, bias/variance/width |
@@ -24,7 +24,8 @@
 | FastAPI backend and interactive frontend | API with bounded validated queries, responsive React/TypeScript workbench and downloads |
 | Dockerfiles, lockfile, CI, README | Both Dockerfiles, Compose/Nginx, npm lockfile, GitHub Actions, setup/reproduction instructions |
 | Research grounding without internal-metric claims | Two verified official publication pages cited in research plan; synthetic disclaimer throughout |
-| Optional learned and observational extensions | Deliberately deferred as directed for baseline MVP; requirements for future weights/identification documented |
+| Learned composite extension | Implemented separately: train-only household prediction weights, validation-only ridge tuning, frozen-before-heldout scoring, held-out treatment-effect agreement and uncertainty; exploratory only |
+| Observational causal extension | Implemented separately: measured-covariate AIPW, complete-household bootstrap, overlap/ESS diagnostics, hidden-confounding sensitivity and explicit assumptions; exploratory, not randomized ITT |
 | Shared calculation library across dashboard and notebooks | Installable `packages/framesignal-metrics`; FrameSignal wrapper delegates; exact-parity notebook cells and independent CSV-export recomputation tests |
 | Portable MetricSteward educational handoff | Versioned wheel, report/plan/wheel hashes, fail-closed consumer validator, preserved rejected/descriptive statuses; `docs/metricsteward_handoff.md` |
 | Actual integration in MetricSteward | Separate `metricsteward/` app in this monorepo; validated persistent catalog, import history, review log, export and shared calculation endpoint; cross-app parity tests for all scenarios/windows |

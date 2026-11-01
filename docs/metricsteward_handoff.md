@@ -55,4 +55,4 @@ These gates are deliberately not relaxed to make a portfolio claim pass. A faile
 
 ## External Steps Still Required
 
-No separate MetricSteward URL is needed for this monorepo integration. Publishing code or triggering fresh remote CI still requires repository access and authorization; local execution is not remote CI. Peer feedback must come from an actual reviewer before it is recorded as user-reported feedback. The app's implementation self-review is not independent peer review. Learned composites and observational extensions remain deferred under the original MVP instructions.
+No separate MetricSteward URL is needed for this monorepo integration. Publishing code or triggering fresh remote CI still requires repository access and authorization; local execution is not remote CI. Peer feedback must come from an actual reviewer before it is recorded as user-reported feedback. The app's implementation self-review is not independent peer review. Separate exploratory learned-score and observational studies now exist in FrameSignal; they do not change this handoff's definitions, rejection statuses, or approval guard.

@@ -63,9 +63,19 @@ A subsequent simultaneous grid follow-up is separately specified in `configs/cal
 
 A third follow-up, `configs/calibration_exact_followup.json`, uses Clopper-Pearson exact binomial intervals for each repeated-simulation coverage proportion. With nominal 99% two-sided marginal intervals at each of five fixed effects, Bonferroni's union bound gives simultaneous familywise coverage of at least 95% for the five Monte Carlo proportions, assuming independent simulation repetitions at each effect. This finite-sample guarantee is about Monte Carlo uncertainty in coverage estimates only. It does not make the target Welch confidence interval exact, guarantee its coverage under other DGPs, or validate a proxy. The seed is 20261103, with the same N, DGP, target estimator, and effect grid. Results are in `docs/calibration_exact_followup_report.md`; all five simultaneous intervals contain 95%, so no familywise deviation was detected, not proved absent.
 
-## Extensions and Review
+## Post-Baseline Extensions
 
-Learned composites and observational causal analyses are deliberately deferred until the baseline is reproducible. An observational extension must specify identification assumptions, overlap/positivity diagnostics, and sensitivity to unmeasured confounding; predictive models cannot declare away selection bias.
+The randomized baseline remains primary and unchanged. Two isolated exploratory extensions were added after the baseline became reproducible; neither changes the frozen v1.0 analysis plan, primary UI decision rule, or MetricSteward approval states.
+
+The observational demonstration is preregistered in `configs/observational_extension.json`. It simulates selected treatment assignment as a function of measured affinity/opportunity and a hidden loyalty factor; later return also depends on the hidden factor. It reports the naive descriptive contrast and a cross-sectional AIPW estimate using only measured affinity and log opportunity, with complete-household bootstrap intervals, propensity quantiles, common support, overlap-range violations, clipping, and effective sample sizes. Identification assumes consistency, no interference, positivity, complete data, conditional exchangeability given measured covariates, and correct specification of either the propensity or outcome model. The sensitivity grid varies hidden-confounding strength (0, 0.5, 1). AIPW does not fix unmeasured confounding; poor overlap is surfaced rather than silently trimmed. These synthetic estimates are not randomized ITT and are not evidence about real populations.
+
+The learned household prediction score is preregistered in `configs/learned_proxy_extension.json`. It uses qualified starts and viewing days to predict days 29-56 return in training households, standardizing features on training data only. Ridge penalty is tuned by household Brier score in a separate validation population. Weights and transforms are frozen before held-out households are generated and evaluated. The held-out treatment effect of the frozen score is compared with return effects across experiments, separately from household prediction. Experiment-bootstrap and correlated effect-noise intervals are reported. These intervals condition on fitted weights and omit training/tuning weight uncertainty; nine experiments per split and the constructed scenarios limit generalization. This is an exploratory demonstration, not a definitive surrogate method or approval.
+
+Both extensions prohibit hidden/oracle fields as estimator inputs. Self-review only. No external peer review or real-world identification validation has occurred.
+
+## Review
+
+Learned proxies and observational analyses remain optional extensions, not replacements for the randomized baseline. Real observational use would additionally require domain-specific identification arguments, overlap assessment, and sensitivity to unmeasured confounding. Predictive models cannot declare away selection bias.
 
 Review status: self-review only. The scientific critique and actual revisions are in `methodology_review.md`; no peer feedback is claimed.
 

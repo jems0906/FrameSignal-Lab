@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
+from scipy.special import expit
 
 
 @dataclass(frozen=True)
@@ -30,6 +31,7 @@ class Simulation:
     seed: int
     experiment_id: str
     split: str
+    assignment_mode: str = "randomized"
 
 
 def simulate(
@@ -39,17 +41,33 @@ def simulate(
     experiment_id: str = "interactive",
     split: str = "exploratory",
     strength: float = 1.0,
+    assignment_mode: str = "randomized",
+    unmeasured_confounding: float = 0.0,
 ) -> Simulation:
     if scenario not in SCENARIOS or n < 100 or n > 20000:
         raise ValueError("Use a registered scenario and 100-20000 households.")
     if not 0 <= strength <= 1.5:
         raise ValueError("strength must be between 0 and 1.5")
+    if assignment_mode not in ("randomized", "observational"):
+        raise ValueError("assignment_mode must be randomized or observational")
+    if not 0 <= unmeasured_confounding <= 1:
+        raise ValueError("unmeasured_confounding must be between 0 and 1")
+    if assignment_mode == "randomized" and unmeasured_confounding != 0:
+        raise ValueError("unmeasured_confounding applies only to observational assignment")
     spec = SCENARIOS[scenario]
     rng = np.random.default_rng(seed)
-    assignment = rng.permutation(np.arange(n) % 2)
+    assignment = rng.permutation(np.arange(n) % 2) if assignment_mode == "randomized" else None
     affinity = rng.beta(2, 2, n)
     opportunity = rng.lognormal(-0.15, 0.65, n)
-    return_probability = 0.40 + 0.25 * affinity + assignment * spec.return_effect * strength
+    observed_log_opportunity = np.log(opportunity)
+    if assignment_mode == "observational":
+        latent_loyalty = rng.uniform(-1, 1, n)
+        assignment_probability = expit(-0.3 + 2 * (affinity - 0.5) + 0.25 * observed_log_opportunity + 0.8 * unmeasured_confounding * latent_loyalty)
+        assignment = rng.binomial(1, assignment_probability)
+        return_probability = 0.40 + 0.25 * affinity + assignment * spec.return_effect * strength + 0.04 * unmeasured_confounding * latent_loyalty
+    else:
+        assignment_probability = np.full(n, 0.5)
+        return_probability = 0.40 + 0.25 * affinity + assignment * spec.return_effect * strength
     returned = rng.binomial(1, return_probability)
     household_ids = [f"{split}:{experiment_id}:h{index:05d}" for index in range(n)]
     households = pd.DataFrame({
@@ -65,6 +83,12 @@ def simulate(
         "return_day": np.where(returned, rng.integers(29, 57, n), -1),
         "outcome_observed": True,
     })
+    if assignment_mode == "observational":
+        households["observed_affinity"] = affinity
+        households["observed_log_opportunity"] = observed_log_opportunity
+        households["assignment_probability_oracle"] = assignment_probability
+        households["latent_loyalty_oracle"] = latent_loyalty
+        households["unmeasured_confounding_strength_oracle"] = unmeasured_confounding
     genres = ["Drama", "Comedy", "Documentary"]
     titles = pd.DataFrame([
         {"title_id": f"t{index:02d}", "title": f"Fictional {genres[index % 3]} {index + 1}",
@@ -95,4 +119,4 @@ def simulate(
     events = pd.DataFrame(event_rows, columns=[
         "event_id", "household_id", "title_id", "day", "minutes", "runtime_minutes", "genre", "qualified", "completed",
     ])
-    return Simulation(households, titles, pd.DataFrame(exposure_rows), events, spec, seed, experiment_id, split)
+    return Simulation(households, titles, pd.DataFrame(exposure_rows), events, spec, seed, experiment_id, split, assignment_mode)

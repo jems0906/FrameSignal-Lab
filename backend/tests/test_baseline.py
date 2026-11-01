@@ -18,6 +18,25 @@ def test_seed_reproducibility_and_population():
     assert frame.loc[~frame.starter, "completion"].isna().all()
 
 
+def test_observational_simulation_is_explicit_and_retains_complete_population():
+    data = simulate("misleading", n=1000, seed=51, assignment_mode="observational", unmeasured_confounding=0.5)
+    frame = household_metrics(data)
+    assert data.assignment_mode == "observational"
+    assert len(frame) == 1000
+    assert frame.returned_d29_56.notna().all()
+    assert frame.assignment_probability_oracle.between(0, 1).all()
+    assert {"observed_affinity", "observed_log_opportunity"}.issubset(frame.columns)
+    assert "latent_loyalty" not in frame.columns
+    assert frame.loc[~frame.starter, "completion"].isna().all()
+
+
+def test_randomized_simulation_rejects_observational_sensitivity_argument():
+    import pytest
+
+    with pytest.raises(ValueError, match="applies only to observational"):
+        simulate(n=100, seed=3, unmeasured_confounding=0.2)
+
+
 def test_misleading_scenario_reverses_starts_decision():
     data = simulate("misleading", n=16000, seed=23)
     frame = household_metrics(data)

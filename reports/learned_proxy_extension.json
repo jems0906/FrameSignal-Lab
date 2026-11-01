@@ -1,0 +1,960 @@
+{
+  "config": {
+    "study_id": "framesignal-learned-proxy-v1",
+    "seed": 528641,
+    "households_per_experiment": 2000,
+    "experiments_per_split": 9,
+    "splits": [
+      "train",
+      "validation",
+      "heldout"
+    ],
+    "features": [
+      "qualified_starts",
+      "viewing_days"
+    ],
+    "target": "returned_d29_56",
+    "model": "Ridge linear probability model fitted to household outcomes; features standardized using training households only; predictions clipped to [0,1].",
+    "ridge_alpha_grid": [
+      0.01,
+      0.1,
+      1.0,
+      10.0
+    ],
+    "selection_metric": "Validation-split household Brier score; ties choose the smaller alpha.",
+    "agreement_draws": 1000,
+    "interval_scope": "Held-out treatment-effect intervals condition on the frozen training weights and validation-selected alpha; they do not include training/tuning weight uncertainty.",
+    "forbidden_features": [
+      "assignment",
+      "return_probability",
+      "return_day",
+      "affinity",
+      "assignment_probability_oracle",
+      "latent_loyalty"
+    ],
+    "decision": "Exploratory educational learned proxy only. Report individual prediction separately from held-out treatment-effect agreement. Never grant surrogate approval from this analysis."
+  },
+  "config_sha256": "357e3e80020b6838dea8d9ebe283ae5230c408706563708b774a4f6da1fd0a44",
+  "runtime": {
+    "python": "3.13.3",
+    "numpy": "2.2.6",
+    "pandas": "2.2.3",
+    "scipy": "1.15.3",
+    "framesignal_metrics": "1.0.0"
+  },
+  "results": {
+    "study_id": "framesignal-learned-proxy-v1",
+    "seed": 528641,
+    "n_per_experiment": 2000,
+    "experiments_per_split": 9,
+    "unique_households": 54000,
+    "leakage_check": true,
+    "split_households": {
+      "train": 18000,
+      "validation": 18000,
+      "heldout": 18000
+    },
+    "experiment_specs": [
+      {
+        "id": "learned-train-01",
+        "split": "train",
+        "scenario": "helpful",
+        "strength": 0.6,
+        "seed": 2146449949
+      },
+      {
+        "id": "learned-train-02",
+        "split": "train",
+        "scenario": "unrelated",
+        "strength": 0.6,
+        "seed": 3800396515
+      },
+      {
+        "id": "learned-train-03",
+        "split": "train",
+        "scenario": "misleading",
+        "strength": 0.6,
+        "seed": 1141418611
+      },
+      {
+        "id": "learned-train-04",
+        "split": "train",
+        "scenario": "helpful",
+        "strength": 1.0,
+        "seed": 3776713827
+      },
+      {
+        "id": "learned-train-05",
+        "split": "train",
+        "scenario": "unrelated",
+        "strength": 1.0,
+        "seed": 3626936278
+      },
+      {
+        "id": "learned-train-06",
+        "split": "train",
+        "scenario": "misleading",
+        "strength": 1.0,
+        "seed": 2531634211
+      },
+      {
+        "id": "learned-train-07",
+        "split": "train",
+        "scenario": "helpful",
+        "strength": 1.4,
+        "seed": 2039488803
+      },
+      {
+        "id": "learned-train-08",
+        "split": "train",
+        "scenario": "unrelated",
+        "strength": 1.4,
+        "seed": 2756352475
+      },
+      {
+        "id": "learned-train-09",
+        "split": "train",
+        "scenario": "misleading",
+        "strength": 1.4,
+        "seed": 3477158972
+      },
+      {
+        "id": "learned-validation-01",
+        "split": "validation",
+        "scenario": "helpful",
+        "strength": 0.6,
+        "seed": 1096379999
+      },
+      {
+        "id": "learned-validation-02",
+        "split": "validation",
+        "scenario": "unrelated",
+        "strength": 0.6,
+        "seed": 473703628
+      },
+      {
+        "id": "learned-validation-03",
+        "split": "validation",
+        "scenario": "misleading",
+        "strength": 0.6,
+        "seed": 1876459126
+      },
+      {
+        "id": "learned-validation-04",
+        "split": "validation",
+        "scenario": "helpful",
+        "strength": 1.0,
+        "seed": 1909792032
+      },
+      {
+        "id": "learned-validation-05",
+        "split": "validation",
+        "scenario": "unrelated",
+        "strength": 1.0,
+        "seed": 2790917587
+      },
+      {
+        "id": "learned-validation-06",
+        "split": "validation",
+        "scenario": "misleading",
+        "strength": 1.0,
+        "seed": 1591792483
+      },
+      {
+        "id": "learned-validation-07",
+        "split": "validation",
+        "scenario": "helpful",
+        "strength": 1.4,
+        "seed": 3579493444
+      },
+      {
+        "id": "learned-validation-08",
+        "split": "validation",
+        "scenario": "unrelated",
+        "strength": 1.4,
+        "seed": 3181204925
+      },
+      {
+        "id": "learned-validation-09",
+        "split": "validation",
+        "scenario": "misleading",
+        "strength": 1.4,
+        "seed": 816489985
+      },
+      {
+        "id": "learned-heldout-01",
+        "split": "heldout",
+        "scenario": "helpful",
+        "strength": 0.6,
+        "seed": 410054039
+      },
+      {
+        "id": "learned-heldout-02",
+        "split": "heldout",
+        "scenario": "unrelated",
+        "strength": 0.6,
+        "seed": 1075627048
+      },
+      {
+        "id": "learned-heldout-03",
+        "split": "heldout",
+        "scenario": "misleading",
+        "strength": 0.6,
+        "seed": 3050144064
+      },
+      {
+        "id": "learned-heldout-04",
+        "split": "heldout",
+        "scenario": "helpful",
+        "strength": 1.0,
+        "seed": 2117166717
+      },
+      {
+        "id": "learned-heldout-05",
+        "split": "heldout",
+        "scenario": "unrelated",
+        "strength": 1.0,
+        "seed": 1790343023
+      },
+      {
+        "id": "learned-heldout-06",
+        "split": "heldout",
+        "scenario": "misleading",
+        "strength": 1.0,
+        "seed": 2874140512
+      },
+      {
+        "id": "learned-heldout-07",
+        "split": "heldout",
+        "scenario": "helpful",
+        "strength": 1.4,
+        "seed": 2756031284
+      },
+      {
+        "id": "learned-heldout-08",
+        "split": "heldout",
+        "scenario": "unrelated",
+        "strength": 1.4,
+        "seed": 2878680378
+      },
+      {
+        "id": "learned-heldout-09",
+        "split": "heldout",
+        "scenario": "misleading",
+        "strength": 1.4,
+        "seed": 2981529789
+      }
+    ],
+    "feature_names": [
+      "qualified_starts",
+      "viewing_days"
+    ],
+    "target": "returned_d29_56",
+    "weight_training_split": "train",
+    "regularization_tuning_split": "validation",
+    "weight_freeze_before_heldout": true,
+    "forbidden_features": [
+      "assignment",
+      "return_probability",
+      "return_day",
+      "affinity",
+      "assignment_probability_oracle",
+      "latent_loyalty"
+    ],
+    "training_feature_means": [
+      2.453777777777778,
+      2.0457222222222224
+    ],
+    "training_feature_scales": [
+      2.9081642081781416,
+      1.9928116738126438
+    ],
+    "model": {
+      "type": "ridge linear probability prediction on standardized household metric values",
+      "intercept": 0.5326111111111111,
+      "standardized_coefficients": {
+        "qualified_starts": -0.003277227746675883,
+        "viewing_days": 0.020237097677588186
+      },
+      "selected_alpha": 0.01,
+      "validation_brier_scores": [
+        {
+          "alpha": 0.01,
+          "brier_score": 0.2490532268492234
+        },
+        {
+          "alpha": 0.1,
+          "brier_score": 0.24909817196039885
+        },
+        {
+          "alpha": 1.0,
+          "brier_score": 0.24920587489681495
+        },
+        {
+          "alpha": 10.0,
+          "brier_score": 0.24945361843748529
+        }
+      ]
+    },
+    "household_prediction": {
+      "train": {
+        "brier_score": 0.24863252800138688,
+        "pooled_correlation": 0.034948311136876554,
+        "within_assignment_correlations": {
+          "0": 0.02545622067031245,
+          "1": 0.040791174791346564
+        },
+        "n_households": 18000
+      },
+      "validation": {
+        "brier_score": 0.2490532268492234,
+        "pooled_correlation": 0.047065493535465575,
+        "within_assignment_correlations": {
+          "0": 0.051265411144117506,
+          "1": 0.043903899222208116
+        },
+        "n_households": 18000
+      },
+      "heldout": {
+        "brier_score": 0.24926613035203668,
+        "pooled_correlation": 0.03055218690730684,
+        "within_assignment_correlations": {
+          "0": 0.04139580893903263,
+          "1": 0.02875316009025055
+        },
+        "n_households": 18000
+      }
+    },
+    "heldout_experiments": [
+      {
+        "id": "learned-heldout-01",
+        "scenario": "helpful",
+        "strength": 0.6,
+        "truth_return_effect": 0.036,
+        "effects": {
+          "qualified_starts": {
+            "control_mean": 1.65,
+            "treatment_mean": 2.775,
+            "effect": 1.125,
+            "se": 0.11017265093031489,
+            "lower": 0.9089211985238714,
+            "upper": 1.3410788014761286,
+            "p_value": 7.703825826336387e-24,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "viewing_days": {
+            "control_mean": 1.449,
+            "treatment_mean": 2.351,
+            "effect": 0.9019999999999999,
+            "se": 0.08181620800239946,
+            "lower": 0.741538991269426,
+            "upper": 1.0624610087305737,
+            "p_value": 2.0022905249041407e-27,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "learned_proxy": {
+            "control_mean": 0.5274571504736412,
+            "treatment_mean": 0.5353492342621191,
+            "effect": 0.007892083788477944,
+            "se": 0.0007131921405009117,
+            "lower": 0.006493348672728941,
+            "upper": 0.009290818904226948,
+            "p_value": 1.2917657022614743e-27,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "control_mean": 0.544,
+            "treatment_mean": 0.572,
+            "effect": 0.027999999999999914,
+            "se": 0.02221200966534486,
+            "lower": -0.015561128655394461,
+            "upper": 0.0715611286553943,
+            "p_value": 0.20760765048766422,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "learned_proxy": [
+            [
+              5.08643029272272e-07,
+              3.7466485461542706e-07
+            ],
+            [
+              3.7466485461542706e-07,
+              0.0004933733733733737
+            ]
+          ]
+        }
+      },
+      {
+        "id": "learned-heldout-02",
+        "scenario": "unrelated",
+        "strength": 0.6,
+        "truth_return_effect": 0.0,
+        "effects": {
+          "qualified_starts": {
+            "control_mean": 1.659,
+            "treatment_mean": 2.855,
+            "effect": 1.196,
+            "se": 0.11027626605419162,
+            "lower": 0.9797109849140865,
+            "upper": 1.4122890150859135,
+            "p_value": 1.4698609058397816e-26,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "viewing_days": {
+            "control_mean": 1.474,
+            "treatment_mean": 2.402,
+            "effect": 0.9280000000000002,
+            "se": 0.08066118165652067,
+            "lower": 0.7698031296258786,
+            "upper": 1.0861968703741216,
+            "p_value": 1.245917476467403e-29,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "learned_proxy": {
+            "control_mean": 0.5277008845128963,
+            "treatment_mean": 0.5357769892152683,
+            "effect": 0.008076104702371967,
+            "se": 0.0007022298486549775,
+            "lower": 0.006698862676815733,
+            "upper": 0.009453346727928202,
+            "p_value": 1.2814507357376396e-29,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "control_mean": 0.535,
+            "treatment_mean": 0.53,
+            "effect": -0.0050000000000000044,
+            "se": 0.02232427766744925,
+            "lower": -0.04878130213860026,
+            "upper": 0.03878130213860025,
+            "p_value": 0.8228024466032465,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "learned_proxy": [
+            [
+              4.931267603419925e-07,
+              5.827696313043087e-07
+            ],
+            [
+              5.827696313043087e-07,
+              0.0004983733733733741
+            ]
+          ]
+        }
+      },
+      {
+        "id": "learned-heldout-03",
+        "scenario": "misleading",
+        "strength": 0.6,
+        "truth_return_effect": -0.036,
+        "effects": {
+          "qualified_starts": {
+            "control_mean": 1.53,
+            "treatment_mean": 3.043,
+            "effect": 1.5130000000000001,
+            "se": 0.11313288668663084,
+            "lower": 1.2910931114871729,
+            "upper": 1.7349068885128274,
+            "p_value": 1.0228079452586002e-38,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "viewing_days": {
+            "control_mean": 1.388,
+            "treatment_mean": 2.493,
+            "effect": 1.105,
+            "se": 0.08204961388781265,
+            "lower": 0.9440761162731344,
+            "upper": 1.2659238837268656,
+            "p_value": 1.9472765678891887e-39,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "learned_proxy": {
+            "control_mean": 0.5269729212838343,
+            "treatment_mean": 0.5364892402279686,
+            "effect": 0.009516318944134294,
+            "se": 0.0007131883508388117,
+            "lower": 0.008117557310286449,
+            "upper": 0.01091508057798214,
+            "p_value": 8.376664344449728e-39,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "control_mean": 0.531,
+            "treatment_mean": 0.475,
+            "effect": -0.05600000000000005,
+            "se": 0.022336358541913515,
+            "lower": -0.09980499457065573,
+            "upper": -0.012195005429344381,
+            "p_value": 0.012250636960986213,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "learned_proxy": [
+            [
+              5.086376237721846e-07,
+              5.89779100298331e-07
+            ],
+            [
+              5.89779100298331e-07,
+              0.0004989129129129137
+            ]
+          ]
+        }
+      },
+      {
+        "id": "learned-heldout-04",
+        "scenario": "helpful",
+        "strength": 1.0,
+        "truth_return_effect": 0.06,
+        "effects": {
+          "qualified_starts": {
+            "control_mean": 1.686,
+            "treatment_mean": 2.974,
+            "effect": 1.2880000000000003,
+            "se": 0.11295790139466777,
+            "lower": 1.066448532882889,
+            "upper": 1.5095514671171115,
+            "p_value": 4.512197483081351e-29,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "viewing_days": {
+            "control_mean": 1.502,
+            "treatment_mean": 2.462,
+            "effect": 0.9600000000000002,
+            "se": 0.08164078158137156,
+            "lower": 0.7998805954093896,
+            "upper": 1.1201194045906107,
+            "p_value": 8.02688221624425e-31,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "learned_proxy": {
+            "control_mean": 0.5279547993870426,
+            "treatment_mean": 0.5362521902633561,
+            "effect": 0.008297390876313537,
+            "se": 0.0007093245775504791,
+            "lower": 0.006906223839299199,
+            "upper": 0.009688557913327876,
+            "p_value": 1.5401655069267225e-30,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "control_mean": 0.51,
+            "treatment_mean": 0.582,
+            "effect": 0.07199999999999995,
+            "se": 0.022218678396107847,
+            "lower": 0.028425789331702554,
+            "upper": 0.11557421066829734,
+            "p_value": 0.0012127453136429507,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "learned_proxy": [
+            [
+              5.031413563171655e-07,
+              3.4412055274761476e-07
+            ],
+            [
+              3.4412055274761476e-07,
+              0.0004936696696696704
+            ]
+          ]
+        }
+      },
+      {
+        "id": "learned-heldout-05",
+        "scenario": "unrelated",
+        "strength": 1.0,
+        "truth_return_effect": 0.0,
+        "effects": {
+          "qualified_starts": {
+            "control_mean": 1.61,
+            "treatment_mean": 3.47,
+            "effect": 1.86,
+            "se": 0.12256435869379818,
+            "lower": 1.6195872304158385,
+            "upper": 2.1004127695841617,
+            "p_value": 1.5074037954400477e-48,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "viewing_days": {
+            "control_mean": 1.455,
+            "treatment_mean": 2.793,
+            "effect": 1.338,
+            "se": 0.0845533871307074,
+            "lower": 1.172165379070436,
+            "upper": 1.503834620929564,
+            "p_value": 7.268262748636238e-53,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "learned_proxy": {
+            "control_mean": 0.527563157000769,
+            "treatment_mean": 0.5390545656793827,
+            "effect": 0.011491408678613757,
+            "se": 0.0007302863399117229,
+            "lower": 0.010059116047285968,
+            "upper": 0.012923701309941546,
+            "p_value": 2.1741388726458963e-52,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "control_mean": 0.501,
+            "treatment_mean": 0.518,
+            "effect": 0.017000000000000015,
+            "se": 0.02236459646797087,
+            "lower": -0.02686037343527998,
+            "upper": 0.06086037343528001,
+            "p_value": 0.4472665845104705,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "learned_proxy": [
+            [
+              5.333181382616607e-07,
+              3.564375591253118e-07
+            ],
+            [
+              3.564375591253118e-07,
+              0.0005001751751751744
+            ]
+          ]
+        }
+      },
+      {
+        "id": "learned-heldout-06",
+        "scenario": "misleading",
+        "strength": 1.0,
+        "truth_return_effect": -0.06,
+        "effects": {
+          "qualified_starts": {
+            "control_mean": 1.642,
+            "treatment_mean": 3.425,
+            "effect": 1.783,
+            "se": 0.12837714629828664,
+            "lower": 1.5311908625997384,
+            "upper": 2.0348091374002615,
+            "p_value": 1.9054470737290447e-41,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "viewing_days": {
+            "control_mean": 1.472,
+            "treatment_mean": 2.738,
+            "effect": 1.266,
+            "se": 0.08685687143868422,
+            "lower": 1.0956459104506349,
+            "upper": 1.4363540895493652,
+            "p_value": 1.6554845242130982e-45,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "learned_proxy": {
+            "control_mean": 0.5276997318197241,
+            "treatment_mean": 0.5385467488246675,
+            "effect": 0.010847017004943393,
+            "se": 0.000748069930983651,
+            "lower": 0.00937983020698146,
+            "upper": 0.012314203802905327,
+            "p_value": 4.0403560425224385e-45,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "control_mean": 0.52,
+            "treatment_mean": 0.45,
+            "effect": -0.07,
+            "se": 0.022306895740949653,
+            "lower": -0.11374721400035018,
+            "upper": -0.026252785999649836,
+            "p_value": 0.001725614883067875,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "learned_proxy": [
+            [
+              5.596086216418847e-07,
+              5.39137829493e-07
+            ],
+            [
+              5.39137829493e-07,
+              0.0004975975975975971
+            ]
+          ]
+        }
+      },
+      {
+        "id": "learned-heldout-07",
+        "scenario": "helpful",
+        "strength": 1.4,
+        "truth_return_effect": 0.08399999999999999,
+        "effects": {
+          "qualified_starts": {
+            "control_mean": 1.599,
+            "treatment_mean": 3.244,
+            "effect": 1.6450000000000002,
+            "se": 0.1136467270913623,
+            "lower": 1.4220962381376185,
+            "upper": 1.867903761862382,
+            "p_value": 7.67542338465169e-45,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "viewing_days": {
+            "control_mean": 1.423,
+            "treatment_mean": 2.672,
+            "effect": 1.249,
+            "se": 0.08065353056123453,
+            "lower": 1.0908159391230372,
+            "upper": 1.407184060876963,
+            "p_value": 6.946593689428693e-51,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "learned_proxy": {
+            "control_mean": 0.527250591439393,
+            "treatment_mean": 0.5380804856632578,
+            "effect": 0.010829894223864822,
+            "se": 0.000699509293851192,
+            "lower": 0.009457970104596963,
+            "upper": 0.012201818343132682,
+            "p_value": 6.872113628430533e-51,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "control_mean": 0.54,
+            "treatment_mean": 0.651,
+            "effect": 0.11099999999999999,
+            "se": 0.02181914469164809,
+            "lower": 0.06820928888468072,
+            "upper": 0.15379071111531925,
+            "p_value": 3.9729615782174396e-07,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "learned_proxy": [
+            [
+              4.893132521841935e-07,
+              8.238240450477439e-07
+            ],
+            [
+              8.238240450477439e-07,
+              0.00047607507507507556
+            ]
+          ]
+        }
+      },
+      {
+        "id": "learned-heldout-08",
+        "scenario": "unrelated",
+        "strength": 1.4,
+        "truth_return_effect": 0.0,
+        "effects": {
+          "qualified_starts": {
+            "control_mean": 1.625,
+            "treatment_mean": 3.973,
+            "effect": 2.348,
+            "se": 0.13332825065387463,
+            "lower": 2.0864642064746426,
+            "upper": 2.609535793525357,
+            "p_value": 4.3633197773538856e-63,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "viewing_days": {
+            "control_mean": 1.461,
+            "treatment_mean": 3.097,
+            "effect": 1.636,
+            "se": 0.08900557281424569,
+            "lower": 1.4614294881703238,
+            "upper": 1.810570511829676,
+            "p_value": 4.902295073042803e-69,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "learned_proxy": {
+            "control_mean": 0.5276071836969228,
+            "treatment_mean": 0.5415748664643976,
+            "effect": 0.013967682767474732,
+            "se": 0.0007645573380643366,
+            "lower": 0.012468147967088053,
+            "upper": 0.01546721756786141,
+            "p_value": 2.023399585702175e-68,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "control_mean": 0.508,
+            "treatment_mean": 0.5,
+            "effect": -0.008000000000000007,
+            "se": 0.02237043666172917,
+            "lower": -0.05187182693236287,
+            "upper": 0.035871826932362856,
+            "p_value": 0.7206693469906835,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "learned_proxy": [
+            [
+              5.84547923188024e-07,
+              7.093156928717505e-07
+            ],
+            [
+              7.093156928717505e-07,
+              0.0005004364364364362
+            ]
+          ]
+        }
+      },
+      {
+        "id": "learned-heldout-09",
+        "scenario": "misleading",
+        "strength": 1.4,
+        "truth_return_effect": -0.08399999999999999,
+        "effects": {
+          "qualified_starts": {
+            "control_mean": 1.648,
+            "treatment_mean": 3.56,
+            "effect": 1.9120000000000001,
+            "se": 0.1323405078198282,
+            "lower": 1.6524023889482033,
+            "upper": 2.171597611051797,
+            "p_value": 2.520174680776879e-44,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "viewing_days": {
+            "control_mean": 1.467,
+            "treatment_mean": 2.812,
+            "effect": 1.3449999999999998,
+            "se": 0.0882913493064998,
+            "lower": 1.1718290087308392,
+            "upper": 1.5181709912691603,
+            "p_value": 3.1938890687386124e-49,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "learned_proxy": {
+            "control_mean": 0.527642195144935,
+            "treatment_mean": 0.5391460900447842,
+            "effect": 0.011503894899849154,
+            "se": 0.0007575022918195903,
+            "lower": 0.010018184903779027,
+            "upper": 0.012989604895919282,
+            "p_value": 5.1822264013134195e-49,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "control_mean": 0.549,
+            "treatment_mean": 0.417,
+            "effect": -0.13200000000000006,
+            "se": 0.022163059382702587,
+            "lower": -0.1754651307671306,
+            "upper": -0.08853486923286952,
+            "p_value": 3.0491550715698656e-09,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "learned_proxy": [
+            [
+              5.738097221119312e-07,
+              1.0307160868278047e-06
+            ],
+            [
+              1.0307160868278047e-06,
+              0.0004912012012012005
+            ]
+          ]
+        }
+      }
+    ],
+    "heldout_agreement": {
+      "observed_agreement": 0.4444444444444444,
+      "lower": 0.1111111111111111,
+      "upper": 0.7777777777777778,
+      "noise_lower": 0.2222222222222222,
+      "noise_upper": 0.7777777777777778,
+      "n_experiments": 9,
+      "resolved_target_experiments": 5,
+      "oracle_nonnull_agreement": 0.5,
+      "oracle_null_proxy_positive": 3,
+      "oracle_null_experiments": 3,
+      "draws": 1000,
+      "warning": "Experiment bootstrap interval is descriptive with only nine experiments. Correlated Gaussian effect draws propagate household covariance, but are a measurement-error sensitivity analysis, not a definitive surrogate test. Null-target signs are unstable; oracle non-null agreement is reported separately."
+    },
+    "interval_scope": "Held-out Welch intervals condition on weights frozen from training and tuning on validation; they do not include training/tuning weight uncertainty.",
+    "status": "exploratory_educational_only_not_surrogate_approval",
+    "warning": "Household prediction does not establish causal surrogacy. Small constructed experiment families, scenario support, and frozen-weight uncertainty limit inference. No real-world approval is granted."
+  }
+}

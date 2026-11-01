@@ -1,0 +1,16 @@
+{
+  "study_id": "framesignal-learned-proxy-v1",
+  "seed": 528641,
+  "households_per_experiment": 2000,
+  "experiments_per_split": 9,
+  "splits": ["train", "validation", "heldout"],
+  "features": ["qualified_starts", "viewing_days"],
+  "target": "returned_d29_56",
+  "model": "Ridge linear probability model fitted to household outcomes; features standardized using training households only; predictions clipped to [0,1].",
+  "ridge_alpha_grid": [0.01, 0.1, 1.0, 10.0],
+  "selection_metric": "Validation-split household Brier score; ties choose the smaller alpha.",
+  "agreement_draws": 1000,
+  "interval_scope": "Held-out treatment-effect intervals condition on the frozen training weights and validation-selected alpha; they do not include training/tuning weight uncertainty.",
+  "forbidden_features": ["assignment", "return_probability", "return_day", "affinity", "assignment_probability_oracle", "latent_loyalty"],
+  "decision": "Exploratory educational learned proxy only. Report individual prediction separately from held-out treatment-effect agreement. Never grant surrogate approval from this analysis."
+}

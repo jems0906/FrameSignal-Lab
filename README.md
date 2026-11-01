@@ -38,6 +38,8 @@ python backend/run_analysis.py
 python backend/run_calibration_followup.py
 python backend/run_calibration_grid_followup.py
 python backend/run_calibration_exact_followup.py
+python backend/run_observational_extension.py
+python backend/run_learned_proxy.py
 python backend/export_metricsteward.py
 python -m pytest -q
 python backend/execute_notebooks.py
@@ -52,6 +54,8 @@ The separate calibration follow-up is predeclared in `configs/calibration_follow
 A second fresh-seed study in `configs/calibration_grid_followup.json` uses nominal 99% Wilson Monte Carlo intervals at each of five effects to form a nominal Bonferroni familywise 95% interval family. Wilson coverage is approximate for discrete Monte Carlo counts, not a strict finite-sample guarantee. It writes `reports/calibration_grid_followup.json` and `docs/calibration_grid_followup_report.md`. No familywise coverage deviation was detected in this synthetic run; that is not proof of calibration.
 
 A third predeclared study in `configs/calibration_exact_followup.json` uses exact Clopper-Pearson intervals for Monte Carlo coverage proportions, with 99% per-effect intervals and a Bonferroni simultaneous familywise lower bound of 95% across five effects. This guarantee applies only under independent simulation repetitions and only to Monte Carlo coverage proportions, not the Welch intervals themselves. It writes `reports/calibration_exact_followup.json` and `docs/calibration_exact_followup_report.md`.
+
+Two isolated, post-baseline extensions are also predeclared. The observational study reports measured-covariate AIPW estimates, overlap diagnostics, household-bootstrap intervals, and sensitivity to simulated hidden confounding. The learned-score study fits on training households, tunes ridge strength on validation households, freezes the score before held-out households are generated, and reports held-out effect agreement. Both are exploratory: observational identification depends on exchangeability/positivity/model assumptions, and learned-score intervals condition on frozen weights without weight-learning uncertainty. Neither approves a proxy or changes the randomized baseline.
 
 For interactive notebooks, select the same environment as the installed dependencies. Both notebooks locate the root from their current working directory and run without pre-existing report files. Full execution can take a few minutes on slower systems; the UI caches bounded analysis results in the local process.
 
@@ -81,7 +85,7 @@ Open http://localhost:5174. FrameSignal remains at http://localhost:5173. See [h
 - Household outcomes and complete-household resampling match random assignment; event rows are not independent inference units.
 - Fixed day-56 horizon, no repeated ordinary p-value peeking or optional stopping.
 - Target inference at alpha 0.05; two predefined candidate comparisons at Bonferroni alpha 0.025 each. Diagnostics and cross-experiment exploratory results do not acquire blanket multiplicity protection.
-- Disjoint training, validation, and held-out household populations and seeds. No learned weights in the MVP; a later composite must train/tune/freeze before fresh held-out assessment.
+- Disjoint training, validation, and held-out household populations and seeds. The optional learned score is fit/tuned/frozen before held-out assessment; its intervals omit weight-learning uncertainty and do not establish surrogacy.
 - Separate individual correlation from experiment-effect agreement. Experiment bootstrap and correlated Gaussian effect-noise sensitivity are descriptive, not definitive surrogacy validation.
 - Known-truth coverage, null false-positive rate, power, variance, bias, and practical-success rates include Monte Carlo uncertainty. These check target inference, not all proxy assumptions.
 - Runtime, genre, time-window, outlier, sampling, and exposure diagnostics preserve household denominators and label changed estimands.
@@ -97,6 +101,8 @@ Open http://localhost:5174. FrameSignal remains at http://localhost:5173. See [h
 | Fresh-seed interval-coverage follow-up | [Predeclared config](configs/calibration_followup.json), [follow-up report](docs/calibration_followup_report.md) |
 | Simultaneous grid-coverage follow-up | [Predeclared config](configs/calibration_grid_followup.json), [follow-up report](docs/calibration_grid_followup_report.md) |
 | Exact Monte Carlo coverage follow-up | [Predeclared config](configs/calibration_exact_followup.json), [follow-up report](docs/calibration_exact_followup_report.md) |
+| Observational sensitivity extension | [Predeclared config](configs/observational_extension.json), [report](docs/observational_extension_report.md) |
+| Train/validate/frozen-heldout learned score | [Predeclared config](configs/learned_proxy_extension.json), [report](docs/learned_proxy_report.md) |
 | Honest self-review and revision history | [Scientific review](docs/methodology_review.md) |
 | Independent statistician review request | [Invitation draft](docs/peer_review_invitation.md), [review packet](docs/peer_review_packet.md); feedback status remains pending until received |
 | Fictional stakeholder recommendation and non-conclusions | [Executive memo](docs/executive_memo.md) |
@@ -109,6 +115,8 @@ Open http://localhost:5174. FrameSignal remains at http://localhost:5173. See [h
 ## API and Exports
 
 `GET /api/analysis?scenario=misleading&n=2000&seed=20261031` returns metric effects, intervals, predictive association, sensitivity, SQL checks, known truth, and memo. `/api/validation` runs the frozen split design; `/api/operating` reports target operating characteristics. `/api/export` downloads all synthetic source tables, household aggregates, run analysis, and provenance as a ZIP. Inputs are bounded and validated. This is a local research app, not a multi-user authenticated production service.
+
+`/api/observational` and `/api/learned-proxy` serve separately generated exploratory reports; the Extensions view exposes their overlap/sensitivity diagnostics and held-out score agreement. They do not replace the randomized baseline or authorize real-world use.
 
 ## Containers and CI
 

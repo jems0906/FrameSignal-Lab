@@ -1,0 +1,588 @@
+{
+  "study_id": "framesignal-observational-sensitivity-v1",
+  "config": {
+    "study_id": "framesignal-observational-sensitivity-v1",
+    "seed": 7483829,
+    "households_per_run": 2000,
+    "household_bootstrap_draws": 200,
+    "scenarios": [
+      "helpful",
+      "unrelated",
+      "misleading"
+    ],
+    "unmeasured_confounding_strengths": [
+      0.0,
+      0.5,
+      1.0
+    ],
+    "estimator": "Augmented inverse-probability weighting using logistic propensity and linear outcome regression on observed affinity and log viewing opportunity; household bootstrap for intervals.",
+    "overlap_thresholds": {
+      "propensity_range": [
+        0.05,
+        0.95
+      ],
+      "max_fraction_outside_range": 0.05,
+      "min_fraction_in_common_support": 0.95,
+      "minimum_effective_sample_size_per_arm": 50
+    },
+    "sensitivity": "Vary an explicitly simulated latent loyalty factor that affects both presentation assignment and later return; do not use latent or oracle fields in the estimator.",
+    "interpretation": "Exploratory observational sensitivity demonstration only; randomized ITT remains primary and observational results cannot approve a metric or replace the target.",
+    "prohibited_changes": [
+      "Do not include oracle propensity, latent loyalty, true return probability, or future return in estimator features.",
+      "Do not interpret AIPW as removing unmeasured confounding.",
+      "Do not conflate observational adjusted effects with randomized household ITT results."
+    ]
+  },
+  "config_sha256": "fdf6838436f71d3fce02758c009f888f19945d32753d659a1bcb42296e0f6476",
+  "runtime": {
+    "python": "3.13.3",
+    "numpy": "2.2.6",
+    "pandas": "2.2.3",
+    "scipy": "1.15.3",
+    "framesignal_metrics": "1.0.0"
+  },
+  "results": {
+    "seed": 7483829,
+    "n_per_run": 2000,
+    "bootstrap_draws": 200,
+    "scenarios": [
+      "helpful",
+      "unrelated",
+      "misleading"
+    ],
+    "unmeasured_confounding_grid": [
+      0.0,
+      0.5,
+      1.0
+    ],
+    "assignment_mode": "observational synthetic selection",
+    "measured_covariates": [
+      "observed_affinity",
+      "observed_log_opportunity"
+    ],
+    "forbidden_estimator_inputs": [
+      "assignment_probability_oracle",
+      "unmeasured_confounding_strength_oracle",
+      "return_probability",
+      "latent_loyalty_oracle"
+    ],
+    "rows": [
+      {
+        "scenario": "helpful",
+        "unmeasured_confounding_strength": 0.0,
+        "n": 2000,
+        "known_population_ate": 0.06,
+        "assignment_rate": 0.448,
+        "observational_estimate": {
+          "estimator": "Augmented inverse-probability weighted (AIPW), with household bootstrap uncertainty",
+          "effect": 0.05046692215595616,
+          "lower": 0.006627704498115876,
+          "upper": 0.09068714474487691,
+          "bootstrap_se": 0.02363974320928081,
+          "bootstrap_draws_requested": 200,
+          "bootstrap_draws_used": 200,
+          "naive_unadjusted_difference_descriptive_only": 0.07474443581780543,
+          "overlap": {
+            "propensity_quantiles": {
+              "0.01": 0.22386139301274907,
+              "0.05": 0.2597780916826934,
+              "0.5": 0.44312658939465716,
+              "0.95": 0.6428177419855665,
+              "0.99": 0.6940936294194202
+            },
+            "propensity_range_by_arm": {
+              "0": [
+                0.18597426507375198,
+                0.7492725624394195
+              ],
+              "1": [
+                0.18486871833092602,
+                0.7352724884360049
+              ]
+            },
+            "common_support": [
+              0.18597426507375198,
+              0.7352724884360049
+            ],
+            "fraction_inside_common_support": 0.999,
+            "fraction_outside_overlap_range_0_05_0_95": 0.0,
+            "fraction_clipped_for_stability": 0.0,
+            "ipw_effective_sample_size": 1849.0130894456684,
+            "ipw_effective_sample_size_by_arm": {
+              "0": 1053.296319726873,
+              "1": 825.1179845613348
+            },
+            "overlap_check_passed": true
+          },
+          "assumptions": [
+            "Consistency and no interference between households.",
+            "Conditional exchangeability given observed affinity and log viewing opportunity; violated when the simulated latent loyalty confounder affects both assignment and return.",
+            "Positivity and adequate propensity overlap; inspect the reported common-support and effective-sample-size diagnostics.",
+            "Correct specification of either the propensity model or the outcome regression for double robustness; neither model corrects unmeasured confounding.",
+            "All registered household outcomes and measured covariates are observed; complete households are resampled for uncertainty."
+          ],
+          "warning": "Exploratory synthetic observational estimate; not interchangeable with randomized ITT, not evidence about real content decisions, and not approval of any proxy."
+        }
+      },
+      {
+        "scenario": "helpful",
+        "unmeasured_confounding_strength": 0.5,
+        "n": 2000,
+        "known_population_ate": 0.06,
+        "assignment_rate": 0.439,
+        "observational_estimate": {
+          "estimator": "Augmented inverse-probability weighted (AIPW), with household bootstrap uncertainty",
+          "effect": 0.06063141086765973,
+          "lower": 0.019026387502224438,
+          "upper": 0.11748652460779188,
+          "bootstrap_se": 0.02419560709847109,
+          "bootstrap_draws_requested": 200,
+          "bootstrap_draws_used": 200,
+          "naive_unadjusted_difference_descriptive_only": 0.08680805103155365,
+          "overlap": {
+            "propensity_quantiles": {
+              "0.01": 0.23936625090775263,
+              "0.05": 0.2799877341664134,
+              "0.5": 0.4347795876187468,
+              "0.95": 0.6022179636836548,
+              "0.99": 0.6499201189697762
+            },
+            "propensity_range_by_arm": {
+              "0": [
+                0.20553729396417866,
+                0.7026494275200861
+              ],
+              "1": [
+                0.20085845378307823,
+                0.6932341477124224
+              ]
+            },
+            "common_support": [
+              0.20553729396417866,
+              0.6932341477124224
+            ],
+            "fraction_inside_common_support": 0.999,
+            "fraction_outside_overlap_range_0_05_0_95": 0.0,
+            "fraction_clipped_for_stability": 0.0,
+            "ipw_effective_sample_size": 1880.3553659310046,
+            "ipw_effective_sample_size_by_arm": {
+              "0": 1082.0961290794614,
+              "1": 830.5833432278554
+            },
+            "overlap_check_passed": true
+          },
+          "assumptions": [
+            "Consistency and no interference between households.",
+            "Conditional exchangeability given observed affinity and log viewing opportunity; violated when the simulated latent loyalty confounder affects both assignment and return.",
+            "Positivity and adequate propensity overlap; inspect the reported common-support and effective-sample-size diagnostics.",
+            "Correct specification of either the propensity model or the outcome regression for double robustness; neither model corrects unmeasured confounding.",
+            "All registered household outcomes and measured covariates are observed; complete households are resampled for uncertainty."
+          ],
+          "warning": "Exploratory synthetic observational estimate; not interchangeable with randomized ITT, not evidence about real content decisions, and not approval of any proxy."
+        }
+      },
+      {
+        "scenario": "helpful",
+        "unmeasured_confounding_strength": 1.0,
+        "n": 2000,
+        "known_population_ate": 0.06,
+        "assignment_rate": 0.435,
+        "observational_estimate": {
+          "estimator": "Augmented inverse-probability weighted (AIPW), with household bootstrap uncertainty",
+          "effect": 0.051662287311598866,
+          "lower": 0.0023574156925660825,
+          "upper": 0.09620332322358681,
+          "bootstrap_se": 0.023689457889877644,
+          "bootstrap_draws_requested": 200,
+          "bootstrap_draws_used": 200,
+          "naive_unadjusted_difference_descriptive_only": 0.0711728206693113,
+          "overlap": {
+            "propensity_quantiles": {
+              "0.01": 0.26029744748617817,
+              "0.05": 0.28894888317918865,
+              "0.5": 0.4359094063934462,
+              "0.95": 0.5857578752657396,
+              "0.99": 0.6231708753042862
+            },
+            "propensity_range_by_arm": {
+              "0": [
+                0.23603122664975146,
+                0.6499197987782281
+              ],
+              "1": [
+                0.23375731320029008,
+                0.6768141335887051
+              ]
+            },
+            "common_support": [
+              0.23603122664975146,
+              0.6499197987782281
+            ],
+            "fraction_inside_common_support": 0.999,
+            "fraction_outside_overlap_range_0_05_0_95": 0.0,
+            "fraction_clipped_for_stability": 0.0,
+            "ipw_effective_sample_size": 1887.7561505036954,
+            "ipw_effective_sample_size_by_arm": {
+              "0": 1098.815994180323,
+              "1": 827.52423454881
+            },
+            "overlap_check_passed": true
+          },
+          "assumptions": [
+            "Consistency and no interference between households.",
+            "Conditional exchangeability given observed affinity and log viewing opportunity; violated when the simulated latent loyalty confounder affects both assignment and return.",
+            "Positivity and adequate propensity overlap; inspect the reported common-support and effective-sample-size diagnostics.",
+            "Correct specification of either the propensity model or the outcome regression for double robustness; neither model corrects unmeasured confounding.",
+            "All registered household outcomes and measured covariates are observed; complete households are resampled for uncertainty."
+          ],
+          "warning": "Exploratory synthetic observational estimate; not interchangeable with randomized ITT, not evidence about real content decisions, and not approval of any proxy."
+        }
+      },
+      {
+        "scenario": "unrelated",
+        "unmeasured_confounding_strength": 0.0,
+        "n": 2000,
+        "known_population_ate": 0.0,
+        "assignment_rate": 0.42,
+        "observational_estimate": {
+          "estimator": "Augmented inverse-probability weighted (AIPW), with household bootstrap uncertainty",
+          "effect": -0.00738167131773431,
+          "lower": -0.05986986895895274,
+          "upper": 0.04439171906021364,
+          "bootstrap_se": 0.0243997084126299,
+          "bootstrap_draws_requested": 200,
+          "bootstrap_draws_used": 200,
+          "naive_unadjusted_difference_descriptive_only": 0.013834154351395678,
+          "overlap": {
+            "propensity_quantiles": {
+              "0.01": 0.18111434169021137,
+              "0.05": 0.23645683466078896,
+              "0.5": 0.41508375066588543,
+              "0.95": 0.624546379285988,
+              "0.99": 0.686245192189246
+            },
+            "propensity_range_by_arm": {
+              "0": [
+                0.15942867245303685,
+                0.7259787456749452
+              ],
+              "1": [
+                0.14648756367439006,
+                0.7452162547803057
+              ]
+            },
+            "common_support": [
+              0.15942867245303685,
+              0.7259787456749452
+            ],
+            "fraction_inside_common_support": 0.9975,
+            "fraction_outside_overlap_range_0_05_0_95": 0.0,
+            "fraction_clipped_for_stability": 0.0,
+            "ipw_effective_sample_size": 1801.5837991745543,
+            "ipw_effective_sample_size_by_arm": {
+              "0": 1107.5916265074827,
+              "1": 760.5400476672305
+            },
+            "overlap_check_passed": true
+          },
+          "assumptions": [
+            "Consistency and no interference between households.",
+            "Conditional exchangeability given observed affinity and log viewing opportunity; violated when the simulated latent loyalty confounder affects both assignment and return.",
+            "Positivity and adequate propensity overlap; inspect the reported common-support and effective-sample-size diagnostics.",
+            "Correct specification of either the propensity model or the outcome regression for double robustness; neither model corrects unmeasured confounding.",
+            "All registered household outcomes and measured covariates are observed; complete households are resampled for uncertainty."
+          ],
+          "warning": "Exploratory synthetic observational estimate; not interchangeable with randomized ITT, not evidence about real content decisions, and not approval of any proxy."
+        }
+      },
+      {
+        "scenario": "unrelated",
+        "unmeasured_confounding_strength": 0.5,
+        "n": 2000,
+        "known_population_ate": 0.0,
+        "assignment_rate": 0.4235,
+        "observational_estimate": {
+          "estimator": "Augmented inverse-probability weighted (AIPW), with household bootstrap uncertainty",
+          "effect": 0.0020538599462419996,
+          "lower": -0.04202407069377516,
+          "upper": 0.04896172534261802,
+          "bootstrap_se": 0.023808146569912186,
+          "bootstrap_draws_requested": 200,
+          "bootstrap_draws_used": 200,
+          "naive_unadjusted_difference_descriptive_only": 0.02658943201401609,
+          "overlap": {
+            "propensity_quantiles": {
+              "0.01": 0.21108414727874134,
+              "0.05": 0.2534667100115778,
+              "0.5": 0.4197037751283256,
+              "0.95": 0.6053998112920572,
+              "0.99": 0.6594033622403888
+            },
+            "propensity_range_by_arm": {
+              "0": [
+                0.15017859736070327,
+                0.6735128804895495
+              ],
+              "1": [
+                0.1934035590802818,
+                0.6980171481521827
+              ]
+            },
+            "common_support": [
+              0.1934035590802818,
+              0.6735128804895495
+            ],
+            "fraction_inside_common_support": 0.9905,
+            "fraction_outside_overlap_range_0_05_0_95": 0.0,
+            "fraction_clipped_for_stability": 0.0,
+            "ipw_effective_sample_size": 1843.0927431267883,
+            "ipw_effective_sample_size_by_arm": {
+              "0": 1111.222337019397,
+              "1": 787.692893159343
+            },
+            "overlap_check_passed": true
+          },
+          "assumptions": [
+            "Consistency and no interference between households.",
+            "Conditional exchangeability given observed affinity and log viewing opportunity; violated when the simulated latent loyalty confounder affects both assignment and return.",
+            "Positivity and adequate propensity overlap; inspect the reported common-support and effective-sample-size diagnostics.",
+            "Correct specification of either the propensity model or the outcome regression for double robustness; neither model corrects unmeasured confounding.",
+            "All registered household outcomes and measured covariates are observed; complete households are resampled for uncertainty."
+          ],
+          "warning": "Exploratory synthetic observational estimate; not interchangeable with randomized ITT, not evidence about real content decisions, and not approval of any proxy."
+        }
+      },
+      {
+        "scenario": "unrelated",
+        "unmeasured_confounding_strength": 1.0,
+        "n": 2000,
+        "known_population_ate": 0.0,
+        "assignment_rate": 0.4325,
+        "observational_estimate": {
+          "estimator": "Augmented inverse-probability weighted (AIPW), with household bootstrap uncertainty",
+          "effect": 0.022673930784138818,
+          "lower": -0.016026711603481143,
+          "upper": 0.0645900082065115,
+          "bootstrap_se": 0.02214398206464219,
+          "bootstrap_draws_requested": 200,
+          "bootstrap_draws_used": 200,
+          "naive_unadjusted_difference_descriptive_only": 0.03267041837488216,
+          "overlap": {
+            "propensity_quantiles": {
+              "0.01": 0.22135302667274218,
+              "0.05": 0.26903309575753737,
+              "0.5": 0.4272480863354347,
+              "0.95": 0.6109462798981437,
+              "0.99": 0.6653992359254731
+            },
+            "propensity_range_by_arm": {
+              "0": [
+                0.17154404492338615,
+                0.7242585581356696
+              ],
+              "1": [
+                0.20217201005516988,
+                0.7209077891866847
+              ]
+            },
+            "common_support": [
+              0.20217201005516988,
+              0.7209077891866847
+            ],
+            "fraction_inside_common_support": 0.9965,
+            "fraction_outside_overlap_range_0_05_0_95": 0.0,
+            "fraction_clipped_for_stability": 0.0,
+            "ipw_effective_sample_size": 1870.392157266833,
+            "ipw_effective_sample_size_by_arm": {
+              "0": 1090.9836617109263,
+              "1": 817.0790769995752
+            },
+            "overlap_check_passed": true
+          },
+          "assumptions": [
+            "Consistency and no interference between households.",
+            "Conditional exchangeability given observed affinity and log viewing opportunity; violated when the simulated latent loyalty confounder affects both assignment and return.",
+            "Positivity and adequate propensity overlap; inspect the reported common-support and effective-sample-size diagnostics.",
+            "Correct specification of either the propensity model or the outcome regression for double robustness; neither model corrects unmeasured confounding.",
+            "All registered household outcomes and measured covariates are observed; complete households are resampled for uncertainty."
+          ],
+          "warning": "Exploratory synthetic observational estimate; not interchangeable with randomized ITT, not evidence about real content decisions, and not approval of any proxy."
+        }
+      },
+      {
+        "scenario": "misleading",
+        "unmeasured_confounding_strength": 0.0,
+        "n": 2000,
+        "known_population_ate": -0.06,
+        "assignment_rate": 0.4205,
+        "observational_estimate": {
+          "estimator": "Augmented inverse-probability weighted (AIPW), with household bootstrap uncertainty",
+          "effect": -0.0567780768087041,
+          "lower": -0.10465445371974953,
+          "upper": -0.01160219764384892,
+          "bootstrap_se": 0.024517838039561125,
+          "bootstrap_draws_requested": 200,
+          "bootstrap_draws_used": 200,
+          "naive_unadjusted_difference_descriptive_only": -0.02928844107891604,
+          "overlap": {
+            "propensity_quantiles": {
+              "0.01": 0.20014303673496234,
+              "0.05": 0.2386950111020402,
+              "0.5": 0.41952452937961926,
+              "0.95": 0.6180947907700197,
+              "0.99": 0.6672563264574457
+            },
+            "propensity_range_by_arm": {
+              "0": [
+                0.14945240735237095,
+                0.6908828601787733
+              ],
+              "1": [
+                0.1704575192681802,
+                0.7473992955690175
+              ]
+            },
+            "common_support": [
+              0.1704575192681802,
+              0.6908828601787733
+            ],
+            "fraction_inside_common_support": 0.9925,
+            "fraction_outside_overlap_range_0_05_0_95": 0.0,
+            "fraction_clipped_for_stability": 0.0,
+            "ipw_effective_sample_size": 1821.3790182342573,
+            "ipw_effective_sample_size_by_arm": {
+              "0": 1108.498782922083,
+              "1": 772.5470498818662
+            },
+            "overlap_check_passed": true
+          },
+          "assumptions": [
+            "Consistency and no interference between households.",
+            "Conditional exchangeability given observed affinity and log viewing opportunity; violated when the simulated latent loyalty confounder affects both assignment and return.",
+            "Positivity and adequate propensity overlap; inspect the reported common-support and effective-sample-size diagnostics.",
+            "Correct specification of either the propensity model or the outcome regression for double robustness; neither model corrects unmeasured confounding.",
+            "All registered household outcomes and measured covariates are observed; complete households are resampled for uncertainty."
+          ],
+          "warning": "Exploratory synthetic observational estimate; not interchangeable with randomized ITT, not evidence about real content decisions, and not approval of any proxy."
+        }
+      },
+      {
+        "scenario": "misleading",
+        "unmeasured_confounding_strength": 0.5,
+        "n": 2000,
+        "known_population_ate": -0.06,
+        "assignment_rate": 0.428,
+        "observational_estimate": {
+          "estimator": "Augmented inverse-probability weighted (AIPW), with household bootstrap uncertainty",
+          "effect": -0.05458700962937244,
+          "lower": -0.09794337656005678,
+          "upper": -0.01614086161294155,
+          "bootstrap_se": 0.022830749657693255,
+          "bootstrap_draws_requested": 200,
+          "bootstrap_draws_used": 200,
+          "naive_unadjusted_difference_descriptive_only": -0.02419776485197045,
+          "overlap": {
+            "propensity_quantiles": {
+              "0.01": 0.20354199980122395,
+              "0.05": 0.2345182689268905,
+              "0.5": 0.4231957918812761,
+              "0.95": 0.6260595046101715,
+              "0.99": 0.6709442819688155
+            },
+            "propensity_range_by_arm": {
+              "0": [
+                0.17205848967571846,
+                0.695928057397132
+              ],
+              "1": [
+                0.18373951694017585,
+                0.6941569761629467
+              ]
+            },
+            "common_support": [
+              0.18373951694017585,
+              0.6941569761629467
+            ],
+            "fraction_inside_common_support": 0.997,
+            "fraction_outside_overlap_range_0_05_0_95": 0.0,
+            "fraction_clipped_for_stability": 0.0,
+            "ipw_effective_sample_size": 1815.5212322873465,
+            "ipw_effective_sample_size_by_arm": {
+              "0": 1091.5908630612362,
+              "1": 778.1904029427657
+            },
+            "overlap_check_passed": true
+          },
+          "assumptions": [
+            "Consistency and no interference between households.",
+            "Conditional exchangeability given observed affinity and log viewing opportunity; violated when the simulated latent loyalty confounder affects both assignment and return.",
+            "Positivity and adequate propensity overlap; inspect the reported common-support and effective-sample-size diagnostics.",
+            "Correct specification of either the propensity model or the outcome regression for double robustness; neither model corrects unmeasured confounding.",
+            "All registered household outcomes and measured covariates are observed; complete households are resampled for uncertainty."
+          ],
+          "warning": "Exploratory synthetic observational estimate; not interchangeable with randomized ITT, not evidence about real content decisions, and not approval of any proxy."
+        }
+      },
+      {
+        "scenario": "misleading",
+        "unmeasured_confounding_strength": 1.0,
+        "n": 2000,
+        "known_population_ate": -0.06,
+        "assignment_rate": 0.4485,
+        "observational_estimate": {
+          "estimator": "Augmented inverse-probability weighted (AIPW), with household bootstrap uncertainty",
+          "effect": -0.04335300862469469,
+          "lower": -0.08540790004709449,
+          "upper": 0.0011763001676785099,
+          "bootstrap_se": 0.02192747424753778,
+          "bootstrap_draws_requested": 200,
+          "bootstrap_draws_used": 200,
+          "naive_unadjusted_difference_descriptive_only": -0.03019129949635685,
+          "overlap": {
+            "propensity_quantiles": {
+              "0.01": 0.23304089924344074,
+              "0.05": 0.2790069288863732,
+              "0.5": 0.446194760934355,
+              "0.95": 0.6312687457840452,
+              "0.99": 0.6730625033646018
+            },
+            "propensity_range_by_arm": {
+              "0": [
+                0.18855472930801065,
+                0.7261784123445689
+              ],
+              "1": [
+                0.20064425047310974,
+                0.7242318935605359
+              ]
+            },
+            "common_support": [
+              0.20064425047310974,
+              0.7242318935605359
+            ],
+            "fraction_inside_common_support": 0.999,
+            "fraction_outside_overlap_range_0_05_0_95": 0.0,
+            "fraction_clipped_for_stability": 0.0,
+            "ipw_effective_sample_size": 1868.0255937092243,
+            "ipw_effective_sample_size_by_arm": {
+              "0": 1058.8932237286874,
+              "1": 836.5048334213341
+            },
+            "overlap_check_passed": true
+          },
+          "assumptions": [
+            "Consistency and no interference between households.",
+            "Conditional exchangeability given observed affinity and log viewing opportunity; violated when the simulated latent loyalty confounder affects both assignment and return.",
+            "Positivity and adequate propensity overlap; inspect the reported common-support and effective-sample-size diagnostics.",
+            "Correct specification of either the propensity model or the outcome regression for double robustness; neither model corrects unmeasured confounding.",
+            "All registered household outcomes and measured covariates are observed; complete households are resampled for uncertainty."
+          ],
+          "warning": "Exploratory synthetic observational estimate; not interchangeable with randomized ITT, not evidence about real content decisions, and not approval of any proxy."
+        }
+      }
+    ],
+    "status": "exploratory_not_randomized_itt",
+    "warning": "Observed-covariate adjustment does not remove unmeasured confounding; estimates are synthetic demonstrations with the stated assumptions."
+  },
+  "review_status": "Self-review only; no independent peer review has occurred."
+}

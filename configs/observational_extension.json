@@ -1,0 +1,22 @@
+{
+  "study_id": "framesignal-observational-sensitivity-v1",
+  "seed": 7483829,
+  "households_per_run": 2000,
+  "household_bootstrap_draws": 200,
+  "scenarios": ["helpful", "unrelated", "misleading"],
+  "unmeasured_confounding_strengths": [0.0, 0.5, 1.0],
+  "estimator": "Augmented inverse-probability weighting using logistic propensity and linear outcome regression on observed affinity and log viewing opportunity; household bootstrap for intervals.",
+  "overlap_thresholds": {
+    "propensity_range": [0.05, 0.95],
+    "max_fraction_outside_range": 0.05,
+    "min_fraction_in_common_support": 0.95,
+    "minimum_effective_sample_size_per_arm": 50
+  },
+  "sensitivity": "Vary an explicitly simulated latent loyalty factor that affects both presentation assignment and later return; do not use latent or oracle fields in the estimator.",
+  "interpretation": "Exploratory observational sensitivity demonstration only; randomized ITT remains primary and observational results cannot approve a metric or replace the target.",
+  "prohibited_changes": [
+    "Do not include oracle propensity, latent loyalty, true return probability, or future return in estimator features.",
+    "Do not interpret AIPW as removing unmeasured confounding.",
+    "Do not conflate observational adjusted effects with randomized household ITT results."
+  ]
+}

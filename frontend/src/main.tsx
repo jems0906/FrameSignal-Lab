@@ -2,7 +2,7 @@ import { StrictMode, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Activity, ArrowDownToLine, ArrowRight, Check, ChevronRight, CircleHelp, ClipboardCheck, Database, FlaskConical, LoaderCircle, Play, RefreshCw, ShieldCheck, SlidersHorizontal, X } from 'lucide-react';
 import { CartesianGrid, ErrorBar, ReferenceLine, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
-import type { Analysis, Candidate, Effect, Metric, Operating, Suite } from './types';
+import type { Analysis, Candidate, Effect, ExtensionReports, Metric, Operating, Suite } from './types';
 import './styles.css';
 
 const candidates: Candidate[] = ['qualified_starts', 'viewing_days'];
@@ -103,12 +103,15 @@ function App() {
   const [data, setData] = useState<Analysis | null>(null);
   const [suite, setSuite] = useState<Suite | null>(null);
   const [operating, setOperating] = useState<Operating | null>(null);
+  const [extensions, setExtensions] = useState<ExtensionReports | null>(null);
   const [loading, setLoading] = useState(false);
   const [suiteLoading, setSuiteLoading] = useState(false);
   const [operatingLoading, setOperatingLoading] = useState(false);
+  const [extensionLoading, setExtensionLoading] = useState(false);
   const [error, setError] = useState('');
   const [suiteError, setSuiteError] = useState('');
   const [operatingError, setOperatingError] = useState('');
+  const [extensionError, setExtensionError] = useState('');
   const [metric, setMetric] = useState<Metric | null>(null);
   const [candidate, setCandidate] = useState<Candidate>('qualified_starts');
   const [split, setSplit] = useState('heldout');
@@ -144,9 +147,22 @@ function App() {
     finally { setOperatingLoading(false); }
   }
 
+  async function loadExtensions() {
+    setExtensionLoading(true); setExtensionError('');
+    try {
+      const [observational, learned] = await Promise.all([
+        get<ExtensionReports['observational']>('/api/observational'),
+        get<ExtensionReports['learned']>('/api/learned-proxy'),
+      ]);
+      setExtensions({ observational, learned });
+    } catch (exception) { setExtensionError((exception as Error).message); }
+    finally { setExtensionLoading(false); }
+  }
+
   useEffect(() => { void run(); return () => { abort.current?.abort(); }; }, []);
   useEffect(() => { if (tab === 'proxy' && !suite && !suiteLoading && !suiteError) void loadSuite(); }, [tab]);
   useEffect(() => { if (tab === 'diagnostics' && !operating && !operatingLoading && !operatingError) void loadOperating(); }, [tab]);
+  useEffect(() => { if (tab === 'extensions' && !extensions && !extensionLoading && !extensionError) void loadExtensions(); }, [tab]);
 
   const stale = data && (data.scenario !== scenario || data.n !== Number(n) || data.seed !== Number(seed));
   const target = data?.metrics.returned_d29_56;
@@ -157,14 +173,14 @@ function App() {
       <a className="brand" href="/" aria-label="FrameSignal Lab home"><span className="brand-symbol"><Activity size={24} /></span><span>FrameSignal<span className="brand-lab">LAB</span></span></a>
       <div className="workspace-label">MEASUREMENT SCIENCE</div>
       <nav aria-label="Workbench views">{[
-        ['overview', 'Experiment', FlaskConical], ['proxy', 'Proxy validation', Activity], ['diagnostics', 'Diagnostics', SlidersHorizontal], ['design', 'Research design', ClipboardCheck],
+        ['overview', 'Experiment', FlaskConical], ['proxy', 'Proxy validation', Activity], ['diagnostics', 'Diagnostics', SlidersHorizontal], ['extensions', 'Extensions', Database], ['design', 'Research design', ClipboardCheck],
       ].map(([id, title, Icon]) => { const NavIcon = Icon as typeof Activity; return <button key={id as string} className={tab === id ? 'nav-item active' : 'nav-item'} onClick={() => setTab(id as string)} aria-current={tab === id ? 'page' : undefined}><NavIcon size={18} /><span>{title as string}</span>{tab === id && <ChevronRight size={15} />}</button>; })}<a className="nav-item" href={import.meta.env.VITE_METRICSTEWARD_URL ?? 'http://localhost:5174'}><Database size={18} /><span>MetricSteward</span><ChevronRight size={15} /></a></nav>
       <div className="sidebar-bottom"><div className="synthetic-mark"><Database size={15} />Synthetic data only</div><p>Fictional policies.<br />Real statistical questions.</p><span className="mono">PROTOCOL v1.0</span></div>
     </aside>
     <main>
       <header className="topbar"><div className="breadcrumb">FrameSignal Lab <ChevronRight size={14} /><span>Content measurement</span></div><span className="protocol-tag"><ShieldCheck size={14} /> Fixed-horizon analysis</span></header>
       <div className="page-body">
-        <div className="page-heading"><div><div className="eyebrow">CONTENT MEASUREMENT / PROXY VALIDATION</div><h1>{tab === 'overview' ? 'A lift is not always a win.' : tab === 'proxy' ? 'Prediction is not surrogacy.' : tab === 'diagnostics' ? 'Challenge the signal.' : 'Define the decision first.'}</h1><p>{tab === 'overview' ? 'Randomized presentation policy · household-level intention-to-treat' : tab === 'proxy' ? 'Frozen candidates · independent experiment populations · held-out evidence' : tab === 'diagnostics' ? 'Sensitivity, sampling variation, and inference with known truth' : 'Preregistered synthetic protocol · not a definition of Netflix retention'}</p></div><span className="project-number mono">FS / 001</span></div>
+        <div className="page-heading"><div><div className="eyebrow">CONTENT MEASUREMENT / PROXY VALIDATION</div><h1>{tab === 'overview' ? 'A lift is not always a win.' : tab === 'proxy' ? 'Prediction is not surrogacy.' : tab === 'diagnostics' ? 'Challenge the signal.' : tab === 'extensions' ? 'Explore beyond randomization.' : 'Define the decision first.'}</h1><p>{tab === 'overview' ? 'Randomized presentation policy · household-level intention-to-treat' : tab === 'proxy' ? 'Frozen candidates · independent experiment populations · held-out evidence' : tab === 'diagnostics' ? 'Sensitivity, sampling variation, and inference with known truth' : tab === 'extensions' ? 'Exploratory synthetic extensions · separate from randomized ITT' : 'Preregistered synthetic protocol · not a definition of Netflix retention'}</p></div><span className="project-number mono">FS / 001</span></div>
 
         {(tab === 'overview' || tab === 'diagnostics') && <form className="experiment-controls" onSubmit={event => { event.preventDefault(); void run(); }}>
           <div className="scenario-control"><label>Simulation scenario</label><div className="segmented">{Object.entries(scenarioLabels).map(([value, label]) => <button type="button" key={value} aria-pressed={scenario === value} onClick={() => { setScenario(value); void run(value); }} className={scenario === value ? 'selected' : ''}><i style={{ background: colors[value] }} />{label}</button>)}</div></div>
@@ -216,9 +232,32 @@ function App() {
           {data && <section className="section"><div className="section-heading"><div><span className="eyebrow">SQL DATA INTEGRITY</span><h2>{data.sql.passed ? 'Population checks passed.' : 'Population checks failed.'}</h2></div><span className={`status ${data.sql.passed ? 'positive' : 'negative'}`}><Database size={14} />{Object.keys(data.sql.counts).length} checks</span></div><div className="sql-grid">{Object.entries(data.sql.counts).map(([key, count]) => <details key={key}><summary><span>{key.replaceAll('_', ' ')}</span><strong className="mono">{count.toLocaleString()}</strong></summary><pre>{data.sql.queries[key]}</pre></details>)}</div></section>}
         </>}
 
+        {tab === 'extensions' && <>
+          {extensionLoading && <div className="loading-state" role="status"><LoaderCircle size={20} className="spin" />Loading predeclared extension reports…</div>}
+          {extensionError && <div className="error-banner" role="alert">{extensionError}<button className="button secondary" onClick={() => void loadExtensions()}>Retry</button></div>}
+          {extensions && <>
+            <div className="split-strip"><span><ShieldCheck size={15} />Exploratory only</span><span>Observational selection is simulated</span><span>Learned weights frozen before held-out assessment</span><button className="icon-button" title="Download extension evidence" aria-label="Download extension evidence" onClick={() => download(extensions, 'framesignal-extensions.json')}><ArrowDownToLine size={17} /></button></div>
+            <section className="section"><div className="section-heading"><div><span className="eyebrow">OBSERVATIONAL SENSITIVITY / AIPW</span><h2>Measured adjustment does not erase hidden confounding.</h2></div><span className="status neutral">Not randomized ITT</span></div>
+              <p className="footnote">Treatment assignment is selected from measured affinity/opportunity and a simulated latent-loyalty factor. AIPW adjusts only for the measured covariates. The hidden-confounding strength varies across runs; late return and oracle fields are not estimator inputs.</p>
+              <div className="table-scroll"><table><thead><tr><th>Scenario</th><th>Hidden confounding</th><th>Known population effect</th><th>Naive difference</th><th>Measured-covariate AIPW</th><th>Bootstrap 95% interval</th><th>Overlap / ESS</th></tr></thead><tbody>{extensions.observational.results.rows.map(row => { const estimate = row.observational_estimate; const overlap = estimate.overlap; return <tr key={`${row.scenario}-${row.unmeasured_confounding_strength}`}><td>{scenarioLabels[row.scenario]}</td><td>{row.unmeasured_confounding_strength.toFixed(1)}</td><td className="mono">{signed(row.known_population_ate * 100)} pp</td><td className="mono">{signed(estimate.naive_unadjusted_difference_descriptive_only * 100)} pp</td><td className="mono">{signed(estimate.effect * 100)} pp</td><td className="mono">[{signed(estimate.lower * 100)}, {signed(estimate.upper * 100)}] pp</td><td><span className={`status ${overlap.overlap_check_passed ? 'positive' : 'negative'}`}>{overlap.overlap_check_passed ? 'Pass' : 'Flag'}</span><small>common {pct(overlap.fraction_inside_common_support)} · outside {pct(overlap.fraction_outside_overlap_range_0_05_0_95)} · ESS {decimal(overlap.ipw_effective_sample_size_by_arm['0'], 0)}/{decimal(overlap.ipw_effective_sample_size_by_arm['1'], 0)}</small></td></tr>; })}</tbody></table></div>
+              <div className="science-note">{extensions.observational.results.warning} The AIPW interval resamples complete households; it does not account for every nuisance-model uncertainty or remove unmeasured confounding.</div>
+              <div className="table-scroll"><table><thead><tr><th>Identification assumption</th></tr></thead><tbody>{extensions.observational.results.rows[0].observational_estimate.assumptions.map(item => <tr key={item}><td>{item}</td></tr>)}</tbody></table></div>
+            </section>
+            <section className="section"><div className="section-heading"><div><span className="eyebrow">LEARNED HOUSEHOLD SCORE</span><h2>Prediction and treatment-effect agreement are different tests.</h2></div><span className="status neutral">Educational only · not approved</span></div>
+              <p className="footnote">Weights fit on training households only; ridge strength selected on validation Brier score; the model is frozen before held-out experiments are generated. Features: qualified starts and viewing days. No assignment, affinity, oracle probability, or late outcome is a score feature.</p>
+              <div className="table-scroll"><table><thead><tr><th>Split</th><th>Households</th><th>Brier score</th><th>Pooled prediction correlation</th><th>Control correlation</th><th>Policy correlation</th></tr></thead><tbody>{['train', 'validation', 'heldout'].map(splitName => { const prediction = extensions.learned.results.household_prediction[splitName]; return <tr key={splitName}><td>{splitName}</td><td>{prediction.n_households.toLocaleString()}</td><td className="mono">{decimal(prediction.brier_score, 4)}</td><td className="mono">{decimal(prediction.pooled_correlation, 3)}</td><td className="mono">{decimal(prediction.within_assignment_correlations['0'], 3)}</td><td className="mono">{decimal(prediction.within_assignment_correlations['1'], 3)}</td></tr>; })}</tbody></table></div>
+              <div className="split-strip"><span>Selected ridge alpha {decimal(extensions.learned.results.model.selected_alpha, 2)}</span><span>Train-only standardized weights</span>{Object.entries(extensions.learned.results.model.standardized_coefficients).map(([feature, weight]) => <span key={feature}>{labels[feature as Candidate]}: {signed(weight, 3)}</span>)}</div>
+              <div className="section-heading"><div><span className="eyebrow">FROZEN HELD-OUT EXPERIMENTS</span><h3>Score effects versus later-return effects</h3></div><strong className="mono">Agreement {pct(extensions.learned.results.heldout_agreement.observed_agreement)}</strong></div>
+              <div className="table-scroll"><table><thead><tr><th>Experiment</th><th>Scenario</th><th>Learned-score effect</th><th>Return effect</th><th>Known truth</th></tr></thead><tbody>{extensions.learned.results.heldout_experiments.map(row => <tr key={row.id}><td className="mono">{row.id}</td><td>{scenarioLabels[row.scenario]}</td><td className="mono">{signed(row.effects.learned_proxy.effect)} [{signed(row.effects.learned_proxy.lower)}, {signed(row.effects.learned_proxy.upper)}]</td><td className="mono">{signed((row.effects.returned_d29_56.effect ?? 0) * 100)} pp</td><td className="mono">{signed(row.truth_return_effect * 100)} pp</td></tr>)}</tbody></table></div>
+              <dl className="compact-dl"><div><dt>Experiment-bootstrap agreement interval</dt><dd>{pct(extensions.learned.results.heldout_agreement.lower)} – {pct(extensions.learned.results.heldout_agreement.upper)}</dd></div><div><dt>Effect-noise sensitivity interval</dt><dd>{pct(extensions.learned.results.heldout_agreement.noise_lower)} – {pct(extensions.learned.results.heldout_agreement.noise_upper)}</dd></div></dl>
+              <div className="science-note">{extensions.learned.results.warning} {extensions.learned.results.interval_scope}</div>
+            </section>
+          </>}
+        </>}
+
         {tab === 'design' && <>
           <section className="design-section"><span className="eyebrow">THE ESTIMAND</span><h2>The policy effect on the proportion of assigned households returning during days 29–56.</h2><p>Assignment happens at the household. The treatment is a fictional presentation or exposure policy, not the creative quality of a title. All registered households remain eligible, whether or not they view anything.</p><div className="design-facts"><div><span>Randomization</span><strong>Household · balanced 1:1</strong></div><div><span>Primary candidate</span><strong>Qualified starts</strong></div><div><span>Alternative</span><strong>Distinct viewing days</strong></div><div><span>Practical target threshold</span><strong>+2 percentage points</strong></div></div></section>
-          <section className="section"><div className="section-heading"><div><span className="eyebrow">FROZEN ANALYSIS PLAN v1.0</span><h2>Before inspecting held-out results.</h2></div></div><div className="protocol-grid"><div><h3>Population & horizon</h3><p>2,000 households per experiment; 9 experiments per split. Short-term days 0–13, fully observed target days 29–56. Fixed-sample Welch intervals on household outcomes; no optional stopping.</p></div><div><h3>Multiplicity</h3><p>One primary target at two-sided α=0.05. Two candidate comparisons form a separate Bonferroni family at α=0.025 each. Other metrics and sensitivities are descriptive.</p></div><div><h3>Leakage prevention</h3><p>Independent household populations and random seeds in training, validation, and held-out experiments. No learned weights in this MVP. Any extension must learn on training, tune on validation, then freeze before held-out assessment.</p></div><div><h3>Success & failure</h3><p>Advance a policy only if its target interval clears +2 pp. Proxy acceptance requires held-out agreement lower bound above 80% and no harmful reversal. Otherwise reject or declare evidence insufficient; no null-as-equivalence shortcut.</p></div><div><h3>Assumptions</h3><p>Random assignment, consistency, no household interference, no attrition, complete exposure logging, and accurate event measurement. Synthetic affinity explains association but is never a proxy input.</p></div><div><h3>Scientific review</h3><p>Self-review only. No peer feedback is claimed. Small experiment counts, constructed scenario truth, and noise in estimated effects limit surrogate conclusions. Observational causal methods and learned composites are deferred.</p></div></div></section>
+          <section className="section"><div className="section-heading"><div><span className="eyebrow">FROZEN ANALYSIS PLAN v1.0</span><h2>Before inspecting held-out results.</h2></div></div><div className="protocol-grid"><div><h3>Population & horizon</h3><p>2,000 households per experiment; 9 experiments per split. Short-term days 0–13, fully observed target days 29–56. Fixed-sample Welch intervals on household outcomes; no optional stopping.</p></div><div><h3>Multiplicity</h3><p>One primary target at two-sided α=0.05. Two candidate comparisons form a separate Bonferroni family at α=0.025 each. Other metrics and sensitivities are descriptive.</p></div><div><h3>Leakage prevention</h3><p>Baseline candidates are predefined. The optional learned score uses independent train/validation/held-out households and is fit, tuned, and frozen before held-out assessment.</p></div><div><h3>Success & failure</h3><p>Advance a policy only if its target interval clears +2 pp. Proxy acceptance requires held-out agreement lower bound above 80% and no harmful reversal. Otherwise reject or declare evidence insufficient; no null-as-equivalence shortcut.</p></div><div><h3>Assumptions</h3><p>Random assignment, consistency, no household interference, no attrition, complete exposure logging, and accurate event measurement. Synthetic affinity explains association but is never a proxy input.</p></div><div><h3>Scientific review</h3><p>Self-review only. No peer feedback is claimed. Optional observational and learned-score extensions remain exploratory; neither changes the randomized baseline or constitutes approval.</p></div></div></section>
           <section className="section"><div className="section-heading"><div><span className="eyebrow">METRIC REGISTRY</span><h2>Definitions are part of the measurement.</h2></div></div><div className="registry-list">{Object.entries(labels).map(([key, label]) => <button key={key} onClick={() => setMetric(key as Metric)}><span>{label}</span><span>{key === 'completion' ? 'Descriptive · post-assignment selection' : key === 'returned_d29_56' ? 'Primary decision target' : definitions[key as Metric].window}</span><ArrowRight size={17} /></button>)}</div></section>
           <section className="references"><h3>Methodological starting points</h3><p>Netflix’s published proxy-metric and surrogate-index research motivates the distinction between predictive usefulness and experiment-level decision agreement. It is not proof of an internal content decision metric.</p><a href="https://research.netflix.com/research-area/experimentation-and-causal-inference" target="_blank" rel="noreferrer">Netflix Research: Experimentation & causal inference <ArrowRight size={14} /></a><p className="footnote">See repository research notes for bibliographic verification status and scope.</p></section>
         </>}

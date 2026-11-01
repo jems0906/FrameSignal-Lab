@@ -135,3 +135,14 @@ def test_noisy_agreement_includes_experiment_uncertainty():
     assert result["observed_agreement"] == 0
     assert result["noise_upper"] > 0
     assert result["oracle_nonnull_agreement"] == 0
+
+
+def test_extension_report_endpoints_are_explicitly_exploratory():
+    client = TestClient(app)
+    observational = client.get("/api/observational")
+    learned = client.get("/api/learned-proxy")
+    assert observational.status_code == 200
+    assert learned.status_code == 200
+    assert observational.json()["results"]["status"] == "exploratory_not_randomized_itt"
+    assert learned.json()["results"]["status"] == "exploratory_educational_only_not_surrogate_approval"
+    assert learned.json()["results"]["weight_freeze_before_heldout"]

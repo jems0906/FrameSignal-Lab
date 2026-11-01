@@ -1,15 +1,15 @@
 # Verification Record
 
-Baseline FrameSignal checks ran locally on 2026-10-31. MetricSteward integration and Vite remediation were verified locally on 2026-11-01. This record reports actual checks, not prospective claims of passing remote CI or peer review.
+Baseline FrameSignal checks ran locally on 2026-10-31. MetricSteward integration and Vite remediation were verified locally on 2026-11-01. The post-baseline extension checks below were run locally on 2026-11-01. This record reports actual checks, not prospective claims of passing remote CI or peer review.
 
 ## Completed Checks
 
 | Check | Observed result |
 |---|---|
-| Full Python regression suite | 45 passed, including FrameSignal, shared-library, MetricSteward persistence/API, cross-app parity for all scenarios/windows, and calibration follow-up protocol validation |
-| Ruff lint | Passed for `backend`, `packages`, and `metricsteward/backend` |
+| Full Python regression suite | 59 passed, including FrameSignal, shared-library, MetricSteward persistence/API, cross-app parity for all scenarios/windows, calibration follow-ups, and both extensions |
+| Ruff lint | Passed for `backend`, `packages`, and `metricsteward/backend` after removing one unused import surfaced by the first lint run |
 | VS Code/Pylance diagnostics | No errors after configuring backend, shared-package, and MetricSteward source roots |
-| Frontend production builds | Both apps type-check and build with Vite 6.4.5. FrameSignal retains its non-blocking >500 kB bundle advisory and Recharts deprecation warning. |
+| Frontend production builds | Both apps type-check and build with Vite 6.4.5. FrameSignal retains its non-blocking >500 kB bundle advisory; MetricSteward builds cleanly. |
 | npm dependency audit | Both full frontend audits report zero vulnerabilities after remediation; production audit was also clean before the dev-tool fix. |
 | GitHub advisory scan | Initial scan found 12 Vite advisories (2 high); follow-up scan for Vite 6.4.5 returned no findings. Details: `docs/cve-fix-summary.md` and `reports/cve-report-*.json`. |
 | Frozen full analysis | Executed three scenarios, 27 split experiments, 54,000 unique households, and 5,000 repeated target simulations; JSON and both decision reports generated |
@@ -43,6 +43,24 @@ Baseline FrameSignal checks ran locally on 2026-10-31. MetricSteward integration
 | Notebook source diagnostics | Both current user-edited notebooks are Pylance-clean. Sources were inspected before path configuration; originals were not rewritten for the diagnostic fix. |
 | Independent review preparation | Reviewer packet prepared with estimand, methods, results, limitations, and focused questions; no reviewer feedback is claimed |
 | Remote GitHub Actions | Run [41321264883](https://github.com/jems0906/FrameSignal-Lab/actions/runs/41321264883) completed successfully on `main` commit `0c763e2a46edbec76824d24a71522406a5d106df`; `scientific-baseline`, `frontend`, and `metricsteward-frontend` all passed |
+
+## Post-Baseline Extension Checks
+
+| Check | Observed result |
+|---|---|
+| Observational extension runner | Generated nine scenario/confounding cases from `configs/observational_extension.json`; report status is `exploratory_not_randomized_itt` |
+| Learned-score runner | Generated 54,000 households in disjoint 18,000-household train/validation/held-out splits; validation selected ridge alpha 0.01; held-out experiment sign agreement was 44.4%; status remains educational-only |
+| Focused extension tests | 7 passed for observational estimation, hidden-confounding mechanism and oracle exclusion, plus learned-score split/freeze behavior |
+| Full regression suite | 59 passed; one third-party Starlette/AnyIO deprecation warning |
+| Python lint | Ruff passed for `backend`, `packages`, and `metricsteward/backend` |
+| Extension report API | TestClient returned both generated reports with their explicit exploratory statuses and learned-weight freeze flag |
+| FrameSignal frontend | TypeScript production build passed; Vite reports the existing non-blocking >500 kB chunk advisory |
+| MetricSteward frontend | TypeScript production build passed |
+| npm audits | Both frontend audits report zero vulnerabilities |
+| Compose | `docker compose config --quiet` passed; all four images built, including the FrameSignal backend with both generated reports copied into the image |
+| Extensions browser view | Local UI loaded all nine observational rows and the three learned-score splits from the new API; no error state. At 390px viewport, body width was 375px with no horizontal page overflow; evidence tables keep their own horizontal scrolling. |
+| Local API port collision | Existing service on port 8000 was left running. Vite now accepts `FRAMESIGNAL_API_TARGET` (default remains `http://127.0.0.1:8000`); browser check used the current backend on port 8002. |
+| Remote CI | Not run for these uncommitted changes. The earlier successful Actions run above applies only to its cited commit. |
 
 Local execution used Python 3.13.3 with pinned direct scientific dependencies. The notebook environment contains the same pinned packages. Other Python versions are not certified by this local run.
 
