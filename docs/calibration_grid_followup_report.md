@@ -2,10 +2,10 @@
 
 A separately predeclared Monte Carlo check following the inconclusive +4 pp follow-up. Neither prior report nor the frozen analysis plan was changed.
 
-Study: `framesignal-return-coverage-grid-20261102-v1`. Config SHA-256: `86538fe99028dea15edb6c4c28e946bb530b93268f4ce45948f5decce5e7a365`. Fresh seed: 20261102.
+Study: `framesignal-return-coverage-grid-20261102-v1`. Config SHA-256: `45ca4b74aa924c0074699f3c75f84bf54a9f00fbb3739a540f66cc2681f19abb`. Fresh seed: 20261102.
 N=2,000 households per repetition; 10,000 repetitions per effect; 50,000 repetitions total.
 
-Each of the five effect-specific Wilson intervals uses 99% confidence, giving Bonferroni simultaneous familywise confidence of at least 95%. This adjusts Monte Carlo uncertainty across the five grid points; it does not change the target's Welch interval or alter the household DGP.
+Each effect-specific Wilson score interval uses nominal 99% confidence, forming a nominal Bonferroni familywise 95% interval family across the five grid points. Wilson intervals are approximate and may not attain nominal marginal coverage exactly because the Monte Carlo count is discrete. This adjusts Monte Carlo uncertainty across the grid; it does not change the target's Welch interval or alter the household DGP.
 
 ## Results
 

@@ -47,7 +47,7 @@ def main():
         "A separately predeclared Monte Carlo check following the inconclusive +4 pp follow-up. Neither prior report nor the frozen analysis plan was changed.", "",
         f"Study: `{config['study_id']}`. Config SHA-256: `{output['config_sha256']}`. Fresh seed: {config['seed']}.",
         f"N={config['households_per_repetition']:,} households per repetition; {config['repetitions_per_effect']:,} repetitions per effect; {config['repetitions_per_effect'] * len(config['effect_grid']):,} repetitions total.", "",
-        "Each of the five effect-specific Wilson intervals uses 99% confidence, giving Bonferroni simultaneous familywise confidence of at least 95%. This adjusts Monte Carlo uncertainty across the five grid points; it does not change the target's Welch interval or alter the household DGP.", "",
+        "Each effect-specific Wilson score interval uses nominal 99% confidence, forming a nominal Bonferroni familywise 95% interval family across the five grid points. Wilson intervals are approximate and may not attain nominal marginal coverage exactly because the Monte Carlo count is discrete. This adjusts Monte Carlo uncertainty across the grid; it does not change the target's Welch interval or alter the household DGP.", "",
         "## Results", "", "| True effect pp | Coverage | Simultaneous Wilson interval | Target interval rejection / power | Bias pp ± MC SE | Mean target interval width pp |",
         "|---:|---:|---:|---:|---:|---:|",
     ]

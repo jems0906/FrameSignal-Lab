@@ -14,7 +14,7 @@
 | Outliers, sampling, runtime, genre, window, exposure | Nine sensitivity variants, household-bootstrap variability, genre mix, exposure summaries |
 | Known-truth coverage, null FPR, power by effect size | 1,000 repeated target simulations per effect with Wilson Monte Carlo intervals, bias/variance/width |
 | Follow up baseline coverage flag without tuning | Separate fresh-seed protocol (`configs/calibration_followup.json`), 10,000 repetitions per effect, primary +4 pp Wilson interval and explicit inconclusive rule; original plan/report retained |
-| Resolve exploratory grid flags with simultaneous Monte Carlo uncertainty | Fresh seed and 10,000 repetitions per effect; Bonferroni 99% Wilson intervals across five effects; all include nominal 95%; no familywise signal detected, not proof of calibration |
+| Resolve exploratory grid flags with simultaneous Monte Carlo uncertainty | Fresh seed and 10,000 repetitions per effect; nominal Bonferroni 95% familywise interval using 99% Wilson score intervals across five effects; all include nominal 95%; no familywise signal detected, not proof of calibration; Wilson discreteness means no strict finite-sample guarantee |
 | Predefinition, practical threshold, multiplicity, fixed horizon | Frozen v1.0 plan and research document; target at 0.05, two candidates at 0.025; no optional stopping |
 | Decision memo with limitations and follow-up | Generated `docs/executive_memo.md`, dynamic UI decision record |
 | Research plan and validation report | `docs/research_plan.md`; generated `docs/validation_report.md` and full `reports/latest.json` |

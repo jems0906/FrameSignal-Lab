@@ -14,7 +14,7 @@ Baseline FrameSignal checks ran locally on 2026-10-31. MetricSteward integration
 | GitHub advisory scan | Initial scan found 12 Vite advisories (2 high); follow-up scan for Vite 6.4.5 returned no findings. Details: `docs/cve-fix-summary.md` and `reports/cve-report-*.json`. |
 | Frozen full analysis | Executed three scenarios, 27 split experiments, 54,000 unique households, and 5,000 repeated target simulations; JSON and both decision reports generated |
 | Calibration follow-up | Fresh seed 20261101; 10,000 repetitions per effect at N=2,000 (50,000 total); original plan/report untouched; report/config hashes recorded |
-| Simultaneous calibration grid | Fresh seed 20261102; 10,000 repetitions at each of five effects; 99% Wilson intervals give Bonferroni familywise 95%; no interval excluded 95%; original plan/report untouched |
+| Simultaneous calibration grid | Fresh seed 20261102; 10,000 repetitions at each of five effects; nominal Bonferroni familywise 95% using 99% Wilson intervals; no interval excluded 95%; Wilson coverage is approximate for discrete counts; original plan/report untouched |
 | SQL integrity | All checks passed in all three default scenario runs |
 | End-to-end notebooks | Current user-edited notebooks validated and executed in memory from clean Python 3.13 kernels; eight cells each, six code cells each, including shared-library parity; originals were not rewritten |
 | Live browser desktop | 1440 x 1000 viewport; default helpful run, misleading switch, complete metric dialogs, nine held-out points with error bars, and no document horizontal overflow |
@@ -51,7 +51,7 @@ Local execution used Python 3.13.3 with pinned direct scientific dependencies. T
 - Null target false-positive rate: 5.4%, Monte Carlo interval 4.2%-7.0%.
 - True +4 pp target coverage: 93.1%, Monte Carlo interval 91.4%-94.5%, below nominal 95%. The report and UI flag this explicitly. Causes are not established; flags across effect sizes are exploratory and unadjusted. The seed, estimator, and effect grid were not tuned after inspecting it.
 - Fresh-seed +4 pp follow-up coverage: 94.76%, 95% Wilson Monte Carlo interval 94.31%-95.18%, which includes nominal coverage. The baseline shortfall was not reproduced as a decisive primary finding; this is inconclusive, not proof of calibration. Secondary unadjusted intervals at 0 pp and 10 pp exclude nominal and are exploratory signals only. See `docs/calibration_followup_report.md`.
-- Simultaneous five-effect follow-up: all Bonferroni-adjusted 99% Wilson Monte Carlo intervals include nominal 95%; no familywise signal was detected in this synthetic DGP. This is not proof of calibration beyond this design. See `docs/calibration_grid_followup_report.md` and `reports/calibration_grid_followup.json`.
+- Simultaneous five-effect follow-up: all nominal Bonferroni-adjusted 99% Wilson Monte Carlo intervals include nominal 95%; no familywise signal was detected in this synthetic DGP. Wilson intervals are approximate under discrete counts, so the procedure does not guarantee strict finite-sample coverage. This is not proof of calibration beyond this design. See `docs/calibration_grid_followup_report.md` and `reports/calibration_grid_followup.json`.
 - At the default misleading n=2,000, the return interval crosses zero; the correct policy recommendation is insufficient evidence to advance, not certain harm. Non-significance does not establish equivalence.
 
 ## Tool and Environment Limitations

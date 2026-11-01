@@ -20,7 +20,7 @@
     "monte_carlo_interval": "Wilson interval for repeated-simulation target interval coverage",
     "per_effect_confidence_level": 0.99,
     "familywise_confidence_level": 0.95,
-    "multiplicity": "Bonferroni: 99% two-sided Wilson interval at each of five effect sizes; simultaneous familywise coverage is at least 95%.",
+    "multiplicity": "Nominal Bonferroni familywise 95%: 99% two-sided Wilson score interval at each of five effect sizes. Wilson intervals are approximate and may not attain nominal marginal coverage exactly because the Monte Carlo count is discrete.",
     "estimator": "Unchanged household difference-in-means with two-sided Welch 95% target intervals.",
     "dgp": "Unchanged Bernoulli household return DGP from backend/app/analysis/workbench.py.",
     "decision_rule": {
@@ -33,7 +33,7 @@
       "Do not select a correction or estimator based on this follow-up and then report the same run as validation."
     ]
   },
-  "config_sha256": "86538fe99028dea15edb6c4c28e946bb530b93268f4ce45948f5decce5e7a365",
+  "config_sha256": "45ca4b74aa924c0074699f3c75f84bf54a9f00fbb3739a540f66cc2681f19abb",
   "source_report_hashes": {
     "latest.json": "a9780837d836eb6f299b8a480fae1e575a4b5ce1707bc438321b2fcb705f8e3b",
     "calibration_followup.json": "4e037d8f0bd6ad0db99aae13cb200622ded177694f2ab29d208507ff378f234b"

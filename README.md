@@ -48,7 +48,7 @@ The report command generates 27 independently populated experiments, 54,000 uniq
 
 The separate calibration follow-up is predeclared in `configs/calibration_followup.json`; it uses a fresh seed and 10,000 repetitions per effect without changing the original report or estimator. It writes `reports/calibration_followup.json` and `docs/calibration_followup_report.md`.
 
-A second fresh-seed study in `configs/calibration_grid_followup.json` uses 99% Wilson Monte Carlo intervals at each of five effect sizes for Bonferroni simultaneous 95% familywise coverage. It writes `reports/calibration_grid_followup.json` and `docs/calibration_grid_followup_report.md`. No familywise coverage deviation was detected in this synthetic run; that is not proof of calibration.
+A second fresh-seed study in `configs/calibration_grid_followup.json` uses nominal 99% Wilson Monte Carlo intervals at each of five effects to form a nominal Bonferroni familywise 95% interval family. Wilson coverage is approximate for discrete Monte Carlo counts, not a strict finite-sample guarantee. It writes `reports/calibration_grid_followup.json` and `docs/calibration_grid_followup_report.md`. No familywise coverage deviation was detected in this synthetic run; that is not proof of calibration.
 
 For interactive notebooks, select the same environment as the installed dependencies. Both notebooks locate the root from their current working directory and run without pre-existing report files. Full execution can take a few minutes on slower systems; the UI caches bounded analysis results in the local process.
 

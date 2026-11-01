@@ -92,7 +92,8 @@ def test_simultaneous_calibration_grid_protocol_uses_bonferroni():
     assert followup["effect_grid"] == [0.0, 0.02, 0.04, 0.06, 0.10]
     assert followup["per_effect_confidence_level"] == 0.99
     assert followup["familywise_confidence_level"] == 0.95
-    assert followup["multiplicity"].startswith("Bonferroni")
+    assert followup["multiplicity"].startswith("Nominal Bonferroni")
+    assert "approximate" in followup["multiplicity"]
 
 
 def test_monte_carlo_wilson_interval_confidence_level():
