@@ -70,6 +70,11 @@ def observational_overlap_audit():
     return _read_extension_report("observational_overlap_oracle_audit.json")
 
 
+@app.get("/api/observational-crossfit-audit")
+def observational_crossfit_audit():
+    return _read_extension_report("observational_crossfit_overlap_audit.json")
+
+
 @app.get("/api/learned-proxy")
 def learned_proxy_extension():
     return _read_extension_report("learned_proxy_extension.json")

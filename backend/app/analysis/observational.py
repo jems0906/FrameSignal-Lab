@@ -13,7 +13,58 @@ PROPENSITY_CLIP = (0.01, 0.99)
 OVERLAP_RANGE = (0.05, 0.95)
 
 
+def _fit_propensity_model(
+    training_frame: pd.DataFrame,
+    prediction_frame: pd.DataFrame,
+) -> tuple[np.ndarray, np.ndarray]:
+    training_covariates = training_frame.loc[:, OBSERVED_COVARIATES].to_numpy(dtype=float)
+    prediction_covariates = prediction_frame.loc[:, OBSERVED_COVARIATES].to_numpy(dtype=float)
+    means = training_covariates.mean(axis=0)
+    scales = training_covariates.std(axis=0)
+    scales[scales == 0] = 1
+    training_standardized = (training_covariates - means) / scales
+    prediction_standardized = (prediction_covariates - means) / scales
+    assignment = training_frame.assignment.to_numpy(dtype=float)
+
+    propensity_design = np.column_stack([np.ones(len(training_frame)), training_standardized])
+
+    def objective(coefficients):
+        linear = propensity_design @ coefficients
+        loss = np.mean(np.logaddexp(0, linear) - assignment * linear) + 0.5e-6 * np.sum(coefficients[1:] ** 2)
+        gradient = propensity_design.T @ (expit(linear) - assignment) / len(training_frame)
+        gradient[1:] += 1e-6 * coefficients[1:]
+        return float(loss), gradient
+
+    fitted = minimize(objective, np.zeros(propensity_design.shape[1]), jac=True, method="L-BFGS-B")
+    if not fitted.success and np.linalg.norm(fitted.jac) > 1e-5:
+        raise ValueError(f"Propensity model failed to converge: {fitted.message}")
+    prediction_design = np.column_stack([np.ones(len(prediction_frame)), prediction_standardized])
+    propensity_raw = expit(prediction_design @ fitted.x)
+    propensity = np.clip(propensity_raw, *PROPENSITY_CLIP)
+    return propensity_raw, propensity
+
+
+def cross_fitted_propensity_predictions(
+    frame: pd.DataFrame,
+    folds: int = 5,
+    seed: int = 0,
+) -> tuple[np.ndarray, np.ndarray]:
+    if folds < 2 or folds > len(frame):
+        raise ValueError("Cross-fitting requires at least two folds and no more folds than observations.")
+    predictions_raw = np.empty(len(frame), dtype=float)
+    rng = np.random.default_rng(seed)
+    for prediction_indices in np.array_split(rng.permutation(len(frame)), folds):
+        training_mask = np.ones(len(frame), dtype=bool)
+        training_mask[prediction_indices] = False
+        predictions_raw[prediction_indices], _ = _fit_propensity_model(
+            frame.iloc[training_mask],
+            frame.iloc[prediction_indices],
+        )
+    return predictions_raw, np.clip(predictions_raw, *PROPENSITY_CLIP)
+
+
 def _nuisance_predictions(frame: pd.DataFrame) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    propensity_raw, propensity = _fit_propensity_model(frame, frame)
     covariates = frame.loc[:, OBSERVED_COVARIATES].to_numpy(dtype=float)
     means = covariates.mean(axis=0)
     scales = covariates.std(axis=0)
@@ -21,21 +72,6 @@ def _nuisance_predictions(frame: pd.DataFrame) -> tuple[np.ndarray, np.ndarray, 
     standardized = (covariates - means) / scales
     assignment = frame.assignment.to_numpy(dtype=float)
     outcome = frame.returned_d29_56.to_numpy(dtype=float)
-
-    propensity_design = np.column_stack([np.ones(len(frame)), standardized])
-
-    def objective(coefficients):
-        linear = propensity_design @ coefficients
-        loss = np.mean(np.logaddexp(0, linear) - assignment * linear) + 0.5e-6 * np.sum(coefficients[1:] ** 2)
-        gradient = propensity_design.T @ (expit(linear) - assignment) / len(frame)
-        gradient[1:] += 1e-6 * coefficients[1:]
-        return float(loss), gradient
-
-    fitted = minimize(objective, np.zeros(propensity_design.shape[1]), jac=True, method="L-BFGS-B")
-    if not fitted.success and np.linalg.norm(fitted.jac) > 1e-5:
-        raise ValueError(f"Propensity model failed to converge: {fitted.message}")
-    propensity_raw = expit(propensity_design @ fitted.x)
-    propensity = np.clip(propensity_raw, *PROPENSITY_CLIP)
 
     outcome_design = np.column_stack([np.ones(len(frame)), assignment, standardized])
     coefficients = np.linalg.lstsq(outcome_design, outcome, rcond=None)[0]
@@ -579,4 +615,162 @@ def observational_overlap_oracle_audit(
         "rows": rows,
         "status": "exploratory_oracle_overlap_diagnostic_audit_not_randomized_itt",
         "warning": "Oracle assignment probabilities are used only to audit overlap diagnostics under this known synthetic generator. Results do not validate real-world identification or proxy approval.",
+    }
+
+
+def observational_crossfit_overlap_audit(
+    seed: int = 66752021,
+    n: int = 2000,
+    replicates: int = 300,
+    folds: int = 5,
+    scenario: str = "helpful",
+    overlap_profiles: tuple[dict, ...] = (
+        {"name": "moderate", "measured_selection_strength": 1.0},
+        {"name": "weak", "measured_selection_strength": 3.0},
+    ),
+    nuisance_profiles: tuple[dict, ...] = (
+        {"name": "correct_both", "propensity_nonlinearity": 0.0, "outcome_nonlinearity": 0.0},
+        {"name": "propensity_misspecified", "propensity_nonlinearity": 2.0, "outcome_nonlinearity": 0.0},
+        {"name": "outcome_misspecified", "propensity_nonlinearity": 0.0, "outcome_nonlinearity": 0.3},
+        {"name": "both_misspecified", "propensity_nonlinearity": 2.0, "outcome_nonlinearity": 0.3},
+    ),
+    confidence_level: float = 0.95,
+) -> dict:
+    if n < 100 or n > 20000 or replicates < 30:
+        raise ValueError("Use 100-20000 households and at least 30 paired replicates per cell.")
+    if folds < 2 or folds > n:
+        raise ValueError("Use at least two cross-fitting folds and no more folds than households.")
+    if not 0 < confidence_level < 1:
+        raise ValueError("confidence_level must be between zero and one.")
+    if scenario not in SCENARIOS or not overlap_profiles or not nuisance_profiles:
+        raise ValueError("Cross-fit audit requires a registered scenario and nonempty stress profiles.")
+
+    cells = len(overlap_profiles) * len(nuisance_profiles)
+    family_alpha = 1 - confidence_level
+    per_cell_alpha = family_alpha / cells
+    difference_critical = float(student_t.ppf(1 - per_cell_alpha / 2, replicates - 1))
+    rows = []
+
+    def binomial_interval(successes: int) -> list[float]:
+        lower = 0.0 if successes == 0 else float(beta.ppf(per_cell_alpha / 2, successes, replicates - successes + 1))
+        upper = 1.0 if successes == replicates else float(beta.ppf(1 - per_cell_alpha / 2, successes + 1, replicates - successes))
+        return [lower, upper]
+
+    def paired_interval(values: list[float]) -> list[float]:
+        array = np.asarray(values, dtype=float)
+        mean = float(array.mean())
+        standard_error = float(array.std(ddof=1) / np.sqrt(replicates))
+        return [mean - difference_critical * standard_error, mean + difference_critical * standard_error]
+
+    for overlap_index, overlap_profile in enumerate(overlap_profiles):
+        for nuisance_index, nuisance_profile in enumerate(nuisance_profiles):
+            in_sample_false = []
+            crossfit_false = []
+            in_sample_missed = []
+            crossfit_missed = []
+            paired_false_differences = []
+            in_sample_pass = []
+            crossfit_pass = []
+            oracle_pass = []
+            in_sample_outside = []
+            crossfit_outside = []
+            oracle_outside = []
+
+            for replicate in range(replicates):
+                replicate_seed = int(np.random.SeedSequence(
+                    [seed, overlap_index, nuisance_index, replicate]
+                ).generate_state(1)[0])
+                data = simulate(
+                    scenario=scenario,
+                    n=n,
+                    seed=replicate_seed,
+                    experiment_id=f"robust-{overlap_index}-{nuisance_index}-{replicate:04d}",
+                    split="observational-robustness-stress",
+                    assignment_mode="observational",
+                    unmeasured_confounding=0.0,
+                    generate_events=False,
+                    measured_selection_strength=overlap_profile["measured_selection_strength"],
+                    propensity_nonlinearity=nuisance_profile["propensity_nonlinearity"],
+                    outcome_nonlinearity=nuisance_profile["outcome_nonlinearity"],
+                )
+                frame = data.households
+                _, in_sample_diagnostics = _aipw_effect(frame)
+                crossfit_raw, crossfit_clipped = cross_fitted_propensity_predictions(
+                    frame,
+                    folds=folds,
+                    seed=replicate_seed ^ 0x5F3759DF,
+                )
+                crossfit_diagnostics = _overlap_diagnostics(
+                    crossfit_raw,
+                    crossfit_clipped,
+                    frame.assignment.to_numpy(dtype=float),
+                )
+                oracle_propensity = frame.assignment_probability_oracle.to_numpy(dtype=float)
+                oracle_diagnostics = _overlap_diagnostics(
+                    oracle_propensity,
+                    np.clip(oracle_propensity, *PROPENSITY_CLIP),
+                    frame.assignment.to_numpy(dtype=float),
+                )
+
+                in_false = not in_sample_diagnostics["overlap_check_passed"] and oracle_diagnostics["overlap_check_passed"]
+                cross_false = not crossfit_diagnostics["overlap_check_passed"] and oracle_diagnostics["overlap_check_passed"]
+                in_missed = in_sample_diagnostics["overlap_check_passed"] and not oracle_diagnostics["overlap_check_passed"]
+                cross_missed = crossfit_diagnostics["overlap_check_passed"] and not oracle_diagnostics["overlap_check_passed"]
+                in_sample_false.append(in_false)
+                crossfit_false.append(cross_false)
+                in_sample_missed.append(in_missed)
+                crossfit_missed.append(cross_missed)
+                paired_false_differences.append(float(cross_false) - float(in_false))
+                in_sample_pass.append(in_sample_diagnostics["overlap_check_passed"])
+                crossfit_pass.append(crossfit_diagnostics["overlap_check_passed"])
+                oracle_pass.append(oracle_diagnostics["overlap_check_passed"])
+                in_sample_outside.append(in_sample_diagnostics["fraction_outside_overlap_range_0_05_0_95"])
+                crossfit_outside.append(crossfit_diagnostics["fraction_outside_overlap_range_0_05_0_95"])
+                oracle_outside.append(oracle_diagnostics["fraction_outside_overlap_range_0_05_0_95"])
+
+            in_false_count = int(np.sum(in_sample_false))
+            cross_false_count = int(np.sum(crossfit_false))
+            in_missed_count = int(np.sum(in_sample_missed))
+            cross_missed_count = int(np.sum(crossfit_missed))
+            rows.append({
+                "overlap_profile": overlap_profile["name"],
+                "nuisance_profile": nuisance_profile["name"],
+                "folds": folds,
+                "replicates": replicates,
+                "in_sample_overlap_pass_rate": float(np.mean(in_sample_pass)),
+                "crossfit_overlap_pass_rate": float(np.mean(crossfit_pass)),
+                "oracle_overlap_pass_rate": float(np.mean(oracle_pass)),
+                "in_sample_false_warning_rate": in_false_count / replicates,
+                "in_sample_false_warning_familywise_mc_interval": binomial_interval(in_false_count),
+                "crossfit_false_warning_rate": cross_false_count / replicates,
+                "crossfit_false_warning_familywise_mc_interval": binomial_interval(cross_false_count),
+                "in_sample_missed_warning_rate": in_missed_count / replicates,
+                "in_sample_missed_warning_familywise_mc_interval": binomial_interval(in_missed_count),
+                "crossfit_missed_warning_rate": cross_missed_count / replicates,
+                "crossfit_missed_warning_familywise_mc_interval": binomial_interval(cross_missed_count),
+                "crossfit_minus_in_sample_false_warning_rate": float(np.mean(paired_false_differences)),
+                "crossfit_minus_in_sample_false_warning_familywise_mc_interval": paired_interval(paired_false_differences),
+                "mean_in_sample_fraction_outside_0_05_0_95": float(np.mean(in_sample_outside)),
+                "mean_crossfit_fraction_outside_0_05_0_95": float(np.mean(crossfit_outside)),
+                "mean_oracle_fraction_outside_0_05_0_95": float(np.mean(oracle_outside)),
+            })
+
+    return {
+        "study_id": "framesignal-observational-crossfit-overlap-audit-v1",
+        "seed": seed,
+        "scenario": scenario,
+        "n_per_replicate": n,
+        "replicates_per_cell": replicates,
+        "cross_fitting_folds": folds,
+        "number_of_cells": cells,
+        "same_seed_replay_of": "framesignal-observational-positivity-misspecification-v1",
+        "same_seed_replay": True,
+        "unmeasured_confounding": 0.0,
+        "audit_scope": "Overlap diagnostics only; no cross-fitted AIPW effect is estimated in this report.",
+        "oracle_usage": "Diagnostic comparison only; oracle fields are not estimator or AIPW inputs.",
+        "forbidden_estimator_inputs": ["assignment_probability_oracle", "return_probability", "latent_loyalty_oracle"],
+        "familywise_mc_interval_scope": "Bonferroni familywise intervals across the fixed eight cells; Clopper-Pearson for warning rates and Student-t intervals for paired crossfit-minus-in-sample false-warning differences.",
+        "rows": rows,
+        "status": "exploratory_crossfit_overlap_diagnostic_audit_not_randomized_itt",
+        "warning": "Cross-fitted and oracle propensity diagnostics are compared only under this known synthetic generator. Oracle probabilities are unavailable in real observational data; the audit does not validate real-world identification.",
     }

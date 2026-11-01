@@ -7,8 +7,10 @@ from app.analysis.observational import (
     _aipw_effect,
     observational_replicated_sensitivity,
     observational_overlap_oracle_audit,
+    observational_crossfit_overlap_audit,
     observational_robustness_stress,
     observational_sensitivity,
+    cross_fitted_propensity_predictions,
 )
 from app.metrics.registry import household_metrics
 from app.simulations.generator import SCENARIOS, simulate
@@ -200,6 +202,38 @@ def test_oracle_audit_replays_exact_stress_simulation_seeds(monkeypatch):
     assert 0 <= row["false_warning_rate"] <= 1
     assert 0 <= row["missed_warning_rate"] <= 1
     assert row["false_warning_familywise_mc_interval"][0] <= row["false_warning_rate"] <= row["false_warning_familywise_mc_interval"][1]
+
+    call_signatures.clear()
+    crossfit_result = observational_crossfit_overlap_audit(
+        seed=712, n=300, replicates=30, overlap_profiles=overlap_profiles, nuisance_profiles=nuisance_profiles,
+    )
+    assert call_signatures == stress_calls
+    assert crossfit_result["same_seed_replay"]
+    assert crossfit_result["cross_fitting_folds"] == 5
+    crossfit_row = crossfit_result["rows"][0]
+    assert 0 <= crossfit_row["crossfit_false_warning_rate"] <= 1
+    assert crossfit_row["crossfit_minus_in_sample_false_warning_familywise_mc_interval"][0] <= crossfit_row["crossfit_minus_in_sample_false_warning_rate"] <= crossfit_row["crossfit_minus_in_sample_false_warning_familywise_mc_interval"][1]
+
+
+def test_cross_fitted_propensities_use_disjoint_training_folds(monkeypatch):
+    data = simulate("helpful", n=600, seed=713, assignment_mode="observational", generate_events=False)
+    frame = data.households
+    real_fit = observational._fit_propensity_model
+    fold_members = []
+
+    def tracked_fit(training_frame, prediction_frame):
+        training_ids = set(training_frame.household_id)
+        prediction_ids = set(prediction_frame.household_id)
+        assert training_ids.isdisjoint(prediction_ids)
+        fold_members.extend(prediction_ids)
+        return real_fit(training_frame, prediction_frame)
+
+    monkeypatch.setattr(observational, "_fit_propensity_model", tracked_fit)
+    propensity_raw, propensity = cross_fitted_propensity_predictions(frame, folds=5, seed=714)
+    assert len(fold_members) == len(frame)
+    assert len(set(fold_members)) == len(frame)
+    assert propensity_raw.shape == propensity.shape == (len(frame),)
+    np.testing.assert_allclose(propensity, np.clip(propensity_raw, 0.01, 0.99))
 
 
 def test_observational_estimator_requires_both_assignment_groups():

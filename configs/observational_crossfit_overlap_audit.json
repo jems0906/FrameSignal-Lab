@@ -1,0 +1,17 @@
+{
+  "study_id": "framesignal-observational-crossfit-overlap-audit-v1",
+  "source_config": "observational_robustness_stress.json",
+  "source_study_id": "framesignal-observational-positivity-misspecification-v1",
+  "reuse_source_seed_grid": true,
+  "cross_fitting_folds": 5,
+  "oracle_usage": "Diagnostic comparison only; never an estimator or AIPW input.",
+  "confidence_level": 0.95,
+  "familywise_cells": 8,
+  "monte_carlo_uncertainty": "Bonferroni familywise 95% intervals across eight paired cells; Clopper-Pearson for warning rates and Student-t intervals for paired crossfit-minus-in-sample false-warning differences.",
+  "interpretation": "Exploratory synthetic diagnostic audit only. Cross-fitted propensity diagnostics and oracle diagnostics do not establish real-world identification.",
+  "prohibited_changes": [
+    "Do not pass oracle propensity into the propensity fit or AIPW estimator.",
+    "Do not interpret the report as a cross-fitted AIPW treatment-effect estimate.",
+    "Do not treat oracle propensity as observable in real observational data."
+  ]
+}

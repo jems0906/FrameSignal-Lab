@@ -109,6 +109,21 @@ export type ObservationalOverlapAuditReport = {
     }[];
   };
 };
+export type ObservationalCrossfitAuditReport = {
+  config: { study_id: string; source_config: string; confidence_level: number; familywise_cells: number; cross_fitting_folds: number };
+  results: {
+    status: string; warning: string; audit_scope: string; same_seed_replay: boolean;
+    cross_fitting_folds: number; number_of_cells: number; familywise_mc_interval_scope: string;
+    rows: {
+      overlap_profile: string; nuisance_profile: string; folds: number; replicates: number;
+      in_sample_false_warning_rate: number; crossfit_false_warning_rate: number;
+      crossfit_minus_in_sample_false_warning_rate: number;
+      crossfit_minus_in_sample_false_warning_familywise_mc_interval: [number, number];
+      in_sample_missed_warning_rate: number; crossfit_missed_warning_rate: number;
+      oracle_overlap_pass_rate: number;
+    }[];
+  };
+};
 export type LearnedProxyReport = {
   config: { study_id: string; seed: number; households_per_experiment: number; experiments_per_split: number };
   results: {
@@ -125,5 +140,6 @@ export type ExtensionReports = {
   observationalReplication: ObservationalReplicationReport;
   observationalRobustness: ObservationalRobustnessReport;
   observationalOverlapAudit: ObservationalOverlapAuditReport;
+  observationalCrossfitAudit: ObservationalCrossfitAuditReport;
   learned: LearnedProxyReport;
 };

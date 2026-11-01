@@ -1,0 +1,349 @@
+{
+  "config": {
+    "study_id": "framesignal-observational-crossfit-overlap-audit-v1",
+    "source_config": "observational_robustness_stress.json",
+    "source_study_id": "framesignal-observational-positivity-misspecification-v1",
+    "reuse_source_seed_grid": true,
+    "cross_fitting_folds": 5,
+    "oracle_usage": "Diagnostic comparison only; never an estimator or AIPW input.",
+    "confidence_level": 0.95,
+    "familywise_cells": 8,
+    "monte_carlo_uncertainty": "Bonferroni familywise 95% intervals across eight paired cells; Clopper-Pearson for warning rates and Student-t intervals for paired crossfit-minus-in-sample false-warning differences.",
+    "interpretation": "Exploratory synthetic diagnostic audit only. Cross-fitted propensity diagnostics and oracle diagnostics do not establish real-world identification.",
+    "prohibited_changes": [
+      "Do not pass oracle propensity into the propensity fit or AIPW estimator.",
+      "Do not interpret the report as a cross-fitted AIPW treatment-effect estimate.",
+      "Do not treat oracle propensity as observable in real observational data."
+    ]
+  },
+  "config_sha256": "3e13f3d935e14dcdd8a25ad8f2db33801bf9e6b0b38478767bc05bad9c39b1ca",
+  "source_config_sha256": "e43970a71de45826c56b4ca33318afa4c1ed76a8e1caf38562bfc40cb9f3ea63",
+  "runtime": {
+    "python": "3.13.3",
+    "numpy": "2.2.6",
+    "pandas": "2.2.3",
+    "scipy": "1.15.3",
+    "framesignal_metrics": "1.0.0"
+  },
+  "results": {
+    "study_id": "framesignal-observational-crossfit-overlap-audit-v1",
+    "seed": 66752021,
+    "scenario": "helpful",
+    "n_per_replicate": 2000,
+    "replicates_per_cell": 300,
+    "cross_fitting_folds": 5,
+    "number_of_cells": 8,
+    "same_seed_replay_of": "framesignal-observational-positivity-misspecification-v1",
+    "same_seed_replay": true,
+    "unmeasured_confounding": 0.0,
+    "audit_scope": "Overlap diagnostics only; no cross-fitted AIPW effect is estimated in this report.",
+    "oracle_usage": "Diagnostic comparison only; oracle fields are not estimator or AIPW inputs.",
+    "forbidden_estimator_inputs": [
+      "assignment_probability_oracle",
+      "return_probability",
+      "latent_loyalty_oracle"
+    ],
+    "familywise_mc_interval_scope": "Bonferroni familywise intervals across the fixed eight cells; Clopper-Pearson for warning rates and Student-t intervals for paired crossfit-minus-in-sample false-warning differences.",
+    "rows": [
+      {
+        "overlap_profile": "moderate",
+        "nuisance_profile": "correct_both",
+        "folds": 5,
+        "replicates": 300,
+        "in_sample_overlap_pass_rate": 1.0,
+        "crossfit_overlap_pass_rate": 1.0,
+        "oracle_overlap_pass_rate": 1.0,
+        "in_sample_false_warning_rate": 0.0,
+        "in_sample_false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_false_warning_rate": 0.0,
+        "crossfit_false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "in_sample_missed_warning_rate": 0.0,
+        "in_sample_missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_missed_warning_rate": 0.0,
+        "crossfit_missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_minus_in_sample_false_warning_rate": 0.0,
+        "crossfit_minus_in_sample_false_warning_familywise_mc_interval": [
+          0.0,
+          0.0
+        ],
+        "mean_in_sample_fraction_outside_0_05_0_95": 0.0,
+        "mean_crossfit_fraction_outside_0_05_0_95": 0.0,
+        "mean_oracle_fraction_outside_0_05_0_95": 0.0
+      },
+      {
+        "overlap_profile": "moderate",
+        "nuisance_profile": "propensity_misspecified",
+        "folds": 5,
+        "replicates": 300,
+        "in_sample_overlap_pass_rate": 1.0,
+        "crossfit_overlap_pass_rate": 1.0,
+        "oracle_overlap_pass_rate": 1.0,
+        "in_sample_false_warning_rate": 0.0,
+        "in_sample_false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_false_warning_rate": 0.0,
+        "crossfit_false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "in_sample_missed_warning_rate": 0.0,
+        "in_sample_missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_missed_warning_rate": 0.0,
+        "crossfit_missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_minus_in_sample_false_warning_rate": 0.0,
+        "crossfit_minus_in_sample_false_warning_familywise_mc_interval": [
+          0.0,
+          0.0
+        ],
+        "mean_in_sample_fraction_outside_0_05_0_95": 2.4999999999999998e-05,
+        "mean_crossfit_fraction_outside_0_05_0_95": 3.8333333333333334e-05,
+        "mean_oracle_fraction_outside_0_05_0_95": 0.0
+      },
+      {
+        "overlap_profile": "moderate",
+        "nuisance_profile": "outcome_misspecified",
+        "folds": 5,
+        "replicates": 300,
+        "in_sample_overlap_pass_rate": 1.0,
+        "crossfit_overlap_pass_rate": 1.0,
+        "oracle_overlap_pass_rate": 1.0,
+        "in_sample_false_warning_rate": 0.0,
+        "in_sample_false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_false_warning_rate": 0.0,
+        "crossfit_false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "in_sample_missed_warning_rate": 0.0,
+        "in_sample_missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_missed_warning_rate": 0.0,
+        "crossfit_missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_minus_in_sample_false_warning_rate": 0.0,
+        "crossfit_minus_in_sample_false_warning_familywise_mc_interval": [
+          0.0,
+          0.0
+        ],
+        "mean_in_sample_fraction_outside_0_05_0_95": 0.0,
+        "mean_crossfit_fraction_outside_0_05_0_95": 0.0,
+        "mean_oracle_fraction_outside_0_05_0_95": 0.0
+      },
+      {
+        "overlap_profile": "moderate",
+        "nuisance_profile": "both_misspecified",
+        "folds": 5,
+        "replicates": 300,
+        "in_sample_overlap_pass_rate": 1.0,
+        "crossfit_overlap_pass_rate": 1.0,
+        "oracle_overlap_pass_rate": 1.0,
+        "in_sample_false_warning_rate": 0.0,
+        "in_sample_false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_false_warning_rate": 0.0,
+        "crossfit_false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "in_sample_missed_warning_rate": 0.0,
+        "in_sample_missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_missed_warning_rate": 0.0,
+        "crossfit_missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_minus_in_sample_false_warning_rate": 0.0,
+        "crossfit_minus_in_sample_false_warning_familywise_mc_interval": [
+          0.0,
+          0.0
+        ],
+        "mean_in_sample_fraction_outside_0_05_0_95": 3.3333333333333335e-05,
+        "mean_crossfit_fraction_outside_0_05_0_95": 4.5e-05,
+        "mean_oracle_fraction_outside_0_05_0_95": 0.0
+      },
+      {
+        "overlap_profile": "weak",
+        "nuisance_profile": "correct_both",
+        "folds": 5,
+        "replicates": 300,
+        "in_sample_overlap_pass_rate": 0.8466666666666667,
+        "crossfit_overlap_pass_rate": 0.85,
+        "oracle_overlap_pass_rate": 0.96,
+        "in_sample_false_warning_rate": 0.12,
+        "in_sample_false_warning_familywise_mc_interval": [
+          0.07414246360898848,
+          0.17978767254132672
+        ],
+        "crossfit_false_warning_rate": 0.12,
+        "crossfit_false_warning_familywise_mc_interval": [
+          0.07414246360898848,
+          0.17978767254132672
+        ],
+        "in_sample_missed_warning_rate": 0.006666666666666667,
+        "in_sample_missed_warning_familywise_mc_interval": [
+          0.0002711456510879124,
+          0.032414611634265955
+        ],
+        "crossfit_missed_warning_rate": 0.01,
+        "crossfit_missed_warning_familywise_mc_interval": [
+          0.0009532185595515374,
+          0.03810529115181906
+        ],
+        "crossfit_minus_in_sample_false_warning_rate": 0.0,
+        "crossfit_minus_in_sample_false_warning_familywise_mc_interval": [
+          -0.018389859855565918,
+          0.018389859855565918
+        ],
+        "mean_in_sample_fraction_outside_0_05_0_95": 0.03687,
+        "mean_crossfit_fraction_outside_0_05_0_95": 0.03728666666666667,
+        "mean_oracle_fraction_outside_0_05_0_95": 0.03495166666666666
+      },
+      {
+        "overlap_profile": "weak",
+        "nuisance_profile": "propensity_misspecified",
+        "folds": 5,
+        "replicates": 300,
+        "in_sample_overlap_pass_rate": 0.0,
+        "crossfit_overlap_pass_rate": 0.0,
+        "oracle_overlap_pass_rate": 0.0,
+        "in_sample_false_warning_rate": 0.0,
+        "in_sample_false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_false_warning_rate": 0.0,
+        "crossfit_false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "in_sample_missed_warning_rate": 0.0,
+        "in_sample_missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_missed_warning_rate": 0.0,
+        "crossfit_missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_minus_in_sample_false_warning_rate": 0.0,
+        "crossfit_minus_in_sample_false_warning_familywise_mc_interval": [
+          0.0,
+          0.0
+        ],
+        "mean_in_sample_fraction_outside_0_05_0_95": 0.13190833333333332,
+        "mean_crossfit_fraction_outside_0_05_0_95": 0.13250833333333334,
+        "mean_oracle_fraction_outside_0_05_0_95": 0.123425
+      },
+      {
+        "overlap_profile": "weak",
+        "nuisance_profile": "outcome_misspecified",
+        "folds": 5,
+        "replicates": 300,
+        "in_sample_overlap_pass_rate": 0.7966666666666666,
+        "crossfit_overlap_pass_rate": 0.8166666666666667,
+        "oracle_overlap_pass_rate": 0.9566666666666667,
+        "in_sample_false_warning_rate": 0.16333333333333333,
+        "in_sample_false_warning_familywise_mc_interval": [
+          0.10972088700915597,
+          0.22923157241367847
+        ],
+        "crossfit_false_warning_rate": 0.15666666666666668,
+        "crossfit_false_warning_familywise_mc_interval": [
+          0.10413899686732578,
+          0.22173052638609964
+        ],
+        "in_sample_missed_warning_rate": 0.0033333333333333335,
+        "in_sample_missed_warning_familywise_mc_interval": [
+          1.0432922273113434e-05,
+          0.026231677844171113
+        ],
+        "crossfit_missed_warning_rate": 0.016666666666666666,
+        "crossfit_missed_warning_familywise_mc_interval": [
+          0.003226729788301628,
+          0.04865255946742941
+        ],
+        "crossfit_minus_in_sample_false_warning_rate": -0.006666666666666667,
+        "crossfit_minus_in_sample_false_warning_familywise_mc_interval": [
+          -0.025025851171676605,
+          0.01169251783834327
+        ],
+        "mean_in_sample_fraction_outside_0_05_0_95": 0.03651833333333333,
+        "mean_crossfit_fraction_outside_0_05_0_95": 0.03687333333333333,
+        "mean_oracle_fraction_outside_0_05_0_95": 0.034508333333333335
+      },
+      {
+        "overlap_profile": "weak",
+        "nuisance_profile": "both_misspecified",
+        "folds": 5,
+        "replicates": 300,
+        "in_sample_overlap_pass_rate": 0.0,
+        "crossfit_overlap_pass_rate": 0.0,
+        "oracle_overlap_pass_rate": 0.0,
+        "in_sample_false_warning_rate": 0.0,
+        "in_sample_false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_false_warning_rate": 0.0,
+        "crossfit_false_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "in_sample_missed_warning_rate": 0.0,
+        "in_sample_missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_missed_warning_rate": 0.0,
+        "crossfit_missed_warning_familywise_mc_interval": [
+          0.0,
+          0.019044062818792905
+        ],
+        "crossfit_minus_in_sample_false_warning_rate": 0.0,
+        "crossfit_minus_in_sample_false_warning_familywise_mc_interval": [
+          0.0,
+          0.0
+        ],
+        "mean_in_sample_fraction_outside_0_05_0_95": 0.130975,
+        "mean_crossfit_fraction_outside_0_05_0_95": 0.13135333333333332,
+        "mean_oracle_fraction_outside_0_05_0_95": 0.12270666666666669
+      }
+    ],
+    "status": "exploratory_crossfit_overlap_diagnostic_audit_not_randomized_itt",
+    "warning": "Cross-fitted and oracle propensity diagnostics are compared only under this known synthetic generator. Oracle probabilities are unavailable in real observational data; the audit does not validate real-world identification."
+  },
+  "review_status": "Self-review only; no independent peer review has occurred."
+}

@@ -143,11 +143,15 @@ def test_extension_report_endpoints_are_explicitly_exploratory():
     replication = client.get("/api/observational-replication")
     robustness = client.get("/api/observational-robustness")
     oracle_audit = client.get("/api/observational-overlap-audit")
+    crossfit_audit = client.get("/api/observational-crossfit-audit")
+    crossfit_audit = client.get("/api/observational-crossfit-audit")
     learned = client.get("/api/learned-proxy")
     assert observational.status_code == 200
     assert replication.status_code == 200
     assert robustness.status_code == 200
     assert oracle_audit.status_code == 200
+    assert crossfit_audit.status_code == 200
+    assert crossfit_audit.status_code == 200
     assert learned.status_code == 200
     assert observational.json()["results"]["status"] == "exploratory_not_randomized_itt"
     assert replication.json()["results"]["status"] == "exploratory_replicated_synthetic_sensitivity_not_randomized_itt"
@@ -159,5 +163,11 @@ def test_extension_report_endpoints_are_explicitly_exploratory():
     assert oracle_audit.json()["results"]["same_seed_replay"]
     assert oracle_audit.json()["results"]["oracle_usage"].startswith("Diagnostic comparison only")
     assert oracle_audit.json()["results"]["status"] == "exploratory_oracle_overlap_diagnostic_audit_not_randomized_itt"
+    assert crossfit_audit.json()["results"]["same_seed_replay"]
+    assert crossfit_audit.json()["results"]["cross_fitting_folds"] == 5
+    assert "no cross-fitted AIPW effect" in crossfit_audit.json()["results"]["audit_scope"]
+    assert crossfit_audit.json()["results"]["same_seed_replay"]
+    assert crossfit_audit.json()["results"]["cross_fitting_folds"] == 5
+    assert "no cross-fitted AIPW effect" in crossfit_audit.json()["results"]["audit_scope"]
     assert learned.json()["results"]["status"] == "exploratory_educational_only_not_surrogate_approval"
     assert learned.json()["results"]["weight_freeze_before_heldout"]
