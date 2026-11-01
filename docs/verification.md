@@ -60,7 +60,7 @@ Baseline FrameSignal checks ran locally on 2026-10-31. MetricSteward integration
 | Compose | `docker compose config --quiet` passed; all four images built, including the FrameSignal backend with both generated reports copied into the image |
 | Extensions browser view | Local UI loaded all nine observational rows and the three learned-score splits from the new API; no error state. At 390px viewport, body width was 375px with no horizontal page overflow; evidence tables keep their own horizontal scrolling. |
 | Local API port collision | Existing service on port 8000 was left running. Vite now accepts `FRAMESIGNAL_API_TARGET` (default remains `http://127.0.0.1:8000`); browser check used the current backend on port 8002. |
-| Remote CI | Not run for these uncommitted changes. The earlier successful Actions run above applies only to its cited commit. |
+| Remote CI | Run [41329669399](https://github.com/jems0906/FrameSignal-Lab/actions/runs/41329669399) passed on extension commit `8b8b466c34e97b4906dcd18c43140d750a607884`; scientific baseline, FrameSignal frontend, and MetricSteward frontend jobs all succeeded, including extension reports, full tests, notebooks, and artifact upload. |
 
 Local execution used Python 3.13.3 with pinned direct scientific dependencies. The notebook environment contains the same pinned packages. Other Python versions are not certified by this local run.
 
