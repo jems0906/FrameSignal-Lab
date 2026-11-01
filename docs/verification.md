@@ -65,7 +65,7 @@ Baseline FrameSignal checks ran locally on 2026-10-31. MetricSteward integration
 | Compose | `docker compose config --quiet` passed; all four images built, including the FrameSignal backend with the threshold report copied into the image |
 | Extensions browser view | Local UI loaded all six threshold summaries and the existing observational panels. At 390px viewport, body width was 375px with no page overflow; evidence tables keep their own horizontal scrolling. |
 | Local API port collision | Existing service on port 8000 was left running. Vite now accepts `FRAMESIGNAL_API_TARGET` (default remains `http://127.0.0.1:8000`); browser check used the current backend on port 8002. |
-| Remote CI | Not run for the current uncommitted threshold study. The successful run above applies to the prior cross-fit audit commit. |
+| Remote CI | Run [41353899068](https://github.com/jems0906/FrameSignal-Lab/actions/runs/41353899068) passed on commit `fef1099a41eac74fefed7e5b5c32ac03de7a706f`; all three jobs succeeded, including the threshold runner, 67-test suite, notebook execution, and artifact upload. |
 
 Local execution used Python 3.13.3 with pinned direct scientific dependencies. The notebook environment contains the same pinned packages. Other Python versions are not certified by this local run.
 
