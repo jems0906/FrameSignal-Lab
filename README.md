@@ -94,7 +94,7 @@ Open http://localhost:5174. FrameSignal remains at http://localhost:5173. See [h
 | Fresh-seed interval-coverage follow-up | [Predeclared config](configs/calibration_followup.json), [follow-up report](docs/calibration_followup_report.md) |
 | Simultaneous grid-coverage follow-up | [Predeclared config](configs/calibration_grid_followup.json), [follow-up report](docs/calibration_grid_followup_report.md) |
 | Honest self-review and revision history | [Scientific review](docs/methodology_review.md) |
-| Independent statistician review request | [Reviewer packet](docs/peer_review_packet.md); feedback status remains pending until received |
+| Independent statistician review request | [Invitation draft](docs/peer_review_invitation.md), [review packet](docs/peer_review_packet.md); feedback status remains pending until received |
 | Fictional stakeholder recommendation and non-conclusions | [Executive memo](docs/executive_memo.md) |
 | End-to-end reproducible analysis | [Proxy notebook](notebooks/proxy_validation.ipynb), [diagnostics notebook](notebooks/simulation_diagnostics.ipynb), tests and fixture |
 | Brief coverage and actual check status | [Coverage](docs/requirements_checklist.md), [verification](docs/verification.md) |
