@@ -1,0 +1,18 @@
+{
+  "study_id": "framesignal-observational-replicated-sensitivity-v1",
+  "seed": 8302723,
+  "households_per_replicate": 2000,
+  "replicates_per_cell": 200,
+  "scenarios": ["helpful", "unrelated", "misleading"],
+  "unmeasured_confounding_strengths": [0.0, 0.5, 1.0],
+  "confidence_level": 0.95,
+  "familywise_cells": 9,
+  "aipw_interval_method": "Normal Wald interval using the empirical variance of the AIPW pseudo-outcome within each replicate.",
+  "monte_carlo_uncertainty": "Bonferroni familywise 95% intervals across the fixed nine scenario-by-confounding cells; Student-t intervals for mean bias and exact Clopper-Pearson intervals for interval coverage proportions.",
+  "interpretation": "Exploratory synthetic mechanism study. The intervals quantify Monte Carlo uncertainty within this specified generator only; they do not establish real-world identification, proxy validity, or approval.",
+  "prohibited_changes": [
+    "Do not combine this replicated study with the single-run illustrative bootstrap report.",
+    "Do not interpret AIPW as removing unmeasured confounding.",
+    "Do not claim real-world identification or proxy approval from simulation coverage."
+  ]
+}

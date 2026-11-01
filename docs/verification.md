@@ -6,7 +6,7 @@ Baseline FrameSignal checks ran locally on 2026-10-31. MetricSteward integration
 
 | Check | Observed result |
 |---|---|
-| Full Python regression suite | 59 passed, including FrameSignal, shared-library, MetricSteward persistence/API, cross-app parity for all scenarios/windows, calibration follow-ups, and both extensions |
+| Full Python regression suite | 61 passed, including FrameSignal, shared-library, MetricSteward persistence/API, cross-app parity for all scenarios/windows, calibration follow-ups, and both observational/learned extensions |
 | Ruff lint | Passed for `backend`, `packages`, and `metricsteward/backend` after removing one unused import surfaced by the first lint run |
 | VS Code/Pylance diagnostics | No errors after configuring backend, shared-package, and MetricSteward source roots |
 | Frontend production builds | Both apps type-check and build with Vite 6.4.5. FrameSignal retains its non-blocking >500 kB bundle advisory; MetricSteward builds cleanly. |
@@ -49,18 +49,19 @@ Baseline FrameSignal checks ran locally on 2026-10-31. MetricSteward integration
 | Check | Observed result |
 |---|---|
 | Observational extension runner | Generated nine scenario/confounding cases from `configs/observational_extension.json`; report status is `exploratory_not_randomized_itt` |
+| Replicated observational runner | Generated nine cells × 200 independent replicates (1,800 total; N=2,000 each) with outcome-only simulation; report includes familywise Monte Carlo intervals for AIPW mean bias and Wald coverage, plus RMSE, overlap, and ESS |
 | Learned-score runner | Generated 54,000 households in disjoint 18,000-household train/validation/held-out splits; validation selected ridge alpha 0.01; held-out experiment sign agreement was 44.4%; status remains educational-only |
-| Focused extension tests | 7 passed for observational estimation, hidden-confounding mechanism and oracle exclusion, plus learned-score split/freeze behavior |
-| Full regression suite | 59 passed; one third-party Starlette/AnyIO deprecation warning |
+| Focused extension tests | 9 passed for observational estimation, replicated Monte Carlo summaries, hidden-confounding mechanism and oracle exclusion, learned-score split/freeze behavior, and report endpoint guards |
+| Full regression suite | 61 passed; one third-party Starlette/AnyIO deprecation warning |
 | Python lint | Ruff passed for `backend`, `packages`, and `metricsteward/backend` |
-| Extension report API | TestClient returned both generated reports with their explicit exploratory statuses and learned-weight freeze flag |
-| FrameSignal frontend | TypeScript production build passed; Vite reports the existing non-blocking >500 kB chunk advisory |
+| Extension report API | TestClient returned the illustrative observational, replicated observational, and learned-score reports with explicit exploratory statuses |
+| FrameSignal frontend | TypeScript production build passed with the replicated-sensitivity panel; Vite reports the existing non-blocking >500 kB chunk advisory |
 | MetricSteward frontend | TypeScript production build passed |
 | npm audits | Both frontend audits report zero vulnerabilities |
-| Compose | `docker compose config --quiet` passed; all four images built, including the FrameSignal backend with both generated reports copied into the image |
-| Extensions browser view | Local UI loaded all nine observational rows and the three learned-score splits from the new API; no error state. At 390px viewport, body width was 375px with no horizontal page overflow; evidence tables keep their own horizontal scrolling. |
+| Compose | `docker compose config --quiet` passed; all four images built, including the FrameSignal backend with all three extension reports copied into the image |
+| Extensions browser view | Local UI loaded all nine illustrative observational rows, all nine replicated cells, and three learned-score splits; no error state. At 390px viewport, body width was 375px with no page overflow; evidence tables keep their own horizontal scrolling. |
 | Local API port collision | Existing service on port 8000 was left running. Vite now accepts `FRAMESIGNAL_API_TARGET` (default remains `http://127.0.0.1:8000`); browser check used the current backend on port 8002. |
-| Remote CI | Run [41329669399](https://github.com/jems0906/FrameSignal-Lab/actions/runs/41329669399) passed on extension commit `8b8b466c34e97b4906dcd18c43140d750a607884`; scientific baseline, FrameSignal frontend, and MetricSteward frontend jobs all succeeded, including extension reports, full tests, notebooks, and artifact upload. |
+| Remote CI | Not run for the current uncommitted replicated-study changes. The successful Actions run above applies to the earlier extension commit only. |
 
 Local execution used Python 3.13.3 with pinned direct scientific dependencies. The notebook environment contains the same pinned packages. Other Python versions are not certified by this local run.
 

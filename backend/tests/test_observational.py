@@ -1,7 +1,11 @@
 import numpy as np
 import pytest
 
-from app.analysis.observational import estimate_observational_effect, observational_sensitivity
+from app.analysis.observational import (
+    estimate_observational_effect,
+    observational_replicated_sensitivity,
+    observational_sensitivity,
+)
 from app.metrics.registry import household_metrics
 from app.simulations.generator import simulate
 
@@ -68,6 +72,22 @@ def test_observational_sensitivity_covers_all_scenarios_and_confounding_levels()
     assert {row["unmeasured_confounding_strength"] for row in result["rows"]} == {0.0, 0.5, 1.0}
     assert result["status"] == "exploratory_not_randomized_itt"
     assert "assignment_probability_oracle" in result["forbidden_estimator_inputs"]
+
+
+def test_replicated_sensitivity_reports_bias_coverage_and_familywise_mc_intervals():
+    result = observational_replicated_sensitivity(
+        seed=308, n=300, replicates=30, scenarios=("helpful",), confounding_grid=(0.0, 1.0),
+    )
+    assert len(result["rows"]) == 2
+    assert result["number_of_cells"] == 2
+    assert result["status"] == "exploratory_replicated_synthetic_sensitivity_not_randomized_itt"
+    for row in result["rows"]:
+        bias_interval = row["aipw_bias_familywise_mc_interval"]
+        coverage_interval = row["aipw_wald_coverage_familywise_mc_interval"]
+        assert bias_interval[0] <= row["mean_aipw_bias"] <= bias_interval[1]
+        assert 0 <= coverage_interval[0] <= row["aipw_wald_interval_coverage"] <= coverage_interval[1] <= 1
+        assert 0 <= row["overlap_check_pass_rate"] <= 1
+        assert row["mean_ipw_effective_sample_size_by_arm"]["0"] > 0
 
 
 def test_observational_estimator_requires_both_assignment_groups():

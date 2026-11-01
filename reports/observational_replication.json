@@ -1,0 +1,333 @@
+{
+  "config": {
+    "study_id": "framesignal-observational-replicated-sensitivity-v1",
+    "seed": 8302723,
+    "households_per_replicate": 2000,
+    "replicates_per_cell": 200,
+    "scenarios": [
+      "helpful",
+      "unrelated",
+      "misleading"
+    ],
+    "unmeasured_confounding_strengths": [
+      0.0,
+      0.5,
+      1.0
+    ],
+    "confidence_level": 0.95,
+    "familywise_cells": 9,
+    "aipw_interval_method": "Normal Wald interval using the empirical variance of the AIPW pseudo-outcome within each replicate.",
+    "monte_carlo_uncertainty": "Bonferroni familywise 95% intervals across the fixed nine scenario-by-confounding cells; Student-t intervals for mean bias and exact Clopper-Pearson intervals for interval coverage proportions.",
+    "interpretation": "Exploratory synthetic mechanism study. The intervals quantify Monte Carlo uncertainty within this specified generator only; they do not establish real-world identification, proxy validity, or approval.",
+    "prohibited_changes": [
+      "Do not combine this replicated study with the single-run illustrative bootstrap report.",
+      "Do not interpret AIPW as removing unmeasured confounding.",
+      "Do not claim real-world identification or proxy approval from simulation coverage."
+    ]
+  },
+  "config_sha256": "5c0ca995bf56e8e12e5b56ba231c5acf4bf5d9305bb146cd72cb08a755883dfc",
+  "runtime": {
+    "python": "3.13.3",
+    "numpy": "2.2.6",
+    "pandas": "2.2.3",
+    "scipy": "1.15.3",
+    "framesignal_metrics": "1.0.0"
+  },
+  "results": {
+    "study_id": "framesignal-observational-replicated-sensitivity-v1",
+    "seed": 8302723,
+    "n_per_replicate": 2000,
+    "replicates_per_cell": 200,
+    "scenarios": [
+      "helpful",
+      "unrelated",
+      "misleading"
+    ],
+    "unmeasured_confounding_grid": [
+      0.0,
+      0.5,
+      1.0
+    ],
+    "confidence_level": 0.95,
+    "number_of_cells": 9,
+    "familywise_mc_interval_scope": "Bonferroni familywise intervals across the fixed scenario-by-confounding cells; exact Clopper-Pearson intervals for coverage proportions and Student-t intervals for mean bias.",
+    "aipw_interval_method": "Normal Wald intervals using the empirical variance of the AIPW pseudo-outcome within each replicate; distinct from the household-bootstrap intervals in the illustrative observational report.",
+    "assignment_mode": "observational synthetic selection",
+    "measured_covariates": [
+      "observed_affinity",
+      "observed_log_opportunity"
+    ],
+    "forbidden_estimator_inputs": [
+      "assignment_probability_oracle",
+      "unmeasured_confounding_strength_oracle",
+      "return_probability",
+      "latent_loyalty_oracle"
+    ],
+    "rows": [
+      {
+        "scenario": "helpful",
+        "unmeasured_confounding_strength": 0.0,
+        "n": 2000,
+        "replicates": 200,
+        "known_population_ate": 0.06,
+        "mean_aipw_effect": 0.05705346906881345,
+        "mean_aipw_bias": -0.0029465309311865473,
+        "aipw_bias_mc_se": 0.0015521413766016712,
+        "aipw_bias_familywise_mc_interval": [
+          -0.007297959727328866,
+          0.0014048978649557715
+        ],
+        "aipw_bias_rmse": 0.02209301863184989,
+        "mean_naive_descriptive_bias": 0.021195311209010012,
+        "aipw_wald_interval_coverage": 0.965,
+        "aipw_wald_covered_replicates": 193,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.9121541024154435,
+          0.9907737759854687
+        ],
+        "overlap_check_pass_rate": 1.0,
+        "mean_fraction_inside_common_support": 0.996145,
+        "mean_fraction_outside_0_05_0_95": 0.0,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 1109.4288782366293,
+          "1": 779.8345470260131
+        }
+      },
+      {
+        "scenario": "helpful",
+        "unmeasured_confounding_strength": 0.5,
+        "n": 2000,
+        "replicates": 200,
+        "known_population_ate": 0.06,
+        "mean_aipw_effect": 0.06126115663188454,
+        "mean_aipw_bias": 0.0012611566318845384,
+        "aipw_bias_mc_se": 0.0016533897145666592,
+        "aipw_bias_familywise_mc_interval": [
+          -0.0033741219088905872,
+          0.0058964351726596646
+        ],
+        "aipw_bias_rmse": 0.023358003513761088,
+        "mean_naive_descriptive_bias": 0.024706277069393833,
+        "aipw_wald_interval_coverage": 0.95,
+        "aipw_wald_covered_replicates": 190,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.8913421648705713,
+          0.9826950940921959
+        ],
+        "overlap_check_pass_rate": 1.0,
+        "mean_fraction_inside_common_support": 0.99631,
+        "mean_fraction_outside_0_05_0_95": 0.0,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 1115.3433472406066,
+          "1": 778.4467855747333
+        }
+      },
+      {
+        "scenario": "helpful",
+        "unmeasured_confounding_strength": 1.0,
+        "n": 2000,
+        "replicates": 200,
+        "known_population_ate": 0.06,
+        "mean_aipw_effect": 0.07045593293825055,
+        "mean_aipw_bias": 0.010455932938250548,
+        "aipw_bias_mc_se": 0.0015543356998572577,
+        "aipw_bias_familywise_mc_interval": [
+          0.006098352356229478,
+          0.014813513520271618
+        ],
+        "aipw_bias_rmse": 0.02429202477587021,
+        "mean_naive_descriptive_bias": 0.032591990812191704,
+        "aipw_wald_interval_coverage": 0.925,
+        "aipw_wald_covered_replicates": 185,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.8586178824063996,
+          0.9670913767109357
+        ],
+        "overlap_check_pass_rate": 1.0,
+        "mean_fraction_inside_common_support": 0.9961775,
+        "mean_fraction_outside_0_05_0_95": 0.0,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 1108.439590008149,
+          "1": 789.9754477975818
+        }
+      },
+      {
+        "scenario": "unrelated",
+        "unmeasured_confounding_strength": 0.0,
+        "n": 2000,
+        "replicates": 200,
+        "known_population_ate": 0.0,
+        "mean_aipw_effect": -0.0009573947779004418,
+        "mean_aipw_bias": -0.0009573947779004418,
+        "aipw_bias_mc_se": 0.0016425950577307507,
+        "aipw_bias_familywise_mc_interval": [
+          -0.00556241049512847,
+          0.0036476209393275856
+        ],
+        "aipw_bias_rmse": 0.02319142494486631,
+        "mean_naive_descriptive_bias": 0.02311522047402075,
+        "aipw_wald_interval_coverage": 0.955,
+        "aipw_wald_covered_replicates": 191,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.8981545765674671,
+          0.985525532165935
+        ],
+        "overlap_check_pass_rate": 1.0,
+        "mean_fraction_inside_common_support": 0.9965675,
+        "mean_fraction_outside_0_05_0_95": 0.0,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 1108.855767419809,
+          "1": 777.983756281572
+        }
+      },
+      {
+        "scenario": "unrelated",
+        "unmeasured_confounding_strength": 0.5,
+        "n": 2000,
+        "replicates": 200,
+        "known_population_ate": 0.0,
+        "mean_aipw_effect": -0.000490841349114912,
+        "mean_aipw_bias": -0.000490841349114912,
+        "aipw_bias_mc_se": 0.0017011661397105466,
+        "aipw_bias_familywise_mc_interval": [
+          -0.005260061111535082,
+          0.004278378413305258
+        ],
+        "aipw_bias_rmse": 0.02400292078007674,
+        "mean_naive_descriptive_bias": 0.0238193404098571,
+        "aipw_wald_interval_coverage": 0.945,
+        "aipw_wald_covered_replicates": 189,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.8846329496089789,
+          0.9797519948862046
+        ],
+        "overlap_check_pass_rate": 1.0,
+        "mean_fraction_inside_common_support": 0.996155,
+        "mean_fraction_outside_0_05_0_95": 0.0,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 1111.0349187745942,
+          "1": 779.1397690511681
+        }
+      },
+      {
+        "scenario": "unrelated",
+        "unmeasured_confounding_strength": 1.0,
+        "n": 2000,
+        "replicates": 200,
+        "known_population_ate": 0.0,
+        "mean_aipw_effect": 0.01068649257178834,
+        "mean_aipw_bias": 0.01068649257178834,
+        "aipw_bias_mc_se": 0.001620908034043009,
+        "aipw_bias_familywise_mc_interval": [
+          0.0061422764317122834,
+          0.015230708711864396
+        ],
+        "aipw_bias_rmse": 0.025239697929989112,
+        "mean_naive_descriptive_bias": 0.033524201892647196,
+        "aipw_wald_interval_coverage": 0.935,
+        "aipw_wald_covered_replicates": 187,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.8714781483170004,
+          0.9735800600570232
+        ],
+        "overlap_check_pass_rate": 1.0,
+        "mean_fraction_inside_common_support": 0.9964325,
+        "mean_fraction_outside_0_05_0_95": 0.0,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 1107.6922905319118,
+          "1": 789.978731041582
+        }
+      },
+      {
+        "scenario": "misleading",
+        "unmeasured_confounding_strength": 0.0,
+        "n": 2000,
+        "replicates": 200,
+        "known_population_ate": -0.06,
+        "mean_aipw_effect": -0.06047954383524262,
+        "mean_aipw_bias": -0.00047954383524262693,
+        "aipw_bias_mc_se": 0.001795756316156856,
+        "aipw_bias_familywise_mc_interval": [
+          -0.005513947184561199,
+          0.0045548595140759455
+        ],
+        "aipw_bias_rmse": 0.025336798750954122,
+        "mean_naive_descriptive_bias": 0.023564391295759882,
+        "aipw_wald_interval_coverage": 0.935,
+        "aipw_wald_covered_replicates": 187,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.8714781483170004,
+          0.9735800600570232
+        ],
+        "overlap_check_pass_rate": 1.0,
+        "mean_fraction_inside_common_support": 0.9963425000000001,
+        "mean_fraction_outside_0_05_0_95": 0.0,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 1111.6119842347023,
+          "1": 779.0707112945337
+        }
+      },
+      {
+        "scenario": "misleading",
+        "unmeasured_confounding_strength": 0.5,
+        "n": 2000,
+        "replicates": 200,
+        "known_population_ate": -0.06,
+        "mean_aipw_effect": -0.05669225027363049,
+        "mean_aipw_bias": 0.003307749726369499,
+        "aipw_bias_mc_se": 0.0017266808375273708,
+        "aipw_bias_familywise_mc_interval": [
+          -0.001533000498725459,
+          0.008148499951464456
+        ],
+        "aipw_bias_rmse": 0.024581397935724846,
+        "mean_naive_descriptive_bias": 0.02736040451845624,
+        "aipw_wald_interval_coverage": 0.935,
+        "aipw_wald_covered_replicates": 187,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.8714781483170004,
+          0.9735800600570232
+        ],
+        "overlap_check_pass_rate": 1.0,
+        "mean_fraction_inside_common_support": 0.9962274999999999,
+        "mean_fraction_outside_0_05_0_95": 0.0,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 1109.6728105327097,
+          "1": 782.1359297316195
+        }
+      },
+      {
+        "scenario": "misleading",
+        "unmeasured_confounding_strength": 1.0,
+        "n": 2000,
+        "replicates": 200,
+        "known_population_ate": -0.06,
+        "mean_aipw_effect": -0.05076342490917152,
+        "mean_aipw_bias": 0.00923657509082848,
+        "aipw_bias_mc_se": 0.0015986448371060162,
+        "aipw_bias_familywise_mc_interval": [
+          0.004754773829774543,
+          0.013718376351882418
+        ],
+        "aipw_bias_rmse": 0.024369893662764545,
+        "mean_naive_descriptive_bias": 0.03155291617694198,
+        "aipw_wald_interval_coverage": 0.955,
+        "aipw_wald_covered_replicates": 191,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.8981545765674671,
+          0.985525532165935
+        ],
+        "overlap_check_pass_rate": 1.0,
+        "mean_fraction_inside_common_support": 0.99642,
+        "mean_fraction_outside_0_05_0_95": 0.0,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 1105.575933475651,
+          "1": 790.0600208405544
+        }
+      }
+    ],
+    "status": "exploratory_replicated_synthetic_sensitivity_not_randomized_itt",
+    "warning": "Monte Carlo results characterize only this constructed selection model. AIPW cannot remove hidden confounding; coverage intervals are not evidence of real-world identification or proxy approval."
+  },
+  "review_status": "Self-review only; no independent peer review has occurred."
+}

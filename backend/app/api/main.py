@@ -55,6 +55,11 @@ def observational_extension():
     return _read_extension_report("observational_extension.json")
 
 
+@app.get("/api/observational-replication")
+def observational_replication():
+    return _read_extension_report("observational_replication.json")
+
+
 @app.get("/api/learned-proxy")
 def learned_proxy_extension():
     return _read_extension_report("learned_proxy_extension.json")

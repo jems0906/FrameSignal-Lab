@@ -140,9 +140,13 @@ def test_noisy_agreement_includes_experiment_uncertainty():
 def test_extension_report_endpoints_are_explicitly_exploratory():
     client = TestClient(app)
     observational = client.get("/api/observational")
+    replication = client.get("/api/observational-replication")
     learned = client.get("/api/learned-proxy")
     assert observational.status_code == 200
+    assert replication.status_code == 200
     assert learned.status_code == 200
     assert observational.json()["results"]["status"] == "exploratory_not_randomized_itt"
+    assert replication.json()["results"]["status"] == "exploratory_replicated_synthetic_sensitivity_not_randomized_itt"
+    assert replication.json()["results"]["replicates_per_cell"] == 200
     assert learned.json()["results"]["status"] == "exploratory_educational_only_not_surrogate_approval"
     assert learned.json()["results"]["weight_freeze_before_heldout"]

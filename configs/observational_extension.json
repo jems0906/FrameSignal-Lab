@@ -1,5 +1,6 @@
 {
   "study_id": "framesignal-observational-sensitivity-v1",
+  "role": "single-run illustrative sensitivity example; superseded for average-bias conclusions by observational_replication.json",
   "seed": 7483829,
   "households_per_run": 2000,
   "household_bootstrap_draws": 200,

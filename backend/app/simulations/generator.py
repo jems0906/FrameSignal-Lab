@@ -43,6 +43,7 @@ def simulate(
     strength: float = 1.0,
     assignment_mode: str = "randomized",
     unmeasured_confounding: float = 0.0,
+    generate_events: bool = True,
 ) -> Simulation:
     if scenario not in SCENARIOS or n < 100 or n > 20000:
         raise ValueError("Use a registered scenario and 100-20000 households.")
@@ -96,6 +97,18 @@ def simulate(
          "available_day": index % 8}
         for index in range(18)
     ])
+    if not generate_events:
+        return Simulation(
+            households,
+            titles,
+            pd.DataFrame(columns=["household_id", "impressions", "window_end"]),
+            pd.DataFrame(columns=["event_id", "household_id", "title_id", "day", "minutes", "runtime_minutes", "genre", "qualified", "completed"]),
+            spec,
+            seed,
+            experiment_id,
+            split,
+            assignment_mode,
+        )
     exposure_rows = []
     event_rows = []
     for index, household_id in enumerate(household_ids):

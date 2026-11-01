@@ -65,6 +65,20 @@ export type ObservationalReport = {
     rows: { scenario: string; unmeasured_confounding_strength: number; n: number; known_population_ate: number; assignment_rate: number; observational_estimate: ObservationalEstimate }[];
   };
 };
+export type ObservationalReplicationReport = {
+  config: { study_id: string; seed: number; households_per_replicate: number; replicates_per_cell: number; confidence_level: number };
+  results: {
+    status: string; warning: string; familywise_mc_interval_scope: string; aipw_interval_method: string;
+    number_of_cells: number;
+    rows: {
+      scenario: string; unmeasured_confounding_strength: number; n: number; replicates: number;
+      known_population_ate: number; mean_aipw_bias: number; aipw_bias_familywise_mc_interval: [number, number];
+      aipw_bias_rmse: number; aipw_wald_interval_coverage: number;
+      aipw_wald_coverage_familywise_mc_interval: [number, number]; overlap_check_pass_rate: number;
+      mean_ipw_effective_sample_size_by_arm: Record<string, number>;
+    }[];
+  };
+};
 export type LearnedProxyReport = {
   config: { study_id: string; seed: number; households_per_experiment: number; experiments_per_split: number };
   results: {
@@ -76,4 +90,8 @@ export type LearnedProxyReport = {
     heldout_agreement: Agreement;
   };
 };
-export type ExtensionReports = { observational: ObservationalReport; learned: LearnedProxyReport };
+export type ExtensionReports = {
+  observational: ObservationalReport;
+  observationalReplication: ObservationalReplicationReport;
+  learned: LearnedProxyReport;
+};

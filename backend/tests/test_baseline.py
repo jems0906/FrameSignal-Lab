@@ -37,6 +37,17 @@ def test_randomized_simulation_rejects_observational_sensitivity_argument():
         simulate(n=100, seed=3, unmeasured_confounding=0.2)
 
 
+def test_outcome_only_simulation_preserves_households_without_building_events():
+    full = simulate("helpful", n=300, seed=401, assignment_mode="observational", unmeasured_confounding=0.5)
+    outcome_only = simulate(
+        "helpful", n=300, seed=401, assignment_mode="observational",
+        unmeasured_confounding=0.5, generate_events=False,
+    )
+    pd.testing.assert_frame_equal(full.households, outcome_only.households)
+    assert outcome_only.exposures.empty
+    assert outcome_only.events.empty
+
+
 def test_misleading_scenario_reverses_starts_decision():
     data = simulate("misleading", n=16000, seed=23)
     frame = household_metrics(data)
