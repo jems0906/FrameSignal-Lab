@@ -813,6 +813,7 @@ def observational_overlap_threshold_stress(
         {"name": "reference_05_95_ess100", "propensity_range": [0.05, 0.95], "minimum_effective_sample_size": 100},
         {"name": "tight_10_90_ess100", "propensity_range": [0.10, 0.90], "minimum_effective_sample_size": 100},
     ),
+    oracle_reference_rule: dict | None = None,
     confidence_level: float = 0.95,
 ) -> dict:
     if n < 100 or n > 20000 or replicates < 30:
@@ -829,6 +830,12 @@ def observational_overlap_threshold_stress(
             raise ValueError("Each propensity range must be an increasing interval within [0, 1].")
         if rule["minimum_effective_sample_size"] < 0:
             raise ValueError("ESS thresholds must be nonnegative.")
+    if oracle_reference_rule is not None:
+        reference_range = tuple(oracle_reference_rule["propensity_range"])
+        if len(reference_range) != 2 or not 0 <= reference_range[0] < reference_range[1] <= 1:
+            raise ValueError("Oracle reference propensity range must be an increasing interval within [0, 1].")
+        if oracle_reference_rule["minimum_effective_sample_size"] < 0:
+            raise ValueError("Oracle reference ESS threshold must be nonnegative.")
 
     profile_cells = len(overlap_profiles) * len(nuisance_profiles)
     family_cells = profile_cells * len(threshold_rules)
@@ -894,8 +901,16 @@ def observational_overlap_threshold_stress(
                             raw,
                             clipped,
                             assignment,
-                            propensity_range=tuple(rule["propensity_range"]),
-                            minimum_effective_sample_size=rule["minimum_effective_sample_size"],
+                            propensity_range=tuple(
+                                oracle_reference_rule["propensity_range"]
+                                if method == "oracle" and oracle_reference_rule is not None
+                                else rule["propensity_range"]
+                            ),
+                            minimum_effective_sample_size=(
+                                oracle_reference_rule["minimum_effective_sample_size"]
+                                if method == "oracle" and oracle_reference_rule is not None
+                                else rule["minimum_effective_sample_size"]
+                            ),
                         )
                         for method, (raw, clipped) in propensities.items()
                     }
@@ -1015,6 +1030,7 @@ def observational_overlap_threshold_stress(
         "overlap_profiles": list(overlap_profiles),
         "nuisance_profiles": list(nuisance_profiles),
         "threshold_rules": list(threshold_rules),
+        "oracle_reference_rule": oracle_reference_rule,
         "number_of_profile_cells": profile_cells,
         "number_of_threshold_rules": len(threshold_rules),
         "number_of_familywise_cells": family_cells,
@@ -1026,3 +1042,19 @@ def observational_overlap_threshold_stress(
         "status": "exploratory_synthetic_overlap_threshold_operating_study_not_randomized_itt",
         "warning": "Threshold performance is specific to the prespecified synthetic generator and rule grid. No threshold is selected or recommended for real observational data.",
     }
+
+
+def observational_overlap_threshold_reference_audit(**study_arguments) -> dict:
+    reference_rule = {
+        "name": "fixed_reference_05_95_ess50",
+        "propensity_range": [0.05, 0.95],
+        "minimum_effective_sample_size": 50,
+    }
+    result = observational_overlap_threshold_stress(
+        **study_arguments,
+        oracle_reference_rule=reference_rule,
+    )
+    result["study_id"] = "framesignal-observational-overlap-threshold-reference-v1"
+    result["status"] = "exploratory_synthetic_overlap_threshold_fixed_reference_audit_not_randomized_itt"
+    result["warning"] = "Candidate rules are compared against one fixed oracle reference criterion. This common reference is a prespecified synthetic convention, not a validated real-world definition of adequate overlap; no threshold is recommended."
+    return result

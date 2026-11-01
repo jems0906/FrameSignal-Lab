@@ -140,6 +140,18 @@ export type ObservationalThresholdStressReport = {
     }[];
   };
 };
+export type ObservationalThresholdReferenceReport = {
+  config: { study_id: string; seed: number; households_per_replicate: number; replicates_per_profile_cell: number; cross_fitting_folds: number; oracle_reference_rule: { name: string; propensity_range: [number, number]; minimum_effective_sample_size: number } };
+  results: {
+    status: string; warning: string; oracle_usage: string; number_of_profile_cells: number;
+    threshold_summaries: {
+      threshold_rule: string; propensity_range: [number, number]; minimum_effective_sample_size: number;
+      oracle: { pass_rate: number };
+      in_sample: { false_warning_rate: number; missed_warning_rate: number };
+      crossfit: { false_warning_rate: number; missed_warning_rate: number };
+    }[];
+  };
+};
 export type LearnedProxyReport = {
   config: { study_id: string; seed: number; households_per_experiment: number; experiments_per_split: number };
   results: {
@@ -158,5 +170,6 @@ export type ExtensionReports = {
   observationalOverlapAudit: ObservationalOverlapAuditReport;
   observationalCrossfitAudit: ObservationalCrossfitAuditReport;
   observationalThresholdStress: ObservationalThresholdStressReport;
+  observationalThresholdReference: ObservationalThresholdReferenceReport;
   learned: LearnedProxyReport;
 };

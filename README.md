@@ -44,6 +44,7 @@ python backend/run_observational_robustness_stress.py
 python backend/run_observational_overlap_oracle_audit.py
 python backend/run_observational_crossfit_overlap_audit.py
 python backend/run_observational_overlap_threshold_stress.py
+python backend/run_observational_overlap_threshold_reference_audit.py
 python backend/run_learned_proxy.py
 python backend/export_metricsteward.py
 python -m pytest -q
@@ -71,6 +72,8 @@ The single-run observational table is illustrative, not evidence of an average s
 `configs/observational_crossfit_overlap_audit.json` replays those same cells and seeds with five-fold out-of-fold propensity predictions, comparing overlap warning behavior against the source in-sample predictions and oracle diagnostics. It reports diagnostics only, not a cross-fitted AIPW treatment effect; the estimator and source reports remain unchanged.
 
 `configs/observational_overlap_threshold_stress.json` uses a fresh seed to compare six prespecified propensity-range/ESS rules on the eight generator profiles. Each dataset is reused across rules and compared under in-sample, five-fold cross-fitted, and oracle diagnostics. The report describes warning tradeoffs only; it selects no threshold and makes no production recommendation.
+
+Because the original threshold stress study evaluated oracle pass status under each candidate's own rule, a separate fresh-seed audit (`configs/observational_overlap_threshold_reference_audit.json`) compares all six candidates against one fixed oracle reference (0.05-0.95 and ESS 50). This makes false/missed warning rates comparable across candidates under the synthetic generator; it still cannot select a real-world threshold without a justified decision-cost model.
 
 For interactive notebooks, select the same environment as the installed dependencies. Both notebooks locate the root from their current working directory and run without pre-existing report files. Full execution can take a few minutes on slower systems; the UI caches bounded analysis results in the local process.
 
@@ -122,6 +125,7 @@ Open http://localhost:5174. FrameSignal remains at http://localhost:5173. See [h
 | Paired oracle-overlap diagnostic audit | [Predeclared config](configs/observational_overlap_oracle_audit.json), [report](docs/observational_overlap_oracle_audit_report.md) |
 | Cross-fitted overlap diagnostic audit | [Predeclared config](configs/observational_crossfit_overlap_audit.json), [report](docs/observational_crossfit_overlap_audit_report.md) |
 | Overlap-threshold operating study | [Predeclared config](configs/observational_overlap_threshold_stress.json), [report](docs/observational_overlap_threshold_stress_report.md) |
+| Fixed-reference threshold comparison | [Predeclared config](configs/observational_overlap_threshold_reference_audit.json), [report](docs/observational_overlap_threshold_reference_audit_report.md) |
 | Train/validate/frozen-heldout learned score | [Predeclared config](configs/learned_proxy_extension.json), [report](docs/learned_proxy_report.md) |
 | Honest self-review and revision history | [Scientific review](docs/methodology_review.md) |
 | Independent statistician review request | [Invitation draft](docs/peer_review_invitation.md), [review packet](docs/peer_review_packet.md); feedback status remains pending until received |
@@ -136,7 +140,7 @@ Open http://localhost:5174. FrameSignal remains at http://localhost:5173. See [h
 
 `GET /api/analysis?scenario=misleading&n=2000&seed=20261031` returns metric effects, intervals, predictive association, sensitivity, SQL checks, known truth, and memo. `/api/validation` runs the frozen split design; `/api/operating` reports target operating characteristics. `/api/export` downloads all synthetic source tables, household aggregates, run analysis, and provenance as a ZIP. Inputs are bounded and validated. This is a local research app, not a multi-user authenticated production service.
 
-`/api/observational`, `/api/observational-replication`, `/api/observational-robustness`, `/api/observational-overlap-audit`, `/api/observational-crossfit-audit`, `/api/observational-threshold-stress`, and `/api/learned-proxy` serve separately generated exploratory reports. The Extensions view compares prespecified warning rules; it selects no threshold. Cross-fit/oracle results are diagnostics only, not treatment-effect estimates or real-world approval.
+`/api/observational`, `/api/observational-replication`, `/api/observational-robustness`, `/api/observational-overlap-audit`, `/api/observational-crossfit-audit`, `/api/observational-threshold-stress`, `/api/observational-threshold-reference-audit`, and `/api/learned-proxy` serve separately generated exploratory reports. The Extensions view compares candidate rules against a fixed synthetic reference; it selects no threshold. Cross-fit/oracle results are diagnostics only, not treatment-effect estimates or real-world approval.
 
 ## Containers and CI
 

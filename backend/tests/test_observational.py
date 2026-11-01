@@ -9,6 +9,7 @@ from app.analysis.observational import (
     observational_overlap_oracle_audit,
     observational_crossfit_overlap_audit,
     observational_overlap_threshold_stress,
+    observational_overlap_threshold_reference_audit,
     _overlap_diagnostics,
     observational_robustness_stress,
     observational_sensitivity,
@@ -270,6 +271,25 @@ def test_threshold_study_reports_all_rules_against_oracle():
     assert len(result["rows"]) == 2
     assert {row["threshold_rule"] for row in result["rows"]} == {"wide", "tight"}
     assert all(0 <= row["oracle_pass_rate"] <= 1 for row in result["rows"])
+
+
+def test_threshold_reference_audit_uses_one_oracle_rule_for_all_candidates():
+    result = observational_overlap_threshold_reference_audit(
+        seed=916, n=300, replicates=30,
+        overlap_profiles=({"name": "weak", "measured_selection_strength": 3.0},),
+        nuisance_profiles=({"name": "correct_both", "propensity_nonlinearity": 0.0, "outcome_nonlinearity": 0.0},),
+        threshold_rules=(
+            {"name": "wide", "propensity_range": [0.02, 0.98], "minimum_effective_sample_size": 50},
+            {"name": "tight", "propensity_range": [0.1, 0.9], "minimum_effective_sample_size": 100},
+        ),
+    )
+    assert result["oracle_reference_rule"] == {
+        "name": "fixed_reference_05_95_ess50",
+        "propensity_range": [0.05, 0.95],
+        "minimum_effective_sample_size": 50,
+    }
+    assert result["rows"][0]["oracle_pass_rate"] == result["rows"][1]["oracle_pass_rate"]
+    assert result["status"] == "exploratory_synthetic_overlap_threshold_fixed_reference_audit_not_randomized_itt"
 
 
 def test_observational_estimator_requires_both_assignment_groups():

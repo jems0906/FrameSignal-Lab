@@ -150,16 +150,17 @@ function App() {
   async function loadExtensions() {
     setExtensionLoading(true); setExtensionError('');
     try {
-      const [observational, observationalReplication, observationalRobustness, observationalOverlapAudit, observationalCrossfitAudit, observationalThresholdStress, learned] = await Promise.all([
+      const [observational, observationalReplication, observationalRobustness, observationalOverlapAudit, observationalCrossfitAudit, observationalThresholdStress, observationalThresholdReference, learned] = await Promise.all([
         get<ExtensionReports['observational']>('/api/observational'),
         get<ExtensionReports['observationalReplication']>('/api/observational-replication'),
         get<ExtensionReports['observationalRobustness']>('/api/observational-robustness'),
         get<ExtensionReports['observationalOverlapAudit']>('/api/observational-overlap-audit'),
         get<ExtensionReports['observationalCrossfitAudit']>('/api/observational-crossfit-audit'),
         get<ExtensionReports['observationalThresholdStress']>('/api/observational-threshold-stress'),
+        get<ExtensionReports['observationalThresholdReference']>('/api/observational-threshold-reference-audit'),
         get<ExtensionReports['learned']>('/api/learned-proxy'),
       ]);
-      setExtensions({ observational, observationalReplication, observationalRobustness, observationalOverlapAudit, observationalCrossfitAudit, observationalThresholdStress, learned });
+      setExtensions({ observational, observationalReplication, observationalRobustness, observationalOverlapAudit, observationalCrossfitAudit, observationalThresholdStress, observationalThresholdReference, learned });
     } catch (exception) { setExtensionError((exception as Error).message); }
     finally { setExtensionLoading(false); }
   }
@@ -272,6 +273,11 @@ function App() {
               <p className="footnote">{extensions.observationalThresholdStress.results.warning} Oracle pass rates are available only in this simulated audit; no threshold is selected or recommended.</p>
               <div className="table-scroll"><table><thead><tr><th>Rule</th><th>Propensity range</th><th>ESS floor</th><th>Oracle pass</th><th>In-sample pass</th><th>Cross-fit pass</th><th>In-sample false warning</th><th>Cross-fit false warning</th><th>Cross-fit minus in-sample</th></tr></thead><tbody>{extensions.observationalThresholdStress.results.threshold_summaries.map(row => { const inInterval = row.in_sample.false_warning_familywise_mc_interval; const crossInterval = row.crossfit.false_warning_familywise_mc_interval; const deltaInterval = row.crossfit_minus_in_sample_false_warning_familywise_mc_interval; return <tr key={row.threshold_rule}><td className="mono">{row.threshold_rule}</td><td className="mono">{row.propensity_range[0].toFixed(2)}–{row.propensity_range[1].toFixed(2)}</td><td>{row.minimum_effective_sample_size}</td><td>{pct(row.oracle.pass_rate)}</td><td>{pct(row.in_sample.pass_rate)}</td><td>{pct(row.crossfit.pass_rate)}</td><td>{pct(row.in_sample.false_warning_rate)}<small>[{pct(inInterval[0])}, {pct(inInterval[1])}] MC</small></td><td>{pct(row.crossfit.false_warning_rate)}<small>[{pct(crossInterval[0])}, {pct(crossInterval[1])}] MC</small></td><td className="mono">{signed(row.crossfit_minus_in_sample_false_warning_rate * 100, 1)} pp<small>[{signed(deltaInterval[0] * 100, 1)}, {signed(deltaInterval[1] * 100, 1)}] MC</small></td></tr>; })}</tbody></table></div>
               <div className="science-note">{extensions.observationalThresholdStress.results.familywise_mc_interval_scope} The study compares prespecified rules on this generator only; looser flags do not prove acceptable identification and stricter flags do not prove invalidity.</div>
+            </section>
+            <section className="section"><div className="section-heading"><div><span className="eyebrow">FIXED-REFERENCE THRESHOLD AUDIT</span><h2>Compare every rule against one common oracle criterion.</h2></div><span className="status neutral">Reference 0.05–0.95 · ESS {extensions.observationalThresholdReference.config.oracle_reference_rule.minimum_effective_sample_size}</span></div>
+              <p className="footnote">{extensions.observationalThresholdReference.results.warning} This keeps the oracle reference fixed while candidate rules vary. False/missed costs are unspecified, so no threshold is recommended.</p>
+              <div className="table-scroll"><table><thead><tr><th>Candidate rule</th><th>Range</th><th>ESS floor</th><th>Oracle pass</th><th>In-sample false warning</th><th>In-sample missed warning</th><th>Cross-fit false warning</th><th>Cross-fit missed warning</th></tr></thead><tbody>{extensions.observationalThresholdReference.results.threshold_summaries.map(row => <tr key={row.threshold_rule}><td className="mono">{row.threshold_rule}</td><td className="mono">{row.propensity_range[0].toFixed(2)}–{row.propensity_range[1].toFixed(2)}</td><td>{row.minimum_effective_sample_size}</td><td>{pct(row.oracle.pass_rate)}</td><td>{pct(row.in_sample.false_warning_rate)}</td><td>{pct(row.in_sample.missed_warning_rate)}</td><td>{pct(row.crossfit.false_warning_rate)}</td><td>{pct(row.crossfit.missed_warning_rate)}</td></tr>)}</tbody></table></div>
+              <div className="science-note">The reference is a fixed synthetic convention, not a validated real-world definition of adequate overlap. These rates are generator-specific and do not select a production threshold.</div>
             </section>
             <section className="section"><div className="section-heading"><div><span className="eyebrow">LEARNED HOUSEHOLD SCORE</span><h2>Prediction and treatment-effect agreement are different tests.</h2></div><span className="status neutral">Educational only · not approved</span></div>
               <p className="footnote">Weights fit on training households only; ridge strength selected on validation Brier score; the model is frozen before held-out experiments are generated. Features: qualified starts and viewing days. No assignment, affinity, oracle probability, or late outcome is a score feature.</p>

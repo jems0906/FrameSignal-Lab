@@ -23,6 +23,7 @@ jobs:
       - run: python backend/run_observational_overlap_oracle_audit.py
       - run: python backend/run_observational_crossfit_overlap_audit.py
       - run: python backend/run_observational_overlap_threshold_stress.py
+      - run: python backend/run_observational_overlap_threshold_reference_audit.py
       - run: python backend/run_learned_proxy.py
       - run: python backend/export_metricsteward.py
       - run: python -m pytest -q
@@ -41,6 +42,7 @@ jobs:
             reports/observational_overlap_oracle_audit.json
             reports/observational_crossfit_overlap_audit.json
             reports/observational_overlap_threshold_stress.json
+            reports/observational_overlap_threshold_reference_audit.json
             reports/learned_proxy_extension.json
             reports/metricsteward_handoff.json
             reports/cve-report-1.json
@@ -57,6 +59,7 @@ jobs:
             docs/observational_overlap_oracle_audit_report.md
             docs/observational_crossfit_overlap_audit_report.md
             docs/observational_overlap_threshold_stress_report.md
+            docs/observational_overlap_threshold_reference_audit_report.md
             docs/learned_proxy_report.md
             configs/calibration_followup.json
             configs/calibration_grid_followup.json
@@ -67,6 +70,7 @@ jobs:
             configs/observational_overlap_oracle_audit.json
             configs/observational_crossfit_overlap_audit.json
             configs/observational_overlap_threshold_stress.json
+            configs/observational_overlap_threshold_reference_audit.json
             configs/learned_proxy_extension.json
             docs/validation_report.md
             docs/executive_memo.md

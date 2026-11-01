@@ -1,0 +1,27 @@
+{
+  "study_id": "framesignal-observational-overlap-threshold-reference-v1",
+  "source_config": "observational_overlap_threshold_stress.json",
+  "source_study_id": "framesignal-observational-overlap-threshold-stress-v1",
+  "seed": 30198473,
+  "households_per_replicate": 2000,
+  "replicates_per_profile_cell": 300,
+  "cross_fitting_folds": 5,
+  "unmeasured_confounding": 0.0,
+  "oracle_reference_rule": {
+    "name": "fixed_reference_05_95_ess50",
+    "propensity_range": [0.05, 0.95],
+    "minimum_effective_sample_size": 50
+  },
+  "confidence_level": 0.95,
+  "profile_cells": 8,
+  "threshold_rules": 6,
+  "familywise_cells": 48,
+  "design": "Fresh seed, same fixed eight generator profiles and six candidate threshold rules. Oracle pass/fail is held to one fixed 0.05-0.95/ESS-50 reference while each candidate is evaluated against it.",
+  "monte_carlo_uncertainty": "Bonferroni familywise 95% intervals across 48 profile-by-candidate cells.",
+  "interpretation": "Exploratory synthetic comparison only. The fixed oracle criterion is a study reference, not a validated real-world definition of adequate overlap; no threshold is recommended.",
+  "prohibited_changes": [
+    "Do not vary the fixed oracle reference criterion across candidate rows.",
+    "Do not use oracle assignment probabilities in propensity fitting or AIPW.",
+    "Do not treat this synthetic comparison as production threshold selection."
+  ]
+}
