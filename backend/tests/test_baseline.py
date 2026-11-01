@@ -35,6 +35,8 @@ def test_randomized_simulation_rejects_observational_sensitivity_argument():
 
     with pytest.raises(ValueError, match="applies only to observational"):
         simulate(n=100, seed=3, unmeasured_confounding=0.2)
+    with pytest.raises(ValueError, match="applies only to observational"):
+        simulate(n=100, seed=3, measured_selection_strength=1.5)
 
 
 def test_outcome_only_simulation_preserves_households_without_building_events():

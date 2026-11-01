@@ -296,3 +296,140 @@ def observational_replicated_sensitivity(
         "status": "exploratory_replicated_synthetic_sensitivity_not_randomized_itt",
         "warning": "Monte Carlo results characterize only this constructed selection model. AIPW cannot remove hidden confounding; coverage intervals are not evidence of real-world identification or proxy approval.",
     }
+
+
+def observational_robustness_stress(
+    seed: int = 66752021,
+    n: int = 2000,
+    replicates: int = 300,
+    scenario: str = "helpful",
+    overlap_profiles: tuple[dict, ...] = (
+        {"name": "moderate", "measured_selection_strength": 1.0},
+        {"name": "weak", "measured_selection_strength": 3.0},
+    ),
+    nuisance_profiles: tuple[dict, ...] = (
+        {"name": "correct_both", "propensity_nonlinearity": 0.0, "outcome_nonlinearity": 0.0},
+        {"name": "propensity_misspecified", "propensity_nonlinearity": 2.0, "outcome_nonlinearity": 0.0},
+        {"name": "outcome_misspecified", "propensity_nonlinearity": 0.0, "outcome_nonlinearity": 0.3},
+        {"name": "both_misspecified", "propensity_nonlinearity": 2.0, "outcome_nonlinearity": 0.3},
+    ),
+    confidence_level: float = 0.95,
+) -> dict:
+    if n < 100 or n > 20000 or replicates < 30:
+        raise ValueError("Use 100-20000 households and at least 30 independent replicates per cell.")
+    if not 0 < confidence_level < 1:
+        raise ValueError("confidence_level must be between zero and one.")
+    if scenario not in SCENARIOS:
+        raise ValueError("Robustness stress requires a registered scenario.")
+    if not overlap_profiles or not nuisance_profiles:
+        raise ValueError("At least one overlap and nuisance-model profile is required.")
+    if any(not 0 <= profile["measured_selection_strength"] <= 5 for profile in overlap_profiles):
+        raise ValueError("Measured-selection strengths must be between 0 and 5.")
+    if any(
+        not 0 <= profile["propensity_nonlinearity"] <= 3
+        or not 0 <= profile["outcome_nonlinearity"] <= 0.4
+        for profile in nuisance_profiles
+    ):
+        raise ValueError("Nuisance nonlinearities are outside the supported ranges.")
+
+    cells = len(overlap_profiles) * len(nuisance_profiles)
+    family_alpha = 1 - confidence_level
+    per_cell_alpha = family_alpha / cells
+    z_critical = float(norm.ppf(1 - family_alpha / 2))
+    true_effect = SCENARIOS[scenario].return_effect
+    rows = []
+    for overlap_index, overlap_profile in enumerate(overlap_profiles):
+        for nuisance_index, nuisance_profile in enumerate(nuisance_profiles):
+            biases = []
+            covered = 0
+            overlap_passed = []
+            common_support = []
+            outside_overlap = []
+            effective_sample_sizes = {"0": [], "1": []}
+            assignment_rates = []
+
+            for replicate in range(replicates):
+                replicate_seed = int(np.random.SeedSequence(
+                    [seed, overlap_index, nuisance_index, replicate]
+                ).generate_state(1)[0])
+                data = simulate(
+                    scenario=scenario,
+                    n=n,
+                    seed=replicate_seed,
+                    experiment_id=f"robust-{overlap_index}-{nuisance_index}-{replicate:04d}",
+                    split="observational-robustness-stress",
+                    assignment_mode="observational",
+                    unmeasured_confounding=0.0,
+                    generate_events=False,
+                    measured_selection_strength=overlap_profile["measured_selection_strength"],
+                    propensity_nonlinearity=nuisance_profile["propensity_nonlinearity"],
+                    outcome_nonlinearity=nuisance_profile["outcome_nonlinearity"],
+                )
+                frame = data.households
+                effect, overlap = _aipw_effect(frame)
+                standard_error = overlap["aipw_influence_function_se"]
+                covered += int(effect - z_critical * standard_error <= true_effect <= effect + z_critical * standard_error)
+                biases.append(effect - true_effect)
+                overlap_passed.append(overlap["overlap_check_passed"])
+                common_support.append(overlap["fraction_inside_common_support"])
+                outside_overlap.append(overlap["fraction_outside_overlap_range_0_05_0_95"])
+                assignment_rates.append(float(frame.assignment.mean()))
+                for arm in ("0", "1"):
+                    effective_sample_sizes[arm].append(overlap["ipw_effective_sample_size_by_arm"][arm])
+
+            bias_array = np.asarray(biases)
+            mean_bias = float(bias_array.mean())
+            bias_mc_se = float(bias_array.std(ddof=1) / np.sqrt(replicates))
+            bias_critical = float(student_t.ppf(1 - per_cell_alpha / 2, replicates - 1))
+            coverage = covered / replicates
+            coverage_lower = 0.0 if covered == 0 else float(beta.ppf(per_cell_alpha / 2, covered, replicates - covered + 1))
+            coverage_upper = 1.0 if covered == replicates else float(beta.ppf(1 - per_cell_alpha / 2, covered + 1, replicates - covered))
+            rows.append({
+                "overlap_profile": overlap_profile["name"],
+                "measured_selection_strength": overlap_profile["measured_selection_strength"],
+                "nuisance_profile": nuisance_profile["name"],
+                "propensity_nonlinearity": nuisance_profile["propensity_nonlinearity"],
+                "outcome_nonlinearity": nuisance_profile["outcome_nonlinearity"],
+                "n": n,
+                "replicates": replicates,
+                "known_population_ate": true_effect,
+                "mean_aipw_bias": mean_bias,
+                "aipw_bias_mc_se": bias_mc_se,
+                "aipw_bias_familywise_mc_interval": [
+                    mean_bias - bias_critical * bias_mc_se,
+                    mean_bias + bias_critical * bias_mc_se,
+                ],
+                "aipw_bias_rmse": float(np.sqrt(np.mean(np.square(bias_array)))),
+                "aipw_wald_interval_coverage": coverage,
+                "aipw_wald_covered_replicates": covered,
+                "aipw_wald_coverage_familywise_mc_interval": [coverage_lower, coverage_upper],
+                "overlap_check_pass_rate": float(np.mean(overlap_passed)),
+                "mean_assignment_rate": float(np.mean(assignment_rates)),
+                "mean_fraction_inside_common_support": float(np.mean(common_support)),
+                "mean_fraction_outside_0_05_0_95": float(np.mean(outside_overlap)),
+                "mean_ipw_effective_sample_size_by_arm": {
+                    arm: float(np.mean(values)) for arm, values in effective_sample_sizes.items()
+                },
+            })
+
+    return {
+        "study_id": "framesignal-observational-positivity-misspecification-v1",
+        "seed": seed,
+        "scenario": scenario,
+        "n_per_replicate": n,
+        "replicates_per_cell": replicates,
+        "unmeasured_confounding": 0.0,
+        "overlap_profiles": list(overlap_profiles),
+        "nuisance_profiles": list(nuisance_profiles),
+        "confidence_level": confidence_level,
+        "number_of_cells": cells,
+        "forbidden_estimator_inputs": [
+            "assignment_probability_oracle", "latent_loyalty_oracle", "return_probability",
+            "measured_selection_strength_oracle", "propensity_nonlinearity_oracle", "outcome_nonlinearity_oracle",
+        ],
+        "familywise_mc_interval_scope": "Bonferroni familywise intervals across the fixed overlap-by-nuisance cells; exact Clopper-Pearson intervals for coverage proportions and Student-t intervals for mean bias.",
+        "aipw_interval_method": "Normal Wald intervals using the empirical variance of the AIPW pseudo-outcome within each replicate.",
+        "rows": rows,
+        "status": "exploratory_synthetic_positivity_and_model_robustness_stress_not_randomized_itt",
+        "warning": "The truth and model-correctness labels are exact only under this constructed generator. Monte Carlo summaries do not establish external validity or real-world identification.",
+    }

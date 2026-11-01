@@ -1,0 +1,28 @@
+{
+  "study_id": "framesignal-observational-positivity-misspecification-v1",
+  "seed": 66752021,
+  "scenario": "helpful",
+  "households_per_replicate": 2000,
+  "replicates_per_cell": 300,
+  "unmeasured_confounding": 0.0,
+  "overlap_profiles": [
+    {"name": "moderate", "measured_selection_strength": 1.0},
+    {"name": "weak", "measured_selection_strength": 3.0}
+  ],
+  "nuisance_profiles": [
+    {"name": "correct_both", "propensity_nonlinearity": 0.0, "outcome_nonlinearity": 0.0},
+    {"name": "propensity_misspecified", "propensity_nonlinearity": 2.0, "outcome_nonlinearity": 0.0},
+    {"name": "outcome_misspecified", "propensity_nonlinearity": 0.0, "outcome_nonlinearity": 0.3},
+    {"name": "both_misspecified", "propensity_nonlinearity": 2.0, "outcome_nonlinearity": 0.3}
+  ],
+  "confidence_level": 0.95,
+  "familywise_cells": 8,
+  "design": "Factorial overlap-by-nuisance misspecification stress. Exactly one nuisance model is incorrect in the single-misspecification profiles; hidden confounding is fixed at zero in every cell.",
+  "monte_carlo_uncertainty": "Bonferroni familywise 95% intervals across eight fixed cells; Student-t intervals for mean bias and exact Clopper-Pearson intervals for replicate-level Wald interval coverage.",
+  "interpretation": "Exploratory synthetic robustness study only. Wald interval coverage and overlap diagnostics apply to this constructed generator and do not establish real-world identification or proxy approval.",
+  "prohibited_changes": [
+    "Do not vary hidden confounding in this study; it is fixed at zero to isolate positivity and nuisance-model misspecification.",
+    "Do not combine this stress study with the earlier confounding-strength sensitivity study.",
+    "Do not interpret Monte Carlo coverage as evidence of real-world identification."
+  ]
+}

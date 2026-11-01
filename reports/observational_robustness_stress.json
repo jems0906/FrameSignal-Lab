@@ -1,0 +1,365 @@
+{
+  "config": {
+    "study_id": "framesignal-observational-positivity-misspecification-v1",
+    "seed": 66752021,
+    "scenario": "helpful",
+    "households_per_replicate": 2000,
+    "replicates_per_cell": 300,
+    "unmeasured_confounding": 0.0,
+    "overlap_profiles": [
+      {
+        "name": "moderate",
+        "measured_selection_strength": 1.0
+      },
+      {
+        "name": "weak",
+        "measured_selection_strength": 3.0
+      }
+    ],
+    "nuisance_profiles": [
+      {
+        "name": "correct_both",
+        "propensity_nonlinearity": 0.0,
+        "outcome_nonlinearity": 0.0
+      },
+      {
+        "name": "propensity_misspecified",
+        "propensity_nonlinearity": 2.0,
+        "outcome_nonlinearity": 0.0
+      },
+      {
+        "name": "outcome_misspecified",
+        "propensity_nonlinearity": 0.0,
+        "outcome_nonlinearity": 0.3
+      },
+      {
+        "name": "both_misspecified",
+        "propensity_nonlinearity": 2.0,
+        "outcome_nonlinearity": 0.3
+      }
+    ],
+    "confidence_level": 0.95,
+    "familywise_cells": 8,
+    "design": "Factorial overlap-by-nuisance misspecification stress. Exactly one nuisance model is incorrect in the single-misspecification profiles; hidden confounding is fixed at zero in every cell.",
+    "monte_carlo_uncertainty": "Bonferroni familywise 95% intervals across eight fixed cells; Student-t intervals for mean bias and exact Clopper-Pearson intervals for replicate-level Wald interval coverage.",
+    "interpretation": "Exploratory synthetic robustness study only. Wald interval coverage and overlap diagnostics apply to this constructed generator and do not establish real-world identification or proxy approval.",
+    "prohibited_changes": [
+      "Do not vary hidden confounding in this study; it is fixed at zero to isolate positivity and nuisance-model misspecification.",
+      "Do not combine this stress study with the earlier confounding-strength sensitivity study.",
+      "Do not interpret Monte Carlo coverage as evidence of real-world identification."
+    ]
+  },
+  "config_sha256": "e43970a71de45826c56b4ca33318afa4c1ed76a8e1caf38562bfc40cb9f3ea63",
+  "runtime": {
+    "python": "3.13.3",
+    "numpy": "2.2.6",
+    "pandas": "2.2.3",
+    "scipy": "1.15.3",
+    "framesignal_metrics": "1.0.0"
+  },
+  "results": {
+    "study_id": "framesignal-observational-positivity-misspecification-v1",
+    "seed": 66752021,
+    "scenario": "helpful",
+    "n_per_replicate": 2000,
+    "replicates_per_cell": 300,
+    "unmeasured_confounding": 0.0,
+    "overlap_profiles": [
+      {
+        "name": "moderate",
+        "measured_selection_strength": 1.0
+      },
+      {
+        "name": "weak",
+        "measured_selection_strength": 3.0
+      }
+    ],
+    "nuisance_profiles": [
+      {
+        "name": "correct_both",
+        "propensity_nonlinearity": 0.0,
+        "outcome_nonlinearity": 0.0
+      },
+      {
+        "name": "propensity_misspecified",
+        "propensity_nonlinearity": 2.0,
+        "outcome_nonlinearity": 0.0
+      },
+      {
+        "name": "outcome_misspecified",
+        "propensity_nonlinearity": 0.0,
+        "outcome_nonlinearity": 0.3
+      },
+      {
+        "name": "both_misspecified",
+        "propensity_nonlinearity": 2.0,
+        "outcome_nonlinearity": 0.3
+      }
+    ],
+    "confidence_level": 0.95,
+    "number_of_cells": 8,
+    "forbidden_estimator_inputs": [
+      "assignment_probability_oracle",
+      "latent_loyalty_oracle",
+      "return_probability",
+      "measured_selection_strength_oracle",
+      "propensity_nonlinearity_oracle",
+      "outcome_nonlinearity_oracle"
+    ],
+    "familywise_mc_interval_scope": "Bonferroni familywise intervals across the fixed overlap-by-nuisance cells; exact Clopper-Pearson intervals for coverage proportions and Student-t intervals for mean bias.",
+    "aipw_interval_method": "Normal Wald intervals using the empirical variance of the AIPW pseudo-outcome within each replicate.",
+    "rows": [
+      {
+        "overlap_profile": "moderate",
+        "measured_selection_strength": 1.0,
+        "nuisance_profile": "correct_both",
+        "propensity_nonlinearity": 0.0,
+        "outcome_nonlinearity": 0.0,
+        "n": 2000,
+        "replicates": 300,
+        "known_population_ate": 0.06,
+        "mean_aipw_bias": -0.0007096694317487249,
+        "aipw_bias_mc_se": 0.0013077516557404893,
+        "aipw_bias_familywise_mc_interval": [
+          -0.004311057521919508,
+          0.002891718658422058
+        ],
+        "aipw_bias_rmse": 0.022624273120630062,
+        "aipw_wald_interval_coverage": 0.9533333333333334,
+        "aipw_wald_covered_replicates": 286,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.9096305366880112,
+          0.9801053624860662
+        ],
+        "overlap_check_pass_rate": 1.0,
+        "mean_assignment_rate": 0.4212283333333333,
+        "mean_fraction_inside_common_support": 0.9963566666666668,
+        "mean_fraction_outside_0_05_0_95": 0.0,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 1110.7991073206797,
+          "1": 779.6988039712736
+        }
+      },
+      {
+        "overlap_profile": "moderate",
+        "measured_selection_strength": 1.0,
+        "nuisance_profile": "propensity_misspecified",
+        "propensity_nonlinearity": 2.0,
+        "outcome_nonlinearity": 0.0,
+        "n": 2000,
+        "replicates": 300,
+        "known_population_ate": 0.06,
+        "mean_aipw_bias": 0.0005114542427340525,
+        "aipw_bias_mc_se": 0.0014927780403022092,
+        "aipw_bias_familywise_mc_interval": [
+          -0.0035994738773062617,
+          0.0046223823627743665
+        ],
+        "aipw_bias_rmse": 0.02581761186568877,
+        "aipw_wald_interval_coverage": 0.9533333333333334,
+        "aipw_wald_covered_replicates": 286,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.9096305366880112,
+          0.9801053624860662
+        ],
+        "overlap_check_pass_rate": 1.0,
+        "mean_assignment_rate": 0.42583666666666664,
+        "mean_fraction_inside_common_support": 0.9924183333333334,
+        "mean_fraction_outside_0_05_0_95": 2.4999999999999998e-05,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 987.2216601601565,
+          "1": 623.0929010114548
+        }
+      },
+      {
+        "overlap_profile": "moderate",
+        "measured_selection_strength": 1.0,
+        "nuisance_profile": "outcome_misspecified",
+        "propensity_nonlinearity": 0.0,
+        "outcome_nonlinearity": 0.3,
+        "n": 2000,
+        "replicates": 300,
+        "known_population_ate": 0.06,
+        "mean_aipw_bias": -0.000349115598626033,
+        "aipw_bias_mc_se": 0.0012786820719716911,
+        "aipw_bias_familywise_mc_interval": [
+          -0.003870449611012535,
+          0.003172218413760469
+        ],
+        "aipw_bias_rmse": 0.022113235995994962,
+        "aipw_wald_interval_coverage": 0.9666666666666667,
+        "aipw_wald_covered_replicates": 290,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.9274360916734948,
+          0.9883239552682083
+        ],
+        "overlap_check_pass_rate": 1.0,
+        "mean_assignment_rate": 0.4204766666666666,
+        "mean_fraction_inside_common_support": 0.9964166666666665,
+        "mean_fraction_outside_0_05_0_95": 0.0,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 1111.9378728518302,
+          "1": 777.6723764549254
+        }
+      },
+      {
+        "overlap_profile": "moderate",
+        "measured_selection_strength": 1.0,
+        "nuisance_profile": "both_misspecified",
+        "propensity_nonlinearity": 2.0,
+        "outcome_nonlinearity": 0.3,
+        "n": 2000,
+        "replicates": 300,
+        "known_population_ate": 0.06,
+        "mean_aipw_bias": 0.0020368810703962946,
+        "aipw_bias_mc_se": 0.0014114144015687248,
+        "aipw_bias_familywise_mc_interval": [
+          -0.0018499815413179676,
+          0.005923743682110557
+        ],
+        "aipw_bias_rmse": 0.024490487495529033,
+        "aipw_wald_interval_coverage": 0.9666666666666667,
+        "aipw_wald_covered_replicates": 290,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.9274360916734948,
+          0.9883239552682083
+        ],
+        "overlap_check_pass_rate": 1.0,
+        "mean_assignment_rate": 0.42593499999999995,
+        "mean_fraction_inside_common_support": 0.9928183333333334,
+        "mean_fraction_outside_0_05_0_95": 3.3333333333333335e-05,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 986.7164744633532,
+          "1": 623.584964437947
+        }
+      },
+      {
+        "overlap_profile": "weak",
+        "measured_selection_strength": 3.0,
+        "nuisance_profile": "correct_both",
+        "propensity_nonlinearity": 0.0,
+        "outcome_nonlinearity": 0.0,
+        "n": 2000,
+        "replicates": 300,
+        "known_population_ate": 0.06,
+        "mean_aipw_bias": 0.0007597103185419749,
+        "aipw_bias_mc_se": 0.0017672574999611677,
+        "aipw_bias_familywise_mc_interval": [
+          -0.0041071006579054764,
+          0.005626521294989427
+        ],
+        "aipw_bias_rmse": 0.030568180875669215,
+        "aipw_wald_interval_coverage": 0.9466666666666667,
+        "aipw_wald_covered_replicates": 284,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.9010022495520287,
+          0.9757002027269368
+        ],
+        "overlap_check_pass_rate": 0.8466666666666667,
+        "mean_assignment_rate": 0.4280166666666666,
+        "mean_fraction_inside_common_support": 0.9772083333333335,
+        "mean_fraction_outside_0_05_0_95": 0.03687,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 748.3363291606844,
+          "1": 424.80947447697787
+        }
+      },
+      {
+        "overlap_profile": "weak",
+        "measured_selection_strength": 3.0,
+        "nuisance_profile": "propensity_misspecified",
+        "propensity_nonlinearity": 2.0,
+        "outcome_nonlinearity": 0.0,
+        "n": 2000,
+        "replicates": 300,
+        "known_population_ate": 0.06,
+        "mean_aipw_bias": -0.0001795996769061735,
+        "aipw_bias_mc_se": 0.002310304815990154,
+        "aipw_bias_familywise_mc_interval": [
+          -0.006541896533842615,
+          0.0061826971800302685
+        ],
+        "aipw_bias_rmse": 0.03994930851137911,
+        "aipw_wald_interval_coverage": 0.93,
+        "aipw_wald_covered_replicates": 279,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.8800086309092219,
+          0.9640736630772887
+        ],
+        "overlap_check_pass_rate": 0.0,
+        "mean_assignment_rate": 0.43095166666666673,
+        "mean_fraction_inside_common_support": 0.9574766666666666,
+        "mean_fraction_outside_0_05_0_95": 0.13190833333333332,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 567.2517491801741,
+          "1": 258.37143378906876
+        }
+      },
+      {
+        "overlap_profile": "weak",
+        "measured_selection_strength": 3.0,
+        "nuisance_profile": "outcome_misspecified",
+        "propensity_nonlinearity": 0.0,
+        "outcome_nonlinearity": 0.3,
+        "n": 2000,
+        "replicates": 300,
+        "known_population_ate": 0.06,
+        "mean_aipw_bias": -0.0026007701794989284,
+        "aipw_bias_mc_se": 0.0017052576051814854,
+        "aipw_bias_familywise_mc_interval": [
+          -0.007296841029813672,
+          0.002095300670815815
+        ],
+        "aipw_bias_rmse": 0.029601134303187275,
+        "aipw_wald_interval_coverage": 0.95,
+        "aipw_wald_covered_replicates": 285,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.9052971055089144,
+          0.9779234137279358
+        ],
+        "overlap_check_pass_rate": 0.7966666666666666,
+        "mean_assignment_rate": 0.4294283333333333,
+        "mean_fraction_inside_common_support": 0.9776033333333332,
+        "mean_fraction_outside_0_05_0_95": 0.03651833333333333,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 745.9047659651714,
+          "1": 423.76366435417583
+        }
+      },
+      {
+        "overlap_profile": "weak",
+        "measured_selection_strength": 3.0,
+        "nuisance_profile": "both_misspecified",
+        "propensity_nonlinearity": 2.0,
+        "outcome_nonlinearity": 0.3,
+        "n": 2000,
+        "replicates": 300,
+        "known_population_ate": 0.06,
+        "mean_aipw_bias": 0.0061072627932550775,
+        "aipw_bias_mc_se": 0.002260260751355436,
+        "aipw_bias_familywise_mc_interval": [
+          -0.00011721883127994992,
+          0.012331744417790105
+        ],
+        "aipw_bias_rmse": 0.03955784978227598,
+        "aipw_wald_interval_coverage": 0.9333333333333333,
+        "aipw_wald_covered_replicates": 280,
+        "aipw_wald_coverage_familywise_mc_interval": [
+          0.8841508391131494,
+          0.9664587055107748
+        ],
+        "overlap_check_pass_rate": 0.0,
+        "mean_assignment_rate": 0.431165,
+        "mean_fraction_inside_common_support": 0.959665,
+        "mean_fraction_outside_0_05_0_95": 0.130975,
+        "mean_ipw_effective_sample_size_by_arm": {
+          "0": 572.7649183745061,
+          "1": 249.13832366768185
+        }
+      }
+    ],
+    "status": "exploratory_synthetic_positivity_and_model_robustness_stress_not_randomized_itt",
+    "warning": "The truth and model-correctness labels are exact only under this constructed generator. Monte Carlo summaries do not establish external validity or real-world identification."
+  },
+  "review_status": "Self-review only; no independent peer review has occurred."
+}

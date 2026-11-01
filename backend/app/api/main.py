@@ -60,6 +60,11 @@ def observational_replication():
     return _read_extension_report("observational_replication.json")
 
 
+@app.get("/api/observational-robustness")
+def observational_robustness():
+    return _read_extension_report("observational_robustness_stress.json")
+
+
 @app.get("/api/learned-proxy")
 def learned_proxy_extension():
     return _read_extension_report("learned_proxy_extension.json")

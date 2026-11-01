@@ -44,6 +44,9 @@ def simulate(
     assignment_mode: str = "randomized",
     unmeasured_confounding: float = 0.0,
     generate_events: bool = True,
+    measured_selection_strength: float = 1.0,
+    propensity_nonlinearity: float = 0.0,
+    outcome_nonlinearity: float = 0.0,
 ) -> Simulation:
     if scenario not in SCENARIOS or n < 100 or n > 20000:
         raise ValueError("Use a registered scenario and 100-20000 households.")
@@ -53,8 +56,19 @@ def simulate(
         raise ValueError("assignment_mode must be randomized or observational")
     if not 0 <= unmeasured_confounding <= 1:
         raise ValueError("unmeasured_confounding must be between 0 and 1")
-    if assignment_mode == "randomized" and unmeasured_confounding != 0:
-        raise ValueError("unmeasured_confounding applies only to observational assignment")
+    if not 0 <= measured_selection_strength <= 5:
+        raise ValueError("measured_selection_strength must be between 0 and 5")
+    if not 0 <= propensity_nonlinearity <= 3:
+        raise ValueError("propensity_nonlinearity must be between 0 and 3")
+    if not 0 <= outcome_nonlinearity <= 0.4:
+        raise ValueError("outcome_nonlinearity must be between 0 and 0.4")
+    if assignment_mode == "randomized" and (
+        unmeasured_confounding != 0
+        or measured_selection_strength != 1
+        or propensity_nonlinearity != 0
+        or outcome_nonlinearity != 0
+    ):
+        raise ValueError("unmeasured_confounding applies only to observational assignment; stress parameters are observational-only")
     spec = SCENARIOS[scenario]
     rng = np.random.default_rng(seed)
     assignment = rng.permutation(np.arange(n) % 2) if assignment_mode == "randomized" else None
@@ -63,9 +77,19 @@ def simulate(
     observed_log_opportunity = np.log(opportunity)
     if assignment_mode == "observational":
         latent_loyalty = rng.uniform(-1, 1, n)
-        assignment_probability = expit(-0.3 + 2 * (affinity - 0.5) + 0.25 * observed_log_opportunity + 0.8 * unmeasured_confounding * latent_loyalty)
+        assignment_logit = (
+            -0.3
+            + measured_selection_strength * (2 * (affinity - 0.5) + 0.25 * observed_log_opportunity)
+            + propensity_nonlinearity * (np.square(affinity) - 0.3)
+            + 0.8 * unmeasured_confounding * latent_loyalty
+        )
+        assignment_probability = expit(assignment_logit)
         assignment = rng.binomial(1, assignment_probability)
-        return_probability = 0.40 + 0.25 * affinity + assignment * spec.return_effect * strength + 0.04 * unmeasured_confounding * latent_loyalty
+        outcome_shift = outcome_nonlinearity * (np.square(affinity - 0.5) - 0.05)
+        return_probability = (
+            0.40 + 0.25 * affinity + assignment * spec.return_effect * strength
+            + outcome_shift + 0.04 * unmeasured_confounding * latent_loyalty
+        )
     else:
         assignment_probability = np.full(n, 0.5)
         return_probability = 0.40 + 0.25 * affinity + assignment * spec.return_effect * strength
@@ -90,6 +114,9 @@ def simulate(
         households["assignment_probability_oracle"] = assignment_probability
         households["latent_loyalty_oracle"] = latent_loyalty
         households["unmeasured_confounding_strength_oracle"] = unmeasured_confounding
+        households["measured_selection_strength_oracle"] = measured_selection_strength
+        households["propensity_nonlinearity_oracle"] = propensity_nonlinearity
+        households["outcome_nonlinearity_oracle"] = outcome_nonlinearity
     genres = ["Drama", "Comedy", "Documentary"]
     titles = pd.DataFrame([
         {"title_id": f"t{index:02d}", "title": f"Fictional {genres[index % 3]} {index + 1}",

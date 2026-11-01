@@ -50,18 +50,19 @@ Baseline FrameSignal checks ran locally on 2026-10-31. MetricSteward integration
 |---|---|
 | Observational extension runner | Generated nine scenario/confounding cases from `configs/observational_extension.json`; report status is `exploratory_not_randomized_itt` |
 | Replicated observational runner | Generated nine cells × 200 independent replicates (1,800 total; N=2,000 each) with outcome-only simulation; report includes familywise Monte Carlo intervals for AIPW mean bias and Wald coverage, plus RMSE, overlap, and ESS |
+| Positivity/model-misspecification stress runner | Generated eight factorial cells × 300 independent replicates (2,400 total; N=2,000 each), hidden confounding fixed at zero. Moderate overlap passed all diagnostics; weak-overlap pass rates were 84.7% with both models correct, 79.7% with outcome-only misspecification, and 0% when the propensity model was misspecified. All familywise mean-bias intervals included zero. |
 | Learned-score runner | Generated 54,000 households in disjoint 18,000-household train/validation/held-out splits; validation selected ridge alpha 0.01; held-out experiment sign agreement was 44.4%; status remains educational-only |
-| Focused extension tests | 9 passed for observational estimation, replicated Monte Carlo summaries, hidden-confounding mechanism and oracle exclusion, learned-score split/freeze behavior, and report endpoint guards |
-| Full regression suite | 61 passed; one third-party Starlette/AnyIO deprecation warning |
+| Focused extension tests | Passed for observational estimation, replicated Monte Carlo summaries, independent stress factors and oracle exclusion, learned-score split/freeze behavior, and report endpoint guards |
+| Full regression suite | 63 passed; one third-party Starlette/AnyIO deprecation warning |
 | Python lint | Ruff passed for `backend`, `packages`, and `metricsteward/backend` |
-| Extension report API | TestClient returned the illustrative observational, replicated observational, and learned-score reports with explicit exploratory statuses |
-| FrameSignal frontend | TypeScript production build passed with the replicated-sensitivity panel; Vite reports the existing non-blocking >500 kB chunk advisory |
+| Extension report API | TestClient returned the illustrative, replicated, and robustness-stress observational reports plus the learned-score report with explicit exploratory statuses |
+| FrameSignal frontend | TypeScript production build passed with replicated-sensitivity and positivity/model-stress panels; Vite reports the existing non-blocking >500 kB chunk advisory |
 | MetricSteward frontend | TypeScript production build passed |
 | npm audits | Both frontend audits report zero vulnerabilities |
-| Compose | `docker compose config --quiet` passed; all four images built, including the FrameSignal backend with all three extension reports copied into the image |
-| Extensions browser view | Local UI loaded all nine illustrative observational rows, all nine replicated cells, and three learned-score splits; no error state. At 390px viewport, body width was 375px with no page overflow; evidence tables keep their own horizontal scrolling. |
+| Compose | `docker compose config --quiet` passed; all four images built, including the FrameSignal backend with the positivity/model-stress report copied into the image |
+| Extensions browser view | Local UI loaded the illustrative observational rows, replicated cells, all eight positivity/model-stress cells, and learned-score splits without an error state. At 390px viewport, body width was 375px with no page overflow; evidence tables keep their own horizontal scrolling. |
 | Local API port collision | Existing service on port 8000 was left running. Vite now accepts `FRAMESIGNAL_API_TARGET` (default remains `http://127.0.0.1:8000`); browser check used the current backend on port 8002. |
-| Remote CI | Run [41331810566](https://github.com/jems0906/FrameSignal-Lab/actions/runs/41331810566) passed on commit `4dcfb12d2464a489d64d5a61ea39cf30783fce3f`; all three jobs succeeded, including the replicated runner, full test suite, notebook execution, and artifact upload. |
+| Remote CI | Not run for the current uncommitted stress-study changes. The successful run above applies to the prior replicated-study commit. |
 
 Local execution used Python 3.13.3 with pinned direct scientific dependencies. The notebook environment contains the same pinned packages. Other Python versions are not certified by this local run.
 
@@ -73,6 +74,7 @@ Local execution used Python 3.13.3 with pinned direct scientific dependencies. T
 - Fresh-seed +4 pp follow-up coverage: 94.76%, 95% Wilson Monte Carlo interval 94.31%-95.18%, which includes nominal coverage. The baseline shortfall was not reproduced as a decisive primary finding; this is inconclusive, not proof of calibration. Secondary unadjusted intervals at 0 pp and 10 pp exclude nominal and are exploratory signals only. See `docs/calibration_followup_report.md`.
 - Simultaneous five-effect follow-up: all nominal Bonferroni-adjusted 99% Wilson Monte Carlo intervals include nominal 95%; no familywise signal was detected in this synthetic DGP. Wilson intervals are approximate under discrete counts, so the procedure does not guarantee strict finite-sample coverage. This is not proof of calibration beyond this design. See `docs/calibration_grid_followup_report.md` and `reports/calibration_grid_followup.json`.
 - Exact five-effect follow-up: all Bonferroni-adjusted Clopper-Pearson intervals for Monte Carlo coverage proportions include 95%. The familywise lower bound is exact under independent repetitions and applies only to those proportions, not to the underlying Welch intervals or any other DGP. See `docs/calibration_exact_followup_report.md` and `reports/calibration_exact_followup.json`.
+- Positivity/model-stress study: with hidden confounding fixed at zero, moderate-overlap cells pass overlap checks in all replicates; weak-overlap cells show diagnostics failing more often, including 100% failure when the propensity model is misspecified. All eight familywise mean-bias intervals include zero, so this run does not precisely establish bias in any cell. These findings are limited to the specified generator and AIPW implementation.
 - At the default misleading n=2,000, the return interval crosses zero; the correct policy recommendation is insufficient evidence to advance, not certain harm. Non-significance does not establish equivalence.
 
 ## Tool and Environment Limitations

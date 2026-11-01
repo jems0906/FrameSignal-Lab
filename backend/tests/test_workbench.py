@@ -141,12 +141,18 @@ def test_extension_report_endpoints_are_explicitly_exploratory():
     client = TestClient(app)
     observational = client.get("/api/observational")
     replication = client.get("/api/observational-replication")
+    robustness = client.get("/api/observational-robustness")
     learned = client.get("/api/learned-proxy")
     assert observational.status_code == 200
     assert replication.status_code == 200
+    assert robustness.status_code == 200
     assert learned.status_code == 200
     assert observational.json()["results"]["status"] == "exploratory_not_randomized_itt"
     assert replication.json()["results"]["status"] == "exploratory_replicated_synthetic_sensitivity_not_randomized_itt"
     assert replication.json()["results"]["replicates_per_cell"] == 200
+    assert robustness.json()["results"]["status"] == "exploratory_synthetic_positivity_and_model_robustness_stress_not_randomized_itt"
+    assert robustness.json()["results"]["unmeasured_confounding"] == 0
+    assert robustness.json()["results"]["number_of_cells"] == 8
+    assert "propensity_nonlinearity_oracle" in robustness.json()["results"]["forbidden_estimator_inputs"]
     assert learned.json()["results"]["status"] == "exploratory_educational_only_not_surrogate_approval"
     assert learned.json()["results"]["weight_freeze_before_heldout"]

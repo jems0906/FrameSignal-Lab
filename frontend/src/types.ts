@@ -69,13 +69,27 @@ export type ObservationalReplicationReport = {
   config: { study_id: string; seed: number; households_per_replicate: number; replicates_per_cell: number; confidence_level: number };
   results: {
     status: string; warning: string; familywise_mc_interval_scope: string; aipw_interval_method: string;
-    number_of_cells: number;
+    number_of_cells: number; forbidden_estimator_inputs: string[];
     rows: {
       scenario: string; unmeasured_confounding_strength: number; n: number; replicates: number;
       known_population_ate: number; mean_aipw_bias: number; aipw_bias_familywise_mc_interval: [number, number];
       aipw_bias_rmse: number; aipw_wald_interval_coverage: number;
       aipw_wald_coverage_familywise_mc_interval: [number, number]; overlap_check_pass_rate: number;
       mean_ipw_effective_sample_size_by_arm: Record<string, number>;
+    }[];
+  };
+};
+export type ObservationalRobustnessReport = {
+  config: { study_id: string; seed: number; scenario: string; households_per_replicate: number; replicates_per_cell: number; unmeasured_confounding: number };
+  results: {
+    status: string; warning: string; familywise_mc_interval_scope: string; aipw_interval_method: string;
+    number_of_cells: number;
+    rows: {
+      overlap_profile: string; nuisance_profile: string; measured_selection_strength: number;
+      propensity_nonlinearity: number; outcome_nonlinearity: number; replicates: number;
+      mean_aipw_bias: number; aipw_bias_familywise_mc_interval: [number, number]; aipw_bias_rmse: number;
+      aipw_wald_interval_coverage: number; aipw_wald_coverage_familywise_mc_interval: [number, number];
+      overlap_check_pass_rate: number; mean_ipw_effective_sample_size_by_arm: Record<string, number>;
     }[];
   };
 };
@@ -93,5 +107,6 @@ export type LearnedProxyReport = {
 export type ExtensionReports = {
   observational: ObservationalReport;
   observationalReplication: ObservationalReplicationReport;
+  observationalRobustness: ObservationalRobustnessReport;
   learned: LearnedProxyReport;
 };

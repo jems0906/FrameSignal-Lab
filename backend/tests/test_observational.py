@@ -3,11 +3,13 @@ import pytest
 
 from app.analysis.observational import (
     estimate_observational_effect,
+    _aipw_effect,
     observational_replicated_sensitivity,
+    observational_robustness_stress,
     observational_sensitivity,
 )
 from app.metrics.registry import household_metrics
-from app.simulations.generator import simulate
+from app.simulations.generator import SCENARIOS, simulate
 
 
 def test_observational_aipw_reports_overlap_and_household_uncertainty():
@@ -88,6 +90,79 @@ def test_replicated_sensitivity_reports_bias_coverage_and_familywise_mc_interval
         assert 0 <= coverage_interval[0] <= row["aipw_wald_interval_coverage"] <= coverage_interval[1] <= 1
         assert 0 <= row["overlap_check_pass_rate"] <= 1
         assert row["mean_ipw_effective_sample_size_by_arm"]["0"] > 0
+
+
+def test_stress_generator_varies_overlap_and_nuisance_models_independently():
+    baseline = simulate(
+        "helpful", n=1000, seed=313, assignment_mode="observational", generate_events=False,
+    ).households
+    weak_overlap = simulate(
+        "helpful", n=1000, seed=313, assignment_mode="observational", generate_events=False,
+        measured_selection_strength=3,
+    ).households
+    propensity_misspecified = simulate(
+        "helpful", n=1000, seed=313, assignment_mode="observational", generate_events=False,
+        propensity_nonlinearity=2,
+    ).households
+    outcome_misspecified = simulate(
+        "helpful", n=1000, seed=313, assignment_mode="observational", generate_events=False,
+        outcome_nonlinearity=0.3,
+    ).households
+
+    assert baseline.unmeasured_confounding_strength_oracle.eq(0).all()
+    assert weak_overlap.assignment_probability_oracle.min() < baseline.assignment_probability_oracle.min()
+    assert weak_overlap.assignment_probability_oracle.max() > baseline.assignment_probability_oracle.max()
+    assert not np.allclose(propensity_misspecified.assignment_probability_oracle, baseline.assignment_probability_oracle)
+    np.testing.assert_allclose(
+        propensity_misspecified.return_probability
+        - propensity_misspecified.assignment * SCENARIOS["helpful"].return_effect,
+        baseline.return_probability - baseline.assignment * SCENARIOS["helpful"].return_effect,
+    )
+    np.testing.assert_allclose(outcome_misspecified.assignment_probability_oracle, baseline.assignment_probability_oracle)
+    outcome_shift = outcome_misspecified.return_probability - baseline.return_probability
+    np.testing.assert_allclose(
+        outcome_shift,
+        0.3 * (np.square(baseline.affinity - 0.5) - 0.05),
+    )
+    for data, nonlinearity in (
+        (baseline, 0.0),
+        (weak_overlap, 0.0),
+        (propensity_misspecified, 0.0),
+        (outcome_misspecified, 0.3),
+    ):
+        expected = (
+            0.40 + 0.25 * data.affinity
+            + data.assignment * SCENARIOS["helpful"].return_effect
+            + nonlinearity * (np.square(data.affinity - 0.5) - 0.05)
+        )
+        np.testing.assert_allclose(data.return_probability, expected)
+
+    altered_oracles = baseline.copy()
+    for column in (
+        "assignment_probability_oracle", "latent_loyalty_oracle",
+        "measured_selection_strength_oracle", "propensity_nonlinearity_oracle",
+        "outcome_nonlinearity_oracle", "return_probability",
+    ):
+        altered_oracles[column] = np.random.default_rng(314).permutation(altered_oracles[column].to_numpy())
+    assert _aipw_effect(baseline) == _aipw_effect(altered_oracles)
+
+
+def test_robustness_stress_emits_all_eight_factorial_cells():
+    result = observational_robustness_stress(seed=711, n=300, replicates=30)
+    assert result["number_of_cells"] == 8
+    assert result["unmeasured_confounding"] == 0
+    assert "propensity_nonlinearity_oracle" in result["forbidden_estimator_inputs"]
+    assert result["status"] == "exploratory_synthetic_positivity_and_model_robustness_stress_not_randomized_itt"
+    assert {row["overlap_profile"] for row in result["rows"]} == {"moderate", "weak"}
+    assert {row["nuisance_profile"] for row in result["rows"]} == {
+        "correct_both", "propensity_misspecified", "outcome_misspecified", "both_misspecified",
+    }
+    for row in result["rows"]:
+        lower, upper = row["aipw_bias_familywise_mc_interval"]
+        assert lower <= row["mean_aipw_bias"] <= upper
+        coverage_lower, coverage_upper = row["aipw_wald_coverage_familywise_mc_interval"]
+        assert 0 <= coverage_lower <= row["aipw_wald_interval_coverage"] <= coverage_upper <= 1
+        assert row["overlap_check_pass_rate"] in (0, 1) or 0 < row["overlap_check_pass_rate"] < 1
 
 
 def test_observational_estimator_requires_both_assignment_groups():
