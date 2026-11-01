@@ -1,0 +1,14 @@
+{
+  "households": [
+    {"household_id":"h0","assignment":0,"returned_d29_56":0},
+    {"household_id":"h1","assignment":0,"returned_d29_56":1},
+    {"household_id":"h2","assignment":1,"returned_d29_56":1},
+    {"household_id":"h3","assignment":1,"returned_d29_56":0}
+  ],
+  "exposures":[{"household_id":"h0","impressions":0},{"household_id":"h1","impressions":1},{"household_id":"h2","impressions":3},{"household_id":"h3","impressions":0}],
+  "events":[
+    {"household_id":"h1","day":1,"minutes":1,"qualified":false,"completed":false},
+    {"household_id":"h2","day":2,"minutes":39,"qualified":true,"completed":true},
+    {"household_id":"h2","day":2,"minutes":8,"qualified":true,"completed":false}
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "study_id": "framesignal-return-coverage-followup-20261101-v1",
+  "trigger": "The frozen baseline reported 93.1% interval coverage at a true +4 pp effect, with its 95% Wilson Monte Carlo interval below nominal 95%.",
+  "baseline_seed": 20261031,
+  "seed": 20261101,
+  "households_per_repetition": 2000,
+  "repetitions_per_effect": 10000,
+  "effect_grid": [0.0, 0.02, 0.04, 0.06, 0.10],
+  "primary_effect": 0.04,
+  "secondary_effects_interpretation": "Descriptive calibration checks only; no confirmatory claims across the full grid.",
+  "primary_interval": "Two-sided Welch household difference-in-means 95% interval, unchanged from baseline.",
+  "monte_carlo_interval": "95% Wilson interval for the proportion of repetitions whose target interval contains the known effect.",
+  "decision_rule": {
+    "upper_below_0.95": "Follow-up provides evidence of undercoverage at +4 pp; preserve the estimator and investigate a separately preregistered method study.",
+    "lower_above_0.95": "Follow-up provides evidence of overcoverage at +4 pp; investigate a separately preregistered method study.",
+    "otherwise": "Monte Carlo interval includes nominal coverage; this is inconclusive, not proof of calibration."
+  },
+  "prohibited_changes": [
+    "Do not reuse the baseline seed.",
+    "Do not change the DGP, sample size, effect grid, estimator, interval, or primary effect after observing follow-up results.",
+    "Do not modify the frozen baseline report or analysis plan."
+  ]
+}

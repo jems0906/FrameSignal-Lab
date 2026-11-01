@@ -1,0 +1,7 @@
+[tool.pytest.ini_options]
+pythonpath = ["backend", "packages/framesignal-metrics/src", "metricsteward/backend"]
+testpaths = ["backend/tests", "metricsteward/backend/tests"]
+
+[tool.ruff]
+line-length = 140
+target-version = "py311"

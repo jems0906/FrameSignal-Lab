@@ -1,0 +1,10 @@
+{
+  "include": ["backend", "packages/framesignal-metrics/src", "metricsteward/backend", "notebooks"],
+  "extraPaths": [
+    "backend",
+    "packages/framesignal-metrics/src",
+    "metricsteward/backend"
+  ],
+  "venvPath": ".",
+  "venv": ".venv-1"
+}

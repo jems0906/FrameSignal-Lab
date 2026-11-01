@@ -1,0 +1,162 @@
+{
+  "schema_version": "1.0.0",
+  "destination": "MetricSteward",
+  "integration_status": "handoff_prepared_not_imported",
+  "library": {
+    "name": "framesignal-metrics",
+    "version": "1.0.0",
+    "entrypoint": "framesignal_metrics.calculate_household_metrics",
+    "wheel_filename": "framesignal_metrics-1.0.0-py3-none-any.whl",
+    "wheel_sha256": "98cf14d95cdadc8315a5b06007d021cc6e33a23590ce5095ef6183c6ca5f55f7"
+  },
+  "source_report_sha256": "a9780837d836eb6f299b8a480fae1e575a4b5ce1707bc438321b2fcb705f8e3b",
+  "source_plan_sha256": "cdc2a0806d848193c0d8dfd8828a857861962c17b8b42f4509cc68907109d031",
+  "source_seed": 20261031,
+  "entries": [
+    {
+      "metric_id": "qualified_starts",
+      "definition": {
+        "label": "Qualified starts",
+        "unit": "starts / household",
+        "role": "Primary candidate",
+        "causal": true
+      },
+      "implementation_status": "educational_calculation_available",
+      "approval_status": "not_approved_for_real_world_decisions",
+      "education_use_only": true,
+      "limitations": [
+        "Synthetic household-randomized presentation-policy evidence only.",
+        "Not Netflix retention, an internal content metric, or an artistic-value score.",
+        "Self-review only; no external peer review or real-world validation."
+      ],
+      "surrogate_status": "rejected",
+      "heldout_agreement": {
+        "observed_agreement": 0.4444444444444444,
+        "lower": 0.1111111111111111,
+        "upper": 0.7777777777777778,
+        "noise_lower": 0.2222222222222222,
+        "noise_upper": 0.7777777777777778,
+        "n_experiments": 9,
+        "resolved_target_experiments": 6,
+        "oracle_nonnull_agreement": 0.5,
+        "oracle_null_proxy_positive": 3,
+        "oracle_null_experiments": 3,
+        "draws": 1000,
+        "warning": "Experiment bootstrap interval is descriptive with only nine experiments. Correlated Gaussian effect draws propagate household covariance, but are a measurement-error sensitivity analysis, not a definitive surrogate test. Null-target signs are unstable; oracle non-null agreement is reported separately."
+      },
+      "harmful_oracle_reversals": [
+        "heldout-03",
+        "heldout-06",
+        "heldout-09"
+      ],
+      "agreement_screen_passed": false,
+      "required_agreement_lower_bound": 0.8,
+      "calibration_flags": [
+        "At true effect 4 pp, the Monte Carlo coverage interval excludes nominal 95% coverage. Investigate in a new, prospectively specified simulation study; do not tune this run to pass."
+      ],
+      "promotion_allowed": false
+    },
+    {
+      "metric_id": "viewing_days",
+      "definition": {
+        "label": "Distinct viewing days",
+        "unit": "days / household",
+        "role": "Predefined alternative",
+        "causal": true
+      },
+      "implementation_status": "educational_calculation_available",
+      "approval_status": "not_approved_for_real_world_decisions",
+      "education_use_only": true,
+      "limitations": [
+        "Synthetic household-randomized presentation-policy evidence only.",
+        "Not Netflix retention, an internal content metric, or an artistic-value score.",
+        "Self-review only; no external peer review or real-world validation."
+      ],
+      "surrogate_status": "rejected",
+      "heldout_agreement": {
+        "observed_agreement": 0.4444444444444444,
+        "lower": 0.1111111111111111,
+        "upper": 0.7777777777777778,
+        "noise_lower": 0.2222222222222222,
+        "noise_upper": 0.7777777777777778,
+        "n_experiments": 9,
+        "resolved_target_experiments": 6,
+        "oracle_nonnull_agreement": 0.5,
+        "oracle_null_proxy_positive": 3,
+        "oracle_null_experiments": 3,
+        "draws": 1000,
+        "warning": "Experiment bootstrap interval is descriptive with only nine experiments. Correlated Gaussian effect draws propagate household covariance, but are a measurement-error sensitivity analysis, not a definitive surrogate test. Null-target signs are unstable; oracle non-null agreement is reported separately."
+      },
+      "harmful_oracle_reversals": [
+        "heldout-03",
+        "heldout-06",
+        "heldout-09"
+      ],
+      "agreement_screen_passed": false,
+      "required_agreement_lower_bound": 0.8,
+      "calibration_flags": [
+        "At true effect 4 pp, the Monte Carlo coverage interval excludes nominal 95% coverage. Investigate in a new, prospectively specified simulation study; do not tune this run to pass."
+      ],
+      "promotion_allowed": false
+    },
+    {
+      "metric_id": "watch_minutes",
+      "definition": {
+        "label": "Watch time",
+        "unit": "minutes / household",
+        "role": "Diagnostic",
+        "causal": true
+      },
+      "implementation_status": "educational_calculation_available",
+      "approval_status": "not_approved_for_real_world_decisions",
+      "education_use_only": true,
+      "limitations": [
+        "Synthetic household-randomized presentation-policy evidence only.",
+        "Not Netflix retention, an internal content metric, or an artistic-value score.",
+        "Self-review only; no external peer review or real-world validation."
+      ],
+      "surrogate_status": "not_evaluated_as_surrogate",
+      "promotion_allowed": false
+    },
+    {
+      "metric_id": "completion",
+      "definition": {
+        "label": "Completion among starters",
+        "unit": "proportion of starters",
+        "role": "Descriptive only",
+        "causal": false
+      },
+      "implementation_status": "educational_calculation_available",
+      "approval_status": "not_approved_for_real_world_decisions",
+      "education_use_only": true,
+      "limitations": [
+        "Synthetic household-randomized presentation-policy evidence only.",
+        "Not Netflix retention, an internal content metric, or an artistic-value score.",
+        "Self-review only; no external peer review or real-world validation.",
+        "Conditions on post-assignment starters; not a clean all-household ITT causal comparison."
+      ],
+      "surrogate_status": "descriptive_only",
+      "promotion_allowed": false
+    },
+    {
+      "metric_id": "returned_d29_56",
+      "definition": {
+        "label": "Return during days 29-56",
+        "unit": "proportion of households",
+        "role": "Primary target",
+        "causal": true
+      },
+      "implementation_status": "educational_calculation_available",
+      "approval_status": "not_approved_for_real_world_decisions",
+      "education_use_only": true,
+      "limitations": [
+        "Synthetic household-randomized presentation-policy evidence only.",
+        "Not Netflix retention, an internal content metric, or an artistic-value score.",
+        "Self-review only; no external peer review or real-world validation."
+      ],
+      "surrogate_status": "primary_target",
+      "promotion_allowed": false
+    }
+  ],
+  "promotion_policy": "Import as educational definitions/evidence only. Real-world approval requires new scoped validation and actual review; importing this handoff cannot confer approval."
+}

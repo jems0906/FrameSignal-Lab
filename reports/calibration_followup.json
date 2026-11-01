@@ -1,0 +1,176 @@
+{
+  "study_id": "framesignal-return-coverage-followup-20261101-v1",
+  "config": {
+    "study_id": "framesignal-return-coverage-followup-20261101-v1",
+    "trigger": "The frozen baseline reported 93.1% interval coverage at a true +4 pp effect, with its 95% Wilson Monte Carlo interval below nominal 95%.",
+    "baseline_seed": 20261031,
+    "seed": 20261101,
+    "households_per_repetition": 2000,
+    "repetitions_per_effect": 10000,
+    "effect_grid": [
+      0.0,
+      0.02,
+      0.04,
+      0.06,
+      0.1
+    ],
+    "primary_effect": 0.04,
+    "secondary_effects_interpretation": "Descriptive calibration checks only; no confirmatory claims across the full grid.",
+    "primary_interval": "Two-sided Welch household difference-in-means 95% interval, unchanged from baseline.",
+    "monte_carlo_interval": "95% Wilson interval for the proportion of repetitions whose target interval contains the known effect.",
+    "decision_rule": {
+      "upper_below_0.95": "Follow-up provides evidence of undercoverage at +4 pp; preserve the estimator and investigate a separately preregistered method study.",
+      "lower_above_0.95": "Follow-up provides evidence of overcoverage at +4 pp; investigate a separately preregistered method study.",
+      "otherwise": "Monte Carlo interval includes nominal coverage; this is inconclusive, not proof of calibration."
+    },
+    "prohibited_changes": [
+      "Do not reuse the baseline seed.",
+      "Do not change the DGP, sample size, effect grid, estimator, interval, or primary effect after observing follow-up results.",
+      "Do not modify the frozen baseline report or analysis plan."
+    ]
+  },
+  "config_sha256": "265940393045c7083d764ce22d0339344866f5cc76e51a6ed173462cadcef81f",
+  "baseline_report_sha256": "a9780837d836eb6f299b8a480fae1e575a4b5ce1707bc438321b2fcb705f8e3b",
+  "runtime": {
+    "python": "3.13.3",
+    "numpy": "2.2.6",
+    "pandas": "2.2.3",
+    "scipy": "1.15.3",
+    "framesignal_metrics": "1.0.0"
+  },
+  "baseline_primary_coverage": {
+    "rate": 0.931,
+    "lower": 0.9135852797713627,
+    "upper": 0.9451160544140887
+  },
+  "primary_followup_coverage": {
+    "rate": 0.9476,
+    "lower": 0.9430581464493889,
+    "upper": 0.9517980982091815
+  },
+  "primary_status": "inconclusive",
+  "interpretation": "Monte Carlo interval includes nominal coverage; this is inconclusive, not proof of calibration.",
+  "results": {
+    "seed": 20261101,
+    "repetitions": 10000,
+    "n": 2000,
+    "rows": [
+      {
+        "true_effect": 0.0,
+        "coverage": {
+          "rate": 0.9453,
+          "lower": 0.9406697463604533,
+          "upper": 0.9495882646906221
+        },
+        "rejection_rate": {
+          "rate": 0.0547,
+          "lower": 0.05041173530937794,
+          "upper": 0.05933025363954662
+        },
+        "practical_success": {
+          "rate": 0.0026,
+          "lower": 0.001774988370166453,
+          "upper": 0.003807013208982625
+        },
+        "bias": -0.0002500000000000003,
+        "bias_mc_se": 0.00022607883838191597,
+        "sampling_variance": 0.0005111164116411649,
+        "mean_interval_width": 0.08759462486801149
+      },
+      {
+        "true_effect": 0.02,
+        "coverage": {
+          "rate": 0.9503,
+          "lower": 0.94586491379854,
+          "upper": 0.9543892572688286
+        },
+        "rejection_rate": {
+          "rate": 0.1433,
+          "lower": 0.13656963185994328,
+          "upper": 0.1503043125776974
+        },
+        "practical_success": {
+          "rate": 0.0252,
+          "lower": 0.02230561215682308,
+          "upper": 0.02845903269597141
+        },
+        "bias": -8.099999999999427e-05,
+        "bias_mc_se": 0.0002222951313289188,
+        "sampling_variance": 0.0004941512541254126,
+        "mean_interval_width": 0.08747205006621094
+      },
+      {
+        "true_effect": 0.04,
+        "coverage": {
+          "rate": 0.9476,
+          "lower": 0.9430581464493889,
+          "upper": 0.9517980982091815
+        },
+        "rejection_rate": {
+          "rate": 0.4452,
+          "lower": 0.43548210718246194,
+          "upper": 0.45495997903896424
+        },
+        "practical_success": {
+          "rate": 0.1448,
+          "lower": 0.13803927661919602,
+          "upper": 0.1518335158233327
+        },
+        "bias": 0.0001003999999999658,
+        "bias_mc_se": 0.0002231675432477489,
+        "sampling_variance": 0.0004980375235923587,
+        "mean_interval_width": 0.08727726906642563
+      },
+      {
+        "true_effect": 0.06,
+        "coverage": {
+          "rate": 0.9487,
+          "lower": 0.9442012419043153,
+          "upper": 0.9528541579578396
+        },
+        "rejection_rate": {
+          "rate": 0.7726,
+          "lower": 0.7642809846162261,
+          "upper": 0.7807096594720809
+        },
+        "practical_success": {
+          "rate": 0.4406,
+          "lower": 0.43089423157777473,
+          "upper": 0.45035138742866165
+        },
+        "bias": 0.0002067999999999584,
+        "bias_mc_se": 0.0002241220793376786,
+        "sampling_variance": 0.000502307064466447,
+        "mean_interval_width": 0.08701099041846144
+      },
+      {
+        "true_effect": 0.1,
+        "coverage": {
+          "rate": 0.9546,
+          "lower": 0.9503422349680876,
+          "upper": 0.9585086337132932
+        },
+        "rejection_rate": {
+          "rate": 0.9954,
+          "lower": 0.9938701942845314,
+          "upper": 0.9965493401298022
+        },
+        "practical_success": {
+          "rate": 0.9556,
+          "lower": 0.9513848602462046,
+          "upper": 0.9594652404384348
+        },
+        "bias": 0.0005283999999999706,
+        "bias_mc_se": 0.0002169973459026929,
+        "sampling_variance": 0.00047087848128812956,
+        "mean_interval_width": 0.08626885280230673
+      }
+    ],
+    "calibration_flags": [
+      "At true effect 0 pp, the Monte Carlo coverage interval excludes nominal 95% coverage. Investigate in a new, prospectively specified simulation study; do not tune this run to pass.",
+      "At true effect 10 pp, the Monte Carlo coverage interval excludes nominal 95% coverage. Investigate in a new, prospectively specified simulation study; do not tune this run to pass."
+    ],
+    "scope": "Target inference only, using the same household return DGP. Null rejection is false-positive rate; non-null rejection is two-sided power. Wilson intervals quantify Monte Carlo uncertainty. Candidate-surrogacy certification is not implied."
+  },
+  "review_status": "Self-review only; no independent peer review has occurred."
+}

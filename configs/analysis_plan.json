@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "seed": 20261031,
+  "assignment_unit": "household",
+  "primary_target": "returned_d29_56",
+  "primary_candidate": "qualified_starts",
+  "alternative_candidate": "viewing_days",
+  "short_window_days": 14,
+  "target_window_days": [29, 56],
+  "households_per_experiment": 2000,
+  "experiments_per_split": 9,
+  "splits": ["train", "validation", "heldout"],
+  "practical_target_effect": 0.02,
+  "familywise_alpha": 0.05,
+  "candidate_alpha": 0.025,
+  "agreement_draws": 1000,
+  "operating_repetitions": 1000,
+  "minimum_agreement_lower_bound": 0.80,
+  "decision": "No deployment on a proxy alone; target evidence governs policy decisions.",
+  "stopping_rule": "Fixed horizon; no repeated significance checks or outcome-based extension.",
+  "learning": "No learned weights in MVP; candidates and thresholds frozen before held-out runs."
+}

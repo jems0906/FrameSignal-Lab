@@ -1,0 +1,4884 @@
+{
+  "provenance": {
+    "seed": 20261031,
+    "plan_sha256": "cdc2a0806d848193c0d8dfd8828a857861962c17b8b42f4509cc68907109d031",
+    "runtime": {
+      "python": "3.13.3",
+      "numpy": "2.2.6",
+      "pandas": "2.2.3",
+      "scipy": "1.15.3"
+    },
+    "metric_library": {
+      "name": "framesignal-metrics",
+      "version": "1.0.0"
+    },
+    "review": "Self-review only; no external peer review occurred."
+  },
+  "scenarios": {
+    "helpful": {
+      "scenario": "helpful",
+      "description": "Relevant presentation increases use and later return.",
+      "seed": 20261031,
+      "n": 2000,
+      "events": 4684,
+      "non_viewers": 498,
+      "estimand": "ITT effect of randomized presentation on assigned households returning during days 29-56.",
+      "truth": {
+        "return_effect": 0.06,
+        "label": "Synthetic oracle, not an estimated result"
+      },
+      "plan": {
+        "version": "1.0",
+        "seed": 20261031,
+        "assignment_unit": "household",
+        "primary_target": "returned_d29_56",
+        "primary_candidate": "qualified_starts",
+        "alternative_candidate": "viewing_days",
+        "short_window_days": 14,
+        "target_window_days": [
+          29,
+          56
+        ],
+        "households_per_experiment": 2000,
+        "experiments_per_split": 9,
+        "splits": [
+          "train",
+          "validation",
+          "heldout"
+        ],
+        "practical_target_effect": 0.02,
+        "familywise_alpha": 0.05,
+        "candidate_alpha": 0.025,
+        "agreement_draws": 1000,
+        "operating_repetitions": 1000,
+        "minimum_agreement_lower_bound": 0.8,
+        "decision": "No deployment on a proxy alone; target evidence governs policy decisions.",
+        "stopping_rule": "Fixed horizon; no repeated significance checks or outcome-based extension.",
+        "learning": "No learned weights in MVP; candidates and thresholds frozen before held-out runs."
+      },
+      "metrics": {
+        "qualified_starts": {
+          "label": "Qualified starts",
+          "unit": "starts / household",
+          "role": "Primary candidate",
+          "causal": true,
+          "control_mean": 1.592,
+          "treatment_mean": 3.092,
+          "effect": 1.5,
+          "se": 0.11288851055716793,
+          "lower": 1.2467484642860467,
+          "upper": 1.7532515357139533,
+          "p_value": 2.0442797318154796e-38,
+          "n_control": 1000,
+          "n_treatment": 1000,
+          "alpha": 0.025
+        },
+        "viewing_days": {
+          "label": "Distinct viewing days",
+          "unit": "days / household",
+          "role": "Predefined alternative",
+          "causal": true,
+          "control_mean": 1.414,
+          "treatment_mean": 2.546,
+          "effect": 1.132,
+          "se": 0.08276072339786149,
+          "lower": 0.9463473592322499,
+          "upper": 1.3176526407677498,
+          "p_value": 1.2629711475675658e-40,
+          "n_control": 1000,
+          "n_treatment": 1000,
+          "alpha": 0.025
+        },
+        "watch_minutes": {
+          "label": "Watch time",
+          "unit": "minutes / household",
+          "role": "Diagnostic",
+          "causal": true,
+          "control_mean": 74.47841355974118,
+          "treatment_mean": 177.5439827697902,
+          "effect": 103.06556921004902,
+          "se": 6.705360719765786,
+          "lower": 89.91298520904363,
+          "upper": 116.21815321105441,
+          "p_value": 1.023533498669388e-49,
+          "n_control": 1000,
+          "n_treatment": 1000,
+          "alpha": 0.05
+        },
+        "completion": {
+          "label": "Completion among starters",
+          "unit": "proportion of starters",
+          "role": "Descriptive only",
+          "causal": false,
+          "control_mean": 0.15813253012048192,
+          "treatment_mean": 0.6897374701670644,
+          "effect": 0.5316049400465825,
+          "lower": 0.4917021649085166,
+          "upper": 0.5743352551468678,
+          "se": 0.021126402807791916,
+          "p_value": null,
+          "n_control": 1000,
+          "n_treatment": 1000,
+          "starters_control": 664,
+          "starters_treatment": 838,
+          "warning": "Conditions on post-assignment starts; not an ITT causal effect. Complete households resampled.",
+          "bootstrap_draws": 400
+        },
+        "returned_d29_56": {
+          "label": "Return during days 29-56",
+          "unit": "proportion of households",
+          "role": "Primary target",
+          "causal": true,
+          "control_mean": 0.518,
+          "treatment_mean": 0.578,
+          "effect": 0.05999999999999994,
+          "se": 0.02222804728459264,
+          "lower": 0.016407416683644996,
+          "upper": 0.10359258331635489,
+          "p_value": 0.0070072673379985365,
+          "n_control": 1000,
+          "n_treatment": 1000,
+          "alpha": 0.05
+        }
+      },
+      "prediction": {
+        "metrics": {
+          "qualified_starts": {
+            "correlation": 0.0622788278493192,
+            "lower": 0.014453365904969278,
+            "upper": 0.10581287949612876,
+            "within_arm": [
+              0.02513344179287981,
+              0.06341792015592634
+            ]
+          },
+          "viewing_days": {
+            "correlation": 0.06280293896774448,
+            "lower": 0.02082739678100096,
+            "upper": 0.10132617467964039,
+            "within_arm": [
+              0.03174759736689762,
+              0.05991992056184087
+            ]
+          }
+        },
+        "warning": "Household prediction is not causal surrogacy. Affinity confounds association; pooled correlation also reflects assignment."
+      },
+      "diagnostics": {
+        "rows": [
+          {
+            "label": "Days 0-13",
+            "note": "Registered household denominator; unadjusted policy ITT.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 1.592,
+                "treatment_mean": 3.092,
+                "effect": 1.5,
+                "se": 0.11288851055716793,
+                "lower": 1.2785859419714098,
+                "upper": 1.7214140580285902,
+                "p_value": 2.0442797318154796e-38,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 1.414,
+                "treatment_mean": 2.546,
+                "effect": 1.132,
+                "se": 0.08276072339786149,
+                "lower": 0.9696847812066418,
+                "upper": 1.294315218793358,
+                "p_value": 1.2629711475675658e-40,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 74.47841355974118,
+                "treatment_mean": 177.5439827697902,
+                "effect": 103.06556921004902,
+                "se": 6.705360719765786,
+                "lower": 89.91298520904363,
+                "upper": 116.21815321105441,
+                "p_value": 1.023533498669388e-49,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Days 0-6",
+            "note": "Shorter window; all assigned households retained.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.509,
+                "treatment_mean": 1.019,
+                "effect": 0.5099999999999999,
+                "se": 0.04944697162620784,
+                "lower": 0.41301894267063777,
+                "upper": 0.606981057329362,
+                "p_value": 2.944625547457344e-24,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.465,
+                "treatment_mean": 0.884,
+                "effect": 0.419,
+                "se": 0.04028575358537981,
+                "lower": 0.33998859111420376,
+                "upper": 0.4980114088857962,
+                "p_value": 1.1973040234572787e-24,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 19.32419834073614,
+                "treatment_mean": 49.8610246478816,
+                "effect": 30.53682630714546,
+                "se": 2.6552947136603477,
+                "lower": 25.328294914053085,
+                "upper": 35.74535770023783,
+                "p_value": 2.2173534625840192e-29,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Pooled 99th-percentile cap",
+            "note": "Exploratory winsorization changes the estimand; cap uses both arms.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 1.587,
+                "treatment_mean": 3.04,
+                "effect": 1.453,
+                "se": 0.10632090638785552,
+                "lower": 1.2444723955980033,
+                "upper": 1.6615276044019969,
+                "p_value": 1.6929985248303046e-40,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 1.41,
+                "treatment_mean": 2.521,
+                "effect": 1.111,
+                "se": 0.08029885993528742,
+                "lower": 0.9535143604049561,
+                "upper": 1.268485639595044,
+                "p_value": 1.6579231130485537e-41,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 74.46649521577554,
+                "treatment_mean": 173.89512435971034,
+                "effect": 99.4286291439348,
+                "se": 6.319846301938694,
+                "lower": 87.03267144308379,
+                "upper": 111.82458684478581,
+                "p_value": 5.319308559440482e-52,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Runtime <= 48 minutes",
+            "note": "Event subset only; household denominator unchanged. Not a title-quality causal effect.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.891,
+                "treatment_mean": 1.718,
+                "effect": 0.827,
+                "se": 0.07169892422997527,
+                "lower": 0.6863754299766405,
+                "upper": 0.9676245700233594,
+                "p_value": 1.0199441677752653e-29,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.84,
+                "treatment_mean": 1.528,
+                "effect": 0.6880000000000001,
+                "se": 0.060176716736934366,
+                "lower": 0.5699776866825813,
+                "upper": 0.8060223133174188,
+                "p_value": 2.75402419784034e-29,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 20.91684327349319,
+                "treatment_mean": 49.35296915257842,
+                "effect": 28.43612587908523,
+                "se": 2.0933990015375987,
+                "lower": 24.32996043245046,
+                "upper": 32.542291325719994,
+                "p_value": 8.255518147883948e-40,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Runtime > 48 minutes",
+            "note": "Event subset only; household denominator unchanged. Not a title-quality causal effect.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.701,
+                "treatment_mean": 1.374,
+                "effect": 0.6730000000000002,
+                "se": 0.06121658656336916,
+                "lower": 0.5529336473137841,
+                "upper": 0.7930663526862162,
+                "p_value": 3.1883287963693077e-27,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.654,
+                "treatment_mean": 1.244,
+                "effect": 0.59,
+                "se": 0.052550066693673285,
+                "lower": 0.4869332174968451,
+                "upper": 0.6930667825031549,
+                "p_value": 2.645009266751497e-28,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 53.561570286248,
+                "treatment_mean": 128.19101361721178,
+                "effect": 74.62944333096378,
+                "se": 5.56344918979122,
+                "lower": 63.716802129743066,
+                "upper": 85.5420845321845,
+                "p_value": 6.593010839502585e-39,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Genre: Drama",
+            "note": "Event subset only; household denominator unchanged. Not a title-quality causal effect.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.531,
+                "treatment_mean": 1.069,
+                "effect": 0.5379999999999999,
+                "se": 0.04965625583694107,
+                "lower": 0.44060776810573177,
+                "upper": 0.6353922318942681,
+                "p_value": 1.6244874876421548e-26,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.501,
+                "treatment_mean": 1.0,
+                "effect": 0.499,
+                "se": 0.044564391446366515,
+                "lower": 0.41159532063304255,
+                "upper": 0.5864046793669574,
+                "p_value": 3.665681085853949e-28,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 27.80545205390287,
+                "treatment_mean": 65.9775626940549,
+                "effect": 38.17211064015203,
+                "se": 3.341326657809149,
+                "lower": 31.618257320058355,
+                "upper": 44.7259639602457,
+                "p_value": 4.1418357411246326e-29,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Genre: Comedy",
+            "note": "Event subset only; household denominator unchanged. Not a title-quality causal effect.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.519,
+                "treatment_mean": 1.024,
+                "effect": 0.505,
+                "se": 0.049411582695806304,
+                "lower": 0.408088093856832,
+                "upper": 0.601911906143168,
+                "p_value": 7.409018863030393e-24,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.5,
+                "treatment_mean": 0.961,
+                "effect": 0.46099999999999997,
+                "se": 0.045050066687059506,
+                "lower": 0.3726440263669867,
+                "upper": 0.5493559736330133,
+                "p_value": 6.2923969325564556e-24,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 20.447761526346962,
+                "treatment_mean": 50.87369904740258,
+                "effect": 30.42593752105562,
+                "se": 2.64133714265688,
+                "lower": 25.24499451697583,
+                "upper": 35.60688052513541,
+                "p_value": 1.5884512738181787e-29,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Genre: Documentary",
+            "note": "Event subset only; household denominator unchanged. Not a title-quality causal effect.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.542,
+                "treatment_mean": 0.999,
+                "effect": 0.45699999999999996,
+                "se": 0.05001736435216011,
+                "lower": 0.35889981191408965,
+                "upper": 0.5551001880859103,
+                "p_value": 1.7302548311352563e-19,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.526,
+                "treatment_mean": 0.921,
+                "effect": 0.395,
+                "se": 0.044923280168539574,
+                "lower": 0.30689334664476253,
+                "upper": 0.4831066533552375,
+                "p_value": 3.312618360626514e-18,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 26.22519997949135,
+                "treatment_mean": 60.69272102833272,
+                "effect": 34.46752104884137,
+                "se": 3.1681933155215183,
+                "lower": 28.253142311344497,
+                "upper": 40.68189978633824,
+                "p_value": 1.2797450417057837e-26,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Per impression (diagnostic)",
+            "note": "Post-assignment exposure normalization is NOT the original ITT estimand; zero impressions mapped to zero.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.2845411311103809,
+                "treatment_mean": 0.42243499928788997,
+                "effect": 0.1378938681775091,
+                "se": 0.01223983941756195,
+                "lower": 0.11388967117863064,
+                "upper": 0.16189806517638755,
+                "p_value": 1.380117520740852e-28,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.2680191100784573,
+                "treatment_mean": 0.37515073158846735,
+                "effect": 0.10713162151001004,
+                "se": 0.011651339808039242,
+                "lower": 0.08428151119591401,
+                "upper": 0.12998173182410608,
+                "p_value": 9.189583512883241e-20,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 13.032290378515572,
+                "treatment_mean": 23.932374616635506,
+                "effect": 10.900084238119934,
+                "se": 0.8049734005592791,
+                "lower": 9.321358477010865,
+                "upper": 12.478809999229004,
+                "p_value": 6.031537389760991e-40,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          }
+        ],
+        "caps": {
+          "qualified_starts": 12.0,
+          "viewing_days": 8.0,
+          "watch_minutes": 688.2660457433175
+        },
+        "genre_mix": [
+          {
+            "genre": "Comedy",
+            "events": 1543,
+            "mean_runtime": 62.10239792611795,
+            "watch_minutes": 71321.46057374954
+          },
+          {
+            "genre": "Documentary",
+            "events": 1541,
+            "mean_runtime": 75.86502271252434,
+            "watch_minutes": 86917.92100782406
+          },
+          {
+            "genre": "Drama",
+            "events": 1600,
+            "mean_runtime": 78.1875,
+            "watch_minutes": 93783.01474795777
+          }
+        ],
+        "exposure_by_arm": {
+          "0": {
+            "mean": 5.101,
+            "zero_exposure": 60
+          },
+          "1": {
+            "mean": 6.823,
+            "zero_exposure": 32
+          }
+        },
+        "sampling_variation": {
+          "qualified_starts": {
+            "bootstrap_sd": 0.11992732261261443,
+            "lower": 1.25685,
+            "upper": 1.7321000000000002
+          },
+          "viewing_days": {
+            "bootstrap_sd": 0.08656295348697363,
+            "lower": 0.958375,
+            "upper": 1.2951
+          },
+          "watch_minutes": {
+            "bootstrap_sd": 6.926076462106245,
+            "lower": 89.84350628843234,
+            "upper": 115.98207895113846
+          },
+          "returned_d29_56": {
+            "bootstrap_sd": 0.021700505262575314,
+            "lower": 0.014949999999999956,
+            "upper": 0.10352499999999996
+          }
+        },
+        "bootstrap_draws": 300
+      },
+      "sql": {
+        "passed": true,
+        "failures": [],
+        "counts": {
+          "registered_households": 2000,
+          "households_without_viewing": 498,
+          "missing_outcomes": 0,
+          "duplicate_households": 0,
+          "orphan_events": 0,
+          "invalid_availability": 0,
+          "invalid_watch_time": 0,
+          "invalid_return_window": 0,
+          "itt_left_join_count": 2000
+        },
+        "queries": {
+          "registered_households": "SELECT COUNT(*) FROM households",
+          "households_without_viewing": "SELECT COUNT(*) FROM households h WHERE NOT EXISTS (SELECT 1 FROM events e WHERE e.household_id = h.household_id)",
+          "missing_outcomes": "SELECT COUNT(*) FROM households WHERE outcome_observed != 1 OR returned_d29_56 IS NULL",
+          "duplicate_households": "SELECT COUNT(*) - COUNT(DISTINCT household_id) FROM households",
+          "orphan_events": "SELECT COUNT(*) FROM events e LEFT JOIN households h USING(household_id) WHERE h.household_id IS NULL",
+          "invalid_availability": "SELECT COUNT(*) FROM events e JOIN titles t USING(title_id) WHERE e.day < t.available_day",
+          "invalid_watch_time": "SELECT COUNT(*) FROM events WHERE minutes < 0 OR minutes > runtime_minutes",
+          "invalid_return_window": "SELECT COUNT(*) FROM households WHERE (returned_d29_56 = 1 AND (return_day < 29 OR return_day > 56)) OR (returned_d29_56 = 0 AND return_day != -1)",
+          "itt_left_join_count": "SELECT COUNT(*) FROM (SELECT h.household_id FROM households h LEFT JOIN events e USING(household_id) GROUP BY h.household_id)"
+        }
+      },
+      "memo": {
+        "recommendation": "Evidence insufficient to advance",
+        "reason": "The fixed-horizon target interval does not establish a practically worthwhile benefit. Non-significance is not equivalence.",
+        "starts_target_reversal": false,
+        "proxy_recommendation": "Do not replace the return target with qualified starts.",
+        "limitations": [
+          "Synthetic presentation policy, not real-world evidence or Netflix retention.",
+          "No claim about a title's creative quality or artistic value.",
+          "Nine held-out experiments cannot establish transportability across policies.",
+          "Follow up with new preregistered experiments, equivalence margins, and external validation; do not extend this run until significant."
+        ]
+      }
+    },
+    "unrelated": {
+      "scenario": "unrelated",
+      "description": "Attention-grabbing presentation increases starts without changing return.",
+      "seed": 20261031,
+      "n": 2000,
+      "events": 4955,
+      "non_viewers": 467,
+      "estimand": "ITT effect of randomized presentation on assigned households returning during days 29-56.",
+      "truth": {
+        "return_effect": 0.0,
+        "label": "Synthetic oracle, not an estimated result"
+      },
+      "plan": {
+        "version": "1.0",
+        "seed": 20261031,
+        "assignment_unit": "household",
+        "primary_target": "returned_d29_56",
+        "primary_candidate": "qualified_starts",
+        "alternative_candidate": "viewing_days",
+        "short_window_days": 14,
+        "target_window_days": [
+          29,
+          56
+        ],
+        "households_per_experiment": 2000,
+        "experiments_per_split": 9,
+        "splits": [
+          "train",
+          "validation",
+          "heldout"
+        ],
+        "practical_target_effect": 0.02,
+        "familywise_alpha": 0.05,
+        "candidate_alpha": 0.025,
+        "agreement_draws": 1000,
+        "operating_repetitions": 1000,
+        "minimum_agreement_lower_bound": 0.8,
+        "decision": "No deployment on a proxy alone; target evidence governs policy decisions.",
+        "stopping_rule": "Fixed horizon; no repeated significance checks or outcome-based extension.",
+        "learning": "No learned weights in MVP; candidates and thresholds frozen before held-out runs."
+      },
+      "metrics": {
+        "qualified_starts": {
+          "label": "Qualified starts",
+          "unit": "starts / household",
+          "role": "Primary candidate",
+          "causal": true,
+          "control_mean": 1.511,
+          "treatment_mean": 3.432,
+          "effect": 1.921,
+          "se": 0.12100370612876654,
+          "lower": 1.6495134802244829,
+          "upper": 2.1924865197755175,
+          "p_value": 1.2261636026107928e-52,
+          "n_control": 1000,
+          "n_treatment": 1000,
+          "alpha": 0.025
+        },
+        "viewing_days": {
+          "label": "Distinct viewing days",
+          "unit": "days / household",
+          "role": "Predefined alternative",
+          "causal": true,
+          "control_mean": 1.373,
+          "treatment_mean": 2.785,
+          "effect": 1.4120000000000001,
+          "se": 0.08522857449183291,
+          "lower": 1.220800854672242,
+          "upper": 1.6031991453277583,
+          "p_value": 2.629427618900337e-57,
+          "n_control": 1000,
+          "n_treatment": 1000,
+          "alpha": 0.025
+        },
+        "watch_minutes": {
+          "label": "Watch time",
+          "unit": "minutes / household",
+          "role": "Diagnostic",
+          "causal": true,
+          "control_mean": 72.91891864721629,
+          "treatment_mean": 143.16847440467038,
+          "effect": 70.24955575745409,
+          "se": 5.7932104046951185,
+          "lower": 58.88687746709313,
+          "upper": 81.61223404781505,
+          "p_value": 1.6799901089102074e-32,
+          "n_control": 1000,
+          "n_treatment": 1000,
+          "alpha": 0.05
+        },
+        "completion": {
+          "label": "Completion among starters",
+          "unit": "proportion of starters",
+          "role": "Descriptive only",
+          "causal": false,
+          "control_mean": 0.17313432835820897,
+          "treatment_mean": 0.013904982618771726,
+          "effect": -0.15922934573943723,
+          "lower": -0.1878066201437902,
+          "upper": -0.12895994594757798,
+          "se": 0.014929175084330872,
+          "p_value": null,
+          "n_control": 1000,
+          "n_treatment": 1000,
+          "starters_control": 670,
+          "starters_treatment": 863,
+          "warning": "Conditions on post-assignment starts; not an ITT causal effect. Complete households resampled.",
+          "bootstrap_draws": 400
+        },
+        "returned_d29_56": {
+          "label": "Return during days 29-56",
+          "unit": "proportion of households",
+          "role": "Primary target",
+          "causal": true,
+          "control_mean": 0.518,
+          "treatment_mean": 0.508,
+          "effect": -0.010000000000000009,
+          "se": 0.02236318653752439,
+          "lower": -0.053857608343434525,
+          "upper": 0.03385760834343451,
+          "p_value": 0.6548055068165819,
+          "n_control": 1000,
+          "n_treatment": 1000,
+          "alpha": 0.05
+        }
+      },
+      "prediction": {
+        "metrics": {
+          "qualified_starts": {
+            "correlation": 0.04679170828120975,
+            "lower": -0.00046216733897510074,
+            "upper": 0.09044596060806985,
+            "within_arm": [
+              -0.004119266449183934,
+              0.08741110418799015
+            ]
+          },
+          "viewing_days": {
+            "correlation": 0.04576916527330958,
+            "lower": 0.006734735335469302,
+            "upper": 0.0853393959723032,
+            "within_arm": [
+              -0.011175079367066324,
+              0.09592148141150118
+            ]
+          }
+        },
+        "warning": "Household prediction is not causal surrogacy. Affinity confounds association; pooled correlation also reflects assignment."
+      },
+      "diagnostics": {
+        "rows": [
+          {
+            "label": "Days 0-13",
+            "note": "Registered household denominator; unadjusted policy ITT.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 1.511,
+                "treatment_mean": 3.432,
+                "effect": 1.921,
+                "se": 0.12100370612876654,
+                "lower": 1.6836484382554193,
+                "upper": 2.1583515617445808,
+                "p_value": 1.2261636026107928e-52,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 1.373,
+                "treatment_mean": 2.785,
+                "effect": 1.4120000000000001,
+                "se": 0.08522857449183291,
+                "lower": 1.244837303031373,
+                "upper": 1.5791626969686272,
+                "p_value": 2.629427618900337e-57,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 72.91891864721629,
+                "treatment_mean": 143.16847440467038,
+                "effect": 70.24955575745409,
+                "se": 5.7932104046951185,
+                "lower": 58.88687746709313,
+                "upper": 81.61223404781505,
+                "p_value": 1.6799901089102074e-32,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Days 0-6",
+            "note": "Shorter window; all assigned households retained.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.493,
+                "treatment_mean": 1.061,
+                "effect": 0.568,
+                "se": 0.04943352782953765,
+                "lower": 0.4710404912992562,
+                "upper": 0.6649595087007437,
+                "p_value": 1.915266264946057e-29,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.458,
+                "treatment_mean": 0.93,
+                "effect": 0.47200000000000003,
+                "se": 0.04068158048786934,
+                "lower": 0.3922096951374496,
+                "upper": 0.5517903048625504,
+                "p_value": 5.0340660881855084e-30,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 18.92004192843487,
+                "treatment_mean": 35.43177260069189,
+                "effect": 16.511730672257023,
+                "se": 2.1010310871173368,
+                "lower": 12.391033464641819,
+                "upper": 20.63242787987223,
+                "p_value": 6.5929434374580476e-15,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Pooled 99th-percentile cap",
+            "note": "Exploratory winsorization changes the estimand; cap uses both arms.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 1.51001,
+                "treatment_mean": 3.36019,
+                "effect": 1.8501799999999997,
+                "se": 0.11313263878190835,
+                "lower": 1.628276230571691,
+                "upper": 2.0720837694283087,
+                "p_value": 1.0378188141936513e-55,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 1.372,
+                "treatment_mean": 2.777,
+                "effect": 1.405,
+                "se": 0.08446313409423678,
+                "lower": 1.2393391027189868,
+                "upper": 1.5706608972810132,
+                "p_value": 9.61919693007444e-58,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 72.6184459868429,
+                "treatment_mean": 140.46901235742797,
+                "effect": 67.85056637058507,
+                "se": 5.471215989041639,
+                "lower": 57.119676502839866,
+                "upper": 78.58145623833028,
+                "p_value": 6.75147422457785e-34,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Runtime <= 48 minutes",
+            "note": "Event subset only; household denominator unchanged. Not a title-quality causal effect.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.836,
+                "treatment_mean": 1.884,
+                "effect": 1.048,
+                "se": 0.07492170087005007,
+                "lower": 0.901044477678328,
+                "upper": 1.1949555223216721,
+                "p_value": 5.078515082938171e-42,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.796,
+                "treatment_mean": 1.687,
+                "effect": 0.891,
+                "se": 0.06197786908450673,
+                "lower": 0.7694396019993066,
+                "upper": 1.0125603980006934,
+                "p_value": 2.5075824406976286e-44,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 20.27995737362151,
+                "treatment_mean": 38.686064969415106,
+                "effect": 18.406107595793596,
+                "se": 1.7371350407387052,
+                "lower": 14.999051854712224,
+                "upper": 21.813163336874968,
+                "p_value": 1.7812492372824544e-25,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Runtime > 48 minutes",
+            "note": "Event subset only; household denominator unchanged. Not a title-quality causal effect.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.675,
+                "treatment_mean": 1.548,
+                "effect": 0.873,
+                "se": 0.06529421363592898,
+                "lower": 0.7449270237779373,
+                "upper": 1.0010729762220627,
+                "p_value": 1.0784100739589249e-38,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.644,
+                "treatment_mean": 1.38,
+                "effect": 0.7359999999999999,
+                "se": 0.055244148250433875,
+                "lower": 0.6276453978872567,
+                "upper": 0.844354602112743,
+                "p_value": 1.436939535494979e-38,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 52.63896127359478,
+                "treatment_mean": 104.48240943525528,
+                "effect": 51.8434481616605,
+                "se": 4.82671490031905,
+                "lower": 42.37656282417946,
+                "upper": 61.310333499141535,
+                "p_value": 4.3461823989635384e-26,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Genre: Drama",
+            "note": "Event subset only; household denominator unchanged. Not a title-quality causal effect.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.5,
+                "treatment_mean": 1.15,
+                "effect": 0.6499999999999999,
+                "se": 0.05450202262733439,
+                "lower": 0.5430941387969656,
+                "upper": 0.7569058612030343,
+                "p_value": 1.984384785627927e-31,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.488,
+                "treatment_mean": 1.068,
+                "effect": 0.5800000000000001,
+                "se": 0.04857562754706924,
+                "lower": 0.4847229231095846,
+                "upper": 0.6752770768904155,
+                "p_value": 1.442704626792178e-31,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 26.656764215962397,
+                "treatment_mean": 54.34723098534722,
+                "effect": 27.69046676938482,
+                "se": 2.971215464011177,
+                "lower": 21.862793990255575,
+                "upper": 33.518139548514064,
+                "p_value": 3.5447755403057624e-20,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Genre: Comedy",
+            "note": "Event subset only; household denominator unchanged. Not a title-quality causal effect.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.489,
+                "treatment_mean": 1.152,
+                "effect": 0.6629999999999999,
+                "se": 0.05127771840092346,
+                "lower": 0.5624222356856484,
+                "upper": 0.7635777643143514,
+                "p_value": 1.8368449579520944e-36,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.469,
+                "treatment_mean": 1.065,
+                "effect": 0.596,
+                "se": 0.045407883411098075,
+                "lower": 0.5069385246234138,
+                "upper": 0.6850614753765861,
+                "p_value": 1.4985539874846447e-37,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 19.938546599139634,
+                "treatment_mean": 39.5438283394852,
+                "effect": 19.605281740345568,
+                "se": 2.1741737238629897,
+                "lower": 15.341148366152568,
+                "upper": 23.86941511453857,
+                "p_value": 4.750674194083961e-19,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Genre: Documentary",
+            "note": "Event subset only; household denominator unchanged. Not a title-quality causal effect.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.522,
+                "treatment_mean": 1.13,
+                "effect": 0.6079999999999999,
+                "se": 0.051315195110700394,
+                "lower": 0.5073511655935854,
+                "upper": 0.7086488344064144,
+                "p_value": 3.731151814345345e-31,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.506,
+                "treatment_mean": 1.061,
+                "effect": 0.5549999999999999,
+                "se": 0.04601478414988339,
+                "lower": 0.46474931806843267,
+                "upper": 0.6452506819315672,
+                "p_value": 3.219137655887618e-32,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 26.32360783211426,
+                "treatment_mean": 49.27741507983796,
+                "effect": 22.9538072477237,
+                "se": 2.689316024364889,
+                "lower": 17.679351385014986,
+                "upper": 28.22826311043241,
+                "p_value": 2.894122356621241e-17,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Per impression (diagnostic)",
+            "note": "Post-assignment exposure normalization is NOT the original ITT estimand; zero impressions mapped to zero.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.27759958887969993,
+                "treatment_mean": 0.4703884870339198,
+                "effect": 0.19278889815421985,
+                "se": 0.012181375972772208,
+                "lower": 0.16889934227742442,
+                "upper": 0.21667845403101527,
+                "p_value": 3.0874983317253473e-53,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.26505185229897676,
+                "treatment_mean": 0.4154597860605942,
+                "effect": 0.15040793376161743,
+                "se": 0.011555598024501982,
+                "lower": 0.1277456458572167,
+                "upper": 0.17307022166601815,
+                "p_value": 3.0996012262757957e-37,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 13.373105952401476,
+                "treatment_mean": 19.2810952313649,
+                "effect": 5.907989278963425,
+                "se": 0.6993881540888975,
+                "lower": 4.536378980906765,
+                "upper": 7.279599577020086,
+                "p_value": 5.665457985641328e-17,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          }
+        ],
+        "caps": {
+          "qualified_starts": 13.009999999999991,
+          "viewing_days": 9.0,
+          "watch_minutes": 620.8009168289718
+        },
+        "genre_mix": [
+          {
+            "genre": "Comedy",
+            "events": 1645,
+            "mean_runtime": 61.01155015197568,
+            "watch_minutes": 59482.374938624846
+          },
+          {
+            "genre": "Documentary",
+            "events": 1655,
+            "mean_runtime": 76.54380664652568,
+            "watch_minutes": 75601.02291195223
+          },
+          {
+            "genre": "Drama",
+            "events": 1655,
+            "mean_runtime": 82.10271903323263,
+            "watch_minutes": 81003.9952013096
+          }
+        ],
+        "exposure_by_arm": {
+          "0": {
+            "mean": 4.975,
+            "zero_exposure": 64
+          },
+          "1": {
+            "mean": 6.778,
+            "zero_exposure": 34
+          }
+        },
+        "sampling_variation": {
+          "qualified_starts": {
+            "bootstrap_sd": 0.11936640027216763,
+            "lower": 1.6889999999999998,
+            "upper": 2.1386249999999998
+          },
+          "viewing_days": {
+            "bootstrap_sd": 0.08340141236984107,
+            "lower": 1.242475,
+            "upper": 1.551675
+          },
+          "watch_minutes": {
+            "bootstrap_sd": 5.969985479433367,
+            "lower": 58.70449758229141,
+            "upper": 82.607325500119
+          },
+          "returned_d29_56": {
+            "bootstrap_sd": 0.022421653761790224,
+            "lower": -0.054525000000000046,
+            "upper": 0.028525000000000002
+          }
+        },
+        "bootstrap_draws": 300
+      },
+      "sql": {
+        "passed": true,
+        "failures": [],
+        "counts": {
+          "registered_households": 2000,
+          "households_without_viewing": 467,
+          "missing_outcomes": 0,
+          "duplicate_households": 0,
+          "orphan_events": 0,
+          "invalid_availability": 0,
+          "invalid_watch_time": 0,
+          "invalid_return_window": 0,
+          "itt_left_join_count": 2000
+        },
+        "queries": {
+          "registered_households": "SELECT COUNT(*) FROM households",
+          "households_without_viewing": "SELECT COUNT(*) FROM households h WHERE NOT EXISTS (SELECT 1 FROM events e WHERE e.household_id = h.household_id)",
+          "missing_outcomes": "SELECT COUNT(*) FROM households WHERE outcome_observed != 1 OR returned_d29_56 IS NULL",
+          "duplicate_households": "SELECT COUNT(*) - COUNT(DISTINCT household_id) FROM households",
+          "orphan_events": "SELECT COUNT(*) FROM events e LEFT JOIN households h USING(household_id) WHERE h.household_id IS NULL",
+          "invalid_availability": "SELECT COUNT(*) FROM events e JOIN titles t USING(title_id) WHERE e.day < t.available_day",
+          "invalid_watch_time": "SELECT COUNT(*) FROM events WHERE minutes < 0 OR minutes > runtime_minutes",
+          "invalid_return_window": "SELECT COUNT(*) FROM households WHERE (returned_d29_56 = 1 AND (return_day < 29 OR return_day > 56)) OR (returned_d29_56 = 0 AND return_day != -1)",
+          "itt_left_join_count": "SELECT COUNT(*) FROM (SELECT h.household_id FROM households h LEFT JOIN events e USING(household_id) GROUP BY h.household_id)"
+        }
+      },
+      "memo": {
+        "recommendation": "Evidence insufficient to advance",
+        "reason": "The fixed-horizon target interval does not establish a practically worthwhile benefit. Non-significance is not equivalence.",
+        "starts_target_reversal": true,
+        "proxy_recommendation": "Do not replace the return target with qualified starts.",
+        "limitations": [
+          "Synthetic presentation policy, not real-world evidence or Netflix retention.",
+          "No claim about a title's creative quality or artistic value.",
+          "Nine held-out experiments cannot establish transportability across policies.",
+          "Follow up with new preregistered experiments, equivalence margins, and external validation; do not extend this run until significant."
+        ]
+      }
+    },
+    "misleading": {
+      "scenario": "misleading",
+      "description": "Aggressive presentation increases starts but reduces later return.",
+      "seed": 20261031,
+      "n": 2000,
+      "events": 5403,
+      "non_viewers": 452,
+      "estimand": "ITT effect of randomized presentation on assigned households returning during days 29-56.",
+      "truth": {
+        "return_effect": -0.06,
+        "label": "Synthetic oracle, not an estimated result"
+      },
+      "plan": {
+        "version": "1.0",
+        "seed": 20261031,
+        "assignment_unit": "household",
+        "primary_target": "returned_d29_56",
+        "primary_candidate": "qualified_starts",
+        "alternative_candidate": "viewing_days",
+        "short_window_days": 14,
+        "target_window_days": [
+          29,
+          56
+        ],
+        "households_per_experiment": 2000,
+        "experiments_per_split": 9,
+        "splits": [
+          "train",
+          "validation",
+          "heldout"
+        ],
+        "practical_target_effect": 0.02,
+        "familywise_alpha": 0.05,
+        "candidate_alpha": 0.025,
+        "agreement_draws": 1000,
+        "operating_repetitions": 1000,
+        "minimum_agreement_lower_bound": 0.8,
+        "decision": "No deployment on a proxy alone; target evidence governs policy decisions.",
+        "stopping_rule": "Fixed horizon; no repeated significance checks or outcome-based extension.",
+        "learning": "No learned weights in MVP; candidates and thresholds frozen before held-out runs."
+      },
+      "metrics": {
+        "qualified_starts": {
+          "label": "Qualified starts",
+          "unit": "starts / household",
+          "role": "Primary candidate",
+          "causal": true,
+          "control_mean": 1.586,
+          "treatment_mean": 3.543,
+          "effect": 1.957,
+          "se": 0.12387130054657172,
+          "lower": 1.6790838313237098,
+          "upper": 2.2349161686762904,
+          "p_value": 3.0848927830731677e-52,
+          "n_control": 1000,
+          "n_treatment": 1000,
+          "alpha": 0.025
+        },
+        "viewing_days": {
+          "label": "Distinct viewing days",
+          "unit": "days / household",
+          "role": "Predefined alternative",
+          "causal": true,
+          "control_mean": 1.425,
+          "treatment_mean": 2.836,
+          "effect": 1.4109999999999998,
+          "se": 0.0851747247352977,
+          "lower": 1.2199262644640363,
+          "upper": 1.6020737355359633,
+          "p_value": 2.0867614256295983e-57,
+          "n_control": 1000,
+          "n_treatment": 1000,
+          "alpha": 0.025
+        },
+        "watch_minutes": {
+          "label": "Watch time",
+          "unit": "minutes / household",
+          "role": "Diagnostic",
+          "causal": true,
+          "control_mean": 75.1996827528268,
+          "treatment_mean": 97.97568132102401,
+          "effect": 22.77599856819721,
+          "se": 4.752256183931095,
+          "lower": 13.4560990479318,
+          "upper": 32.09589808846262,
+          "p_value": 1.7671584491960715e-06,
+          "n_control": 1000,
+          "n_treatment": 1000,
+          "alpha": 0.05
+        },
+        "completion": {
+          "label": "Completion among starters",
+          "unit": "proportion of starters",
+          "role": "Descriptive only",
+          "causal": false,
+          "control_mean": 0.16666666666666666,
+          "treatment_mean": 0.0,
+          "effect": -0.16666666666666666,
+          "lower": -0.19826369828833773,
+          "upper": -0.14031907446501726,
+          "se": 0.01523038467160402,
+          "p_value": null,
+          "n_control": 1000,
+          "n_treatment": 1000,
+          "starters_control": 678,
+          "starters_treatment": 870,
+          "warning": "Conditions on post-assignment starts; not an ITT causal effect. Complete households resampled.",
+          "bootstrap_draws": 400
+        },
+        "returned_d29_56": {
+          "label": "Return during days 29-56",
+          "unit": "proportion of households",
+          "role": "Primary target",
+          "causal": true,
+          "control_mean": 0.518,
+          "treatment_mean": 0.481,
+          "effect": -0.03700000000000003,
+          "se": 0.0223565385248883,
+          "lower": -0.08084457057300509,
+          "upper": 0.00684457057300502,
+          "p_value": 0.09808219921468432,
+          "n_control": 1000,
+          "n_treatment": 1000,
+          "alpha": 0.05
+        }
+      },
+      "prediction": {
+        "metrics": {
+          "qualified_starts": {
+            "correlation": 0.027948311279720056,
+            "lower": -0.017399807028238404,
+            "upper": 0.07058877636158019,
+            "within_arm": [
+              0.0026153118272278677,
+              0.067456708305827
+            ]
+          },
+          "viewing_days": {
+            "correlation": 0.02493942148992963,
+            "lower": -0.025049950477537657,
+            "upper": 0.07029687391113337,
+            "within_arm": [
+              0.009015151714722763,
+              0.06296125603537288
+            ]
+          }
+        },
+        "warning": "Household prediction is not causal surrogacy. Affinity confounds association; pooled correlation also reflects assignment."
+      },
+      "diagnostics": {
+        "rows": [
+          {
+            "label": "Days 0-13",
+            "note": "Registered household denominator; unadjusted policy ITT.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 1.586,
+                "treatment_mean": 3.543,
+                "effect": 1.957,
+                "se": 0.12387130054657172,
+                "lower": 1.7140264995971652,
+                "upper": 2.199973500402835,
+                "p_value": 3.0848927830731677e-52,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 1.425,
+                "treatment_mean": 2.836,
+                "effect": 1.4109999999999998,
+                "se": 0.0851747247352977,
+                "lower": 1.2439461563575298,
+                "upper": 1.5780538436424698,
+                "p_value": 2.0867614256295983e-57,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 75.1996827528268,
+                "treatment_mean": 97.97568132102401,
+                "effect": 22.77599856819721,
+                "se": 4.752256183931095,
+                "lower": 13.4560990479318,
+                "upper": 32.09589808846262,
+                "p_value": 1.7671584491960715e-06,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Days 0-6",
+            "note": "Shorter window; all assigned households retained.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.516,
+                "treatment_mean": 1.084,
+                "effect": 0.5680000000000001,
+                "se": 0.04922510651193262,
+                "lower": 0.4714481482906928,
+                "upper": 0.6645518517093073,
+                "p_value": 1.1821418719770431e-29,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.483,
+                "treatment_mean": 0.939,
+                "effect": 0.45599999999999996,
+                "se": 0.040182142857301734,
+                "lower": 0.37719015316579074,
+                "upper": 0.5348098468342092,
+                "p_value": 7.435208681371025e-29,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 20.338043806943027,
+                "treatment_mean": 24.49904194875458,
+                "effect": 4.160998141811554,
+                "se": 1.7146866396147005,
+                "lower": 0.7982315711495169,
+                "upper": 7.523764712473591,
+                "p_value": 0.01532579772446382,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Pooled 99th-percentile cap",
+            "note": "Exploratory winsorization changes the estimand; cap uses both arms.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 1.58001,
+                "treatment_mean": 3.4661899999999997,
+                "effect": 1.8861799999999997,
+                "se": 0.11367153778454087,
+                "lower": 1.6632215297464772,
+                "upper": 2.109138470253522,
+                "p_value": 3.091195634891429e-57,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 1.423,
+                "treatment_mean": 2.804,
+                "effect": 1.3809999999999998,
+                "se": 0.08258617000125067,
+                "lower": 1.2190252649587554,
+                "upper": 1.5429747350412442,
+                "p_value": 1.8365468094798453e-58,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 73.57540136194035,
+                "treatment_mean": 96.17670430492925,
+                "effect": 22.601302942988895,
+                "se": 4.342097557296809,
+                "lower": 14.085785158516622,
+                "upper": 31.116820727461167,
+                "p_value": 2.1373570110728398e-07,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Runtime <= 48 minutes",
+            "note": "Event subset only; household denominator unchanged. Not a title-quality causal effect.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.863,
+                "treatment_mean": 1.967,
+                "effect": 1.104,
+                "se": 0.07651141088750092,
+                "lower": 0.9539241344845983,
+                "upper": 1.2540758655154018,
+                "p_value": 2.1182369088039848e-44,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.814,
+                "treatment_mean": 1.741,
+                "effect": 0.9270000000000002,
+                "se": 0.06346140835460833,
+                "lower": 0.8025279532896167,
+                "upper": 1.0514720467103837,
+                "p_value": 1.4157151698113064e-45,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 20.653669507477346,
+                "treatment_mean": 27.001172101856998,
+                "effect": 6.347502594379652,
+                "se": 1.3731135012789566,
+                "lower": 3.654616326362568,
+                "upper": 9.040388862396735,
+                "p_value": 4.03004473254214e-06,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Runtime > 48 minutes",
+            "note": "Event subset only; household denominator unchanged. Not a title-quality causal effect.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.723,
+                "treatment_mean": 1.576,
+                "effect": 0.8530000000000001,
+                "se": 0.0675948523488591,
+                "lower": 0.7204196603796015,
+                "upper": 0.9855803396203987,
+                "p_value": 6.32001290413674e-35,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.674,
+                "treatment_mean": 1.386,
+                "effect": 0.7119999999999999,
+                "se": 0.054494932770833816,
+                "lower": 0.6051190796178106,
+                "upper": 0.8188809203821891,
+                "p_value": 2.5664768068269225e-37,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 54.54601324534946,
+                "treatment_mean": 70.97450921916703,
+                "effect": 16.428495973817576,
+                "se": 3.986691307564496,
+                "lower": 8.609987549362629,
+                "upper": 24.247004398272523,
+                "p_value": 3.9292089987000045e-05,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Genre: Drama",
+            "note": "Event subset only; household denominator unchanged. Not a title-quality causal effect.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.524,
+                "treatment_mean": 1.161,
+                "effect": 0.637,
+                "se": 0.052203718528743025,
+                "lower": 0.5346073700187225,
+                "upper": 0.7393926299812775,
+                "p_value": 7.55157368472008e-33,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.503,
+                "treatment_mean": 1.069,
+                "effect": 0.566,
+                "se": 0.04628576857277377,
+                "lower": 0.47521792801803264,
+                "upper": 0.6567820719819673,
+                "p_value": 4.882643951886592e-33,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 26.45514924073458,
+                "treatment_mean": 34.686801168743244,
+                "effect": 8.231651928008663,
+                "se": 2.3563973272979957,
+                "lower": 3.6103979176997587,
+                "upper": 12.852905938317567,
+                "p_value": 0.0004874370721466155,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Genre: Comedy",
+            "note": "Event subset only; household denominator unchanged. Not a title-quality causal effect.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.515,
+                "treatment_mean": 1.172,
+                "effect": 0.6569999999999999,
+                "se": 0.0520086136701979,
+                "lower": 0.5549911980909109,
+                "upper": 0.7590088019090889,
+                "p_value": 5.241145510557405e-35,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.499,
+                "treatment_mean": 1.088,
+                "effect": 0.5890000000000001,
+                "se": 0.046673691020032194,
+                "lower": 0.49745744603722003,
+                "upper": 0.6805425539627801,
+                "p_value": 5.380409579747928e-35,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 21.91797934130425,
+                "treatment_mean": 28.53771187672888,
+                "effect": 6.619732535424632,
+                "se": 1.9328142856880757,
+                "lower": 2.8291852072573382,
+                "upper": 10.410279863591924,
+                "p_value": 0.0006274338953195658,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Genre: Documentary",
+            "note": "Event subset only; household denominator unchanged. Not a title-quality causal effect.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.547,
+                "treatment_mean": 1.21,
+                "effect": 0.6629999999999999,
+                "se": 0.056114524321603576,
+                "lower": 0.5529322615254775,
+                "upper": 0.7730677384745224,
+                "p_value": 6.4682061428693335e-31,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.527,
+                "treatment_mean": 1.113,
+                "effect": 0.586,
+                "se": 0.048268331562545556,
+                "lower": 0.491326985724437,
+                "upper": 0.6806730142755629,
+                "p_value": 1.4650813831261844e-32,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 26.82655417078798,
+                "treatment_mean": 34.75116827555189,
+                "effect": 7.924614104763911,
+                "se": 2.2466863081904034,
+                "lower": 3.5185194740074515,
+                "upper": 12.330708735520371,
+                "p_value": 0.000429388301963667,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          },
+          {
+            "label": "Per impression (diagnostic)",
+            "note": "Post-assignment exposure normalization is NOT the original ITT estimand; zero impressions mapped to zero.",
+            "effects": {
+              "qualified_starts": {
+                "control_mean": 0.2793682837602118,
+                "treatment_mean": 0.5039963025097649,
+                "effect": 0.22462801874955313,
+                "se": 0.012421648750619817,
+                "lower": 0.20026701902579921,
+                "upper": 0.24898901847330704,
+                "p_value": 9.881914862936757e-68,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "viewing_days": {
+                "control_mean": 0.2619336743812728,
+                "treatment_mean": 0.44235520710089626,
+                "effect": 0.18042153271962347,
+                "se": 0.01167212684701287,
+                "lower": 0.15753054064247346,
+                "upper": 0.20331252479677347,
+                "p_value": 5.771109171321338e-51,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              },
+              "watch_minutes": {
+                "control_mean": 12.54327210486277,
+                "treatment_mean": 13.724241131151635,
+                "effect": 1.1809690262888655,
+                "se": 0.5619230180116435,
+                "lower": 0.07891774891203918,
+                "upper": 2.2830203036656918,
+                "p_value": 0.03571483218809816,
+                "n_control": 1000,
+                "n_treatment": 1000,
+                "alpha": 0.05
+              }
+            }
+          }
+        ],
+        "caps": {
+          "qualified_starts": 13.009999999999991,
+          "viewing_days": 8.0,
+          "watch_minutes": 484.8056230641114
+        },
+        "genre_mix": [
+          {
+            "genre": "Comedy",
+            "events": 1780,
+            "mean_runtime": 63.12584269662921,
+            "watch_minutes": 50455.691218033135
+          },
+          {
+            "genre": "Documentary",
+            "events": 1837,
+            "mean_runtime": 75.943385955362,
+            "watch_minutes": 61577.72244633987
+          },
+          {
+            "genre": "Drama",
+            "events": 1786,
+            "mean_runtime": 77.91265397536394,
+            "watch_minutes": 61141.95040947782
+          }
+        ],
+        "exposure_by_arm": {
+          "0": {
+            "mean": 5.023,
+            "zero_exposure": 62
+          },
+          "1": {
+            "mean": 6.669,
+            "zero_exposure": 23
+          }
+        },
+        "sampling_variation": {
+          "qualified_starts": {
+            "bootstrap_sd": 0.1308092204806862,
+            "lower": 1.6949999999999998,
+            "upper": 2.222924999999999
+          },
+          "viewing_days": {
+            "bootstrap_sd": 0.08735602335302077,
+            "lower": 1.24145,
+            "upper": 1.576525
+          },
+          "watch_minutes": {
+            "bootstrap_sd": 5.035767578029446,
+            "lower": 12.426706584245407,
+            "upper": 32.89761440125522
+          },
+          "returned_d29_56": {
+            "bootstrap_sd": 0.021002120984360006,
+            "lower": -0.08252500000000007,
+            "upper": 0.0005749999999999323
+          }
+        },
+        "bootstrap_draws": 300
+      },
+      "sql": {
+        "passed": true,
+        "failures": [],
+        "counts": {
+          "registered_households": 2000,
+          "households_without_viewing": 431,
+          "missing_outcomes": 0,
+          "duplicate_households": 0,
+          "orphan_events": 0,
+          "invalid_availability": 0,
+          "invalid_watch_time": 0,
+          "invalid_return_window": 0,
+          "itt_left_join_count": 2000
+        },
+        "queries": {
+          "registered_households": "SELECT COUNT(*) FROM households",
+          "households_without_viewing": "SELECT COUNT(*) FROM households h WHERE NOT EXISTS (SELECT 1 FROM events e WHERE e.household_id = h.household_id)",
+          "missing_outcomes": "SELECT COUNT(*) FROM households WHERE outcome_observed != 1 OR returned_d29_56 IS NULL",
+          "duplicate_households": "SELECT COUNT(*) - COUNT(DISTINCT household_id) FROM households",
+          "orphan_events": "SELECT COUNT(*) FROM events e LEFT JOIN households h USING(household_id) WHERE h.household_id IS NULL",
+          "invalid_availability": "SELECT COUNT(*) FROM events e JOIN titles t USING(title_id) WHERE e.day < t.available_day",
+          "invalid_watch_time": "SELECT COUNT(*) FROM events WHERE minutes < 0 OR minutes > runtime_minutes",
+          "invalid_return_window": "SELECT COUNT(*) FROM households WHERE (returned_d29_56 = 1 AND (return_day < 29 OR return_day > 56)) OR (returned_d29_56 = 0 AND return_day != -1)",
+          "itt_left_join_count": "SELECT COUNT(*) FROM (SELECT h.household_id FROM households h LEFT JOIN events e USING(household_id) GROUP BY h.household_id)"
+        }
+      },
+      "memo": {
+        "recommendation": "Evidence insufficient to advance",
+        "reason": "The fixed-horizon target interval does not establish a practically worthwhile benefit. Non-significance is not equivalence.",
+        "starts_target_reversal": true,
+        "proxy_recommendation": "Do not replace the return target with qualified starts.",
+        "limitations": [
+          "Synthetic presentation policy, not real-world evidence or Netflix retention.",
+          "No claim about a title's creative quality or artistic value.",
+          "Nine held-out experiments cannot establish transportability across policies.",
+          "Follow up with new preregistered experiments, equivalence margins, and external validation; do not extend this run until significant."
+        ]
+      }
+    }
+  },
+  "validation": {
+    "plan": {
+      "version": "1.0",
+      "seed": 20261031,
+      "assignment_unit": "household",
+      "primary_target": "returned_d29_56",
+      "primary_candidate": "qualified_starts",
+      "alternative_candidate": "viewing_days",
+      "short_window_days": 14,
+      "target_window_days": [
+        29,
+        56
+      ],
+      "households_per_experiment": 2000,
+      "experiments_per_split": 9,
+      "splits": [
+        "train",
+        "validation",
+        "heldout"
+      ],
+      "practical_target_effect": 0.02,
+      "familywise_alpha": 0.05,
+      "candidate_alpha": 0.025,
+      "agreement_draws": 1000,
+      "operating_repetitions": 1000,
+      "minimum_agreement_lower_bound": 0.8,
+      "decision": "No deployment on a proxy alone; target evidence governs policy decisions.",
+      "stopping_rule": "Fixed horizon; no repeated significance checks or outcome-based extension.",
+      "learning": "No learned weights in MVP; candidates and thresholds frozen before held-out runs."
+    },
+    "experiments": [
+      {
+        "id": "train-01",
+        "split": "train",
+        "scenario": "helpful",
+        "strength": 0.6,
+        "seed": 1619730685,
+        "n": 2000,
+        "truth_return_effect": 0.036,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.675,
+            "treatment_mean": 2.605,
+            "effect": 0.9299999999999999,
+            "se": 0.10431314026157601,
+            "lower": 0.695998662669582,
+            "upper": 1.1640013373304179,
+            "p_value": 1.1531036066242254e-18,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.475,
+            "treatment_mean": 2.211,
+            "effect": 0.7359999999999998,
+            "se": 0.0780893843742666,
+            "lower": 0.5608317766813424,
+            "upper": 0.9111682233186571,
+            "p_value": 1.2001457590770072e-20,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 80.54822916701254,
+            "treatment_mean": 143.04781617552075,
+            "effect": 62.499587008508215,
+            "se": 6.164228676855717,
+            "lower": 50.40922127220094,
+            "upper": 74.58995274481549,
+            "p_value": 1.7268615018355944e-23,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.51,
+            "treatment_mean": 0.565,
+            "effect": 0.05499999999999994,
+            "se": 0.022274900026064564,
+            "lower": 0.011315533099781082,
+            "upper": 0.09868446690021879,
+            "p_value": 0.013626647849373012,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.01088123123123123,
+              0.00017510010010010003
+            ],
+            [
+              0.00017510010010010003,
+              0.000496171171171172
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.006097951951951952,
+              0.0001306656656656656
+            ],
+            [
+              0.0001306656656656656,
+              0.000496171171171172
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.08457874853059053,
+          "viewing_days": 0.08477122222200605
+        }
+      },
+      {
+        "id": "train-02",
+        "split": "train",
+        "scenario": "unrelated",
+        "strength": 0.6,
+        "seed": 1701635912,
+        "n": 2000,
+        "truth_return_effect": 0.0,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.602,
+            "treatment_mean": 2.912,
+            "effect": 1.3099999999999998,
+            "se": 0.11010892777597998,
+            "lower": 1.0629842389671453,
+            "upper": 1.5570157610328543,
+            "p_value": 2.0377744603166907e-31,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.445,
+            "treatment_mean": 2.427,
+            "effect": 0.982,
+            "se": 0.08111859359127367,
+            "lower": 0.8000320530740866,
+            "upper": 1.1639679469259132,
+            "p_value": 1.6235229523307012e-32,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 74.55335661598325,
+            "treatment_mean": 127.61689060575014,
+            "effect": 53.063533989766896,
+            "se": 5.555915329013054,
+            "lower": 42.166662298828186,
+            "upper": 63.960405680705605,
+            "p_value": 4.1266360166934536e-21,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.497,
+            "treatment_mean": 0.511,
+            "effect": 0.014000000000000012,
+            "se": 0.022368959975161348,
+            "lower": -0.029868930926424203,
+            "upper": 0.05786893092642423,
+            "p_value": 0.5314734871418434,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.012123975975975977,
+              5.082482482482472e-05
+            ],
+            [
+              5.082482482482472e-05,
+              0.0005003703703703698
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.006580226226226226,
+              4.568368368368362e-05
+            ],
+            [
+              4.568368368368362e-05,
+              0.0005003703703703698
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.02353998967378348,
+          "viewing_days": 0.02795851354950064
+        }
+      },
+      {
+        "id": "train-03",
+        "split": "train",
+        "scenario": "misleading",
+        "strength": 0.6,
+        "seed": 2343293170,
+        "n": 2000,
+        "truth_return_effect": -0.036,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.739,
+            "treatment_mean": 3.086,
+            "effect": 1.3469999999999998,
+            "se": 0.12285999176940221,
+            "lower": 1.071377212338564,
+            "upper": 1.6226227876614354,
+            "p_value": 4.494641728089733e-27,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.536,
+            "treatment_mean": 2.511,
+            "effect": 0.9750000000000001,
+            "se": 0.08549791162883975,
+            "lower": 0.7832038742472082,
+            "upper": 1.1667961257527921,
+            "p_value": 3.921158816316579e-29,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 82.7229876201311,
+            "treatment_mean": 106.76994503073462,
+            "effect": 24.046957410603525,
+            "se": 5.25302388398004,
+            "lower": 13.744917728565799,
+            "upper": 34.348997092641255,
+            "p_value": 4.9923767409354655e-06,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.53,
+            "treatment_mean": 0.482,
+            "effect": -0.04800000000000004,
+            "se": 0.022344468561039336,
+            "lower": -0.09182089957436114,
+            "upper": -0.004179100425638946,
+            "p_value": 0.0318191442009951,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.015094577577577584,
+              0.00019507307307307302
+            ],
+            [
+              0.00019507307307307302,
+              0.000499275275275275
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.007309892892892893,
+              0.00013375175175175176
+            ],
+            [
+              0.00013375175175175176,
+              0.000499275275275275
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.05749816704888728,
+          "viewing_days": 0.05589432855690919
+        }
+      },
+      {
+        "id": "train-04",
+        "split": "train",
+        "scenario": "helpful",
+        "strength": 1.0,
+        "seed": 4272762283,
+        "n": 2000,
+        "truth_return_effect": 0.06,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.598,
+            "treatment_mean": 3.145,
+            "effect": 1.547,
+            "se": 0.1138214668958643,
+            "lower": 1.291637220673115,
+            "upper": 1.8023627793268848,
+            "p_value": 7.095718215529215e-40,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.449,
+            "treatment_mean": 2.561,
+            "effect": 1.1119999999999999,
+            "se": 0.083908990690621,
+            "lower": 0.9237641308664627,
+            "upper": 1.300235869133537,
+            "p_value": 2.8572242994636555e-38,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 74.1551228398834,
+            "treatment_mean": 184.2953404638199,
+            "effect": 110.14021762393651,
+            "se": 6.874704332533038,
+            "lower": 96.65455209117721,
+            "upper": 123.6258831566958,
+            "p_value": 3.139576910249696e-53,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.5,
+            "treatment_mean": 0.595,
+            "effect": 0.09499999999999997,
+            "se": 0.022169042975881174,
+            "lower": 0.05152312779636355,
+            "upper": 0.1384768722036364,
+            "p_value": 1.91206553764865e-05,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.01295532632632633,
+              1.3738738738738733e-05
+            ],
+            [
+              1.3738738738738733e-05,
+              0.0004914664664664662
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.007040718718718718,
+              -2.9529529529534e-07
+            ],
+            [
+              -2.9529529529534e-07,
+              0.0004914664664664662
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.03294795880488822,
+          "viewing_days": 0.026975136310821417
+        }
+      },
+      {
+        "id": "train-05",
+        "split": "train",
+        "scenario": "unrelated",
+        "strength": 1.0,
+        "seed": 1034979692,
+        "n": 2000,
+        "truth_return_effect": 0.0,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.641,
+            "treatment_mean": 3.332,
+            "effect": 1.6909999999999998,
+            "se": 0.13000306071703002,
+            "lower": 1.3993285437397263,
+            "upper": 1.9826714562602734,
+            "p_value": 8.535431754021375e-37,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.449,
+            "treatment_mean": 2.658,
+            "effect": 1.2089999999999999,
+            "se": 0.08690216905801021,
+            "lower": 1.0140517416471002,
+            "upper": 1.4039482583528995,
+            "p_value": 7.739933377715896e-42,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 77.01127017796054,
+            "treatment_mean": 138.98076407539392,
+            "effect": 61.96949389743338,
+            "se": 6.069728037699837,
+            "lower": 50.064669388260924,
+            "upper": 73.87431840660584,
+            "p_value": 8.438945306450255e-24,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.495,
+            "treatment_mean": 0.507,
+            "effect": 0.01200000000000001,
+            "se": 0.022370212927605906,
+            "lower": -0.03187138815536171,
+            "upper": 0.05587138815536173,
+            "p_value": 0.5917227678253645,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.0169007957957958,
+              0.00015954054054054058
+            ],
+            [
+              0.00015954054054054058,
+              0.0005004264264264254
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.007551986986986991,
+              0.00010424324324324324
+            ],
+            [
+              0.00010424324324324324,
+              0.0005004264264264254
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.056023141733493494,
+          "viewing_days": 0.05476240795296287
+        }
+      },
+      {
+        "id": "train-06",
+        "split": "train",
+        "scenario": "misleading",
+        "strength": 1.0,
+        "seed": 2626315003,
+        "n": 2000,
+        "truth_return_effect": -0.06,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.74,
+            "treatment_mean": 3.527,
+            "effect": 1.7870000000000001,
+            "se": 0.13894955191715436,
+            "lower": 1.4752467685831092,
+            "upper": 2.0987532314168913,
+            "p_value": 5.408572545112182e-36,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.551,
+            "treatment_mean": 2.768,
+            "effect": 1.2169999999999999,
+            "se": 0.08977546788869793,
+            "lower": 1.0156062253849176,
+            "upper": 1.418393774615082,
+            "p_value": 6.562203763554901e-40,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 80.7398653788116,
+            "treatment_mean": 97.65600272853241,
+            "effect": 16.916137349720813,
+            "se": 5.043424834229306,
+            "lower": 7.0252039911903985,
+            "upper": 26.807070708251228,
+            "p_value": 0.0008111483436311315,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.546,
+            "treatment_mean": 0.445,
+            "effect": -0.10100000000000003,
+            "se": 0.02225655755848946,
+            "lower": -0.14464849278843145,
+            "upper": -0.05735150721156863,
+            "p_value": 6.016913632908713e-06,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.01930697797797798,
+              0.00022567067067067085
+            ],
+            [
+              0.00022567067067067085,
+              0.0004953543543543553
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.008059634634634636,
+              0.00014954354354354356
+            ],
+            [
+              0.00014954354354354356,
+              0.0004953543543543553
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.041841144815938716,
+          "viewing_days": 0.0419420867003392
+        }
+      },
+      {
+        "id": "train-07",
+        "split": "train",
+        "scenario": "helpful",
+        "strength": 1.4,
+        "seed": 674465457,
+        "n": 2000,
+        "truth_return_effect": 0.08399999999999999,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.591,
+            "treatment_mean": 3.429,
+            "effect": 1.8379999999999999,
+            "se": 0.11891517488873662,
+            "lower": 1.5711998719439437,
+            "upper": 2.104800128056056,
+            "p_value": 3.529585374698798e-50,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.44,
+            "treatment_mean": 2.785,
+            "effect": 1.3450000000000002,
+            "se": 0.08425125087067416,
+            "lower": 1.1559966617231834,
+            "upper": 1.534003338276817,
+            "p_value": 1.1387226827988721e-53,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 75.84991637138597,
+            "treatment_mean": 205.1304803879672,
+            "effect": 129.28056401658122,
+            "se": 7.646934943778654,
+            "lower": 114.27962706103973,
+            "upper": 144.28150097212273,
+            "p_value": 2.1409262452731968e-58,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.511,
+            "treatment_mean": 0.631,
+            "effect": 0.12,
+            "se": 0.02198183798505487,
+            "lower": 0.07689024158442662,
+            "upper": 0.16310975841557337,
+            "p_value": 5.383563161117751e-08,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.014140818818818821,
+              0.00016846846846846846
+            ],
+            [
+              0.00016846846846846846,
+              0.0004832012012012018
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.007098273273273276,
+              0.00013395895895895916
+            ],
+            [
+              0.00013395895895895916,
+              0.0004832012012012018
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.1000789300833031,
+          "viewing_days": 0.10838977296209668
+        }
+      },
+      {
+        "id": "train-08",
+        "split": "train",
+        "scenario": "unrelated",
+        "strength": 1.4,
+        "seed": 368196360,
+        "n": 2000,
+        "truth_return_effect": 0.0,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.731,
+            "treatment_mean": 4.047,
+            "effect": 2.316,
+            "se": 0.15759526092578502,
+            "lower": 1.9623886682811231,
+            "upper": 2.6696113317188765,
+            "p_value": 1.3268546970766969e-45,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.533,
+            "treatment_mean": 3.139,
+            "effect": 1.6059999999999999,
+            "se": 0.08980342228809911,
+            "lower": 1.4045451824806299,
+            "upper": 1.8074548175193699,
+            "p_value": 6.007946810656726e-66,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 81.56112433800456,
+            "treatment_mean": 159.57307943359433,
+            "effect": 78.01195509558977,
+            "se": 7.125811299890537,
+            "lower": 64.03482364988723,
+            "upper": 91.98908654129231,
+            "p_value": 6.258209521583128e-27,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.511,
+            "treatment_mean": 0.522,
+            "effect": 0.01100000000000001,
+            "se": 0.022358329429876794,
+            "lower": -0.03284808282382836,
+            "upper": 0.05484808282382838,
+            "p_value": 0.6227828167872889,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.024836266266266272,
+              0.00021313813813813817
+            ],
+            [
+              0.00021313813813813817,
+              0.0004998948948948951
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.008064654654654658,
+              0.00012220120120120108
+            ],
+            [
+              0.00012220120120120108,
+              0.0004998948948948951
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.060897303657664555,
+          "viewing_days": 0.060591727808787244
+        }
+      },
+      {
+        "id": "train-09",
+        "split": "train",
+        "scenario": "misleading",
+        "strength": 1.4,
+        "seed": 3583202063,
+        "n": 2000,
+        "truth_return_effect": -0.08399999999999999,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.696,
+            "treatment_mean": 3.87,
+            "effect": 2.1740000000000004,
+            "se": 0.1456842747447641,
+            "lower": 1.8471210723442075,
+            "upper": 2.5008789276557932,
+            "p_value": 6.229557939697282e-47,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.51,
+            "treatment_mean": 2.981,
+            "effect": 1.4709999999999999,
+            "se": 0.0921793688199048,
+            "lower": 1.2642052502860208,
+            "upper": 1.677794749713979,
+            "p_value": 1.6138050514676354e-53,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 80.73606971973591,
+            "treatment_mean": 82.20719079341939,
+            "effect": 1.4711210736834772,
+            "se": 4.396769713694786,
+            "lower": -7.151647445362787,
+            "upper": 10.093889592729742,
+            "p_value": 0.737968730486636,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.488,
+            "treatment_mean": 0.463,
+            "effect": -0.024999999999999967,
+            "se": 0.022337994224772867,
+            "lower": -0.06880820254168352,
+            "upper": 0.018808202541683576,
+            "p_value": 0.2632023973029841,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.021223907907907933,
+              0.0001867287287287288
+            ],
+            [
+              0.0001867287287287288,
+              0.0004989859859859853
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.008497036036036035,
+              0.0001370540540540541
+            ],
+            [
+              0.0001370540540540541,
+              0.0004989859859859853
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.04648299428310545,
+          "viewing_days": 0.05424966401132764
+        }
+      },
+      {
+        "id": "validation-01",
+        "split": "validation",
+        "scenario": "helpful",
+        "strength": 0.6,
+        "seed": 197775100,
+        "n": 2000,
+        "truth_return_effect": 0.036,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.558,
+            "treatment_mean": 2.644,
+            "effect": 1.086,
+            "se": 0.10624117463200031,
+            "lower": 0.8476581302777879,
+            "upper": 1.3243418697222122,
+            "p_value": 7.693929407135298e-24,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.41,
+            "treatment_mean": 2.227,
+            "effect": 0.817,
+            "se": 0.07953424857692878,
+            "lower": 0.6385846802046795,
+            "upper": 0.9954153197953204,
+            "p_value": 4.189228042501974e-24,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 72.67715361279828,
+            "treatment_mean": 141.14125374145002,
+            "effect": 68.46410012865174,
+            "se": 6.066044297008238,
+            "lower": 56.5657165362843,
+            "upper": 80.36248372101917,
+            "p_value": 1.839978698105737e-28,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.514,
+            "treatment_mean": 0.57,
+            "effect": 0.05599999999999994,
+            "se": 0.02225756948544471,
+            "lower": 0.012349520367929037,
+            "upper": 0.09965047963207084,
+            "p_value": 0.011947408970272546,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.011287187187187183,
+              0.00011121921921921916
+            ],
+            [
+              0.00011121921921921916,
+              0.0004953993993993984
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.006325696696696696,
+              7.694694694694708e-05
+            ],
+            [
+              7.694694694694708e-05,
+              0.0004953993993993984
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.058306013546278054,
+          "viewing_days": 0.054882713697805036
+        }
+      },
+      {
+        "id": "validation-02",
+        "split": "validation",
+        "scenario": "unrelated",
+        "strength": 0.6,
+        "seed": 1655949615,
+        "n": 2000,
+        "truth_return_effect": 0.0,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.77,
+            "treatment_mean": 2.965,
+            "effect": 1.1949999999999998,
+            "se": 0.12153042682655503,
+            "lower": 0.922354247533959,
+            "upper": 1.4676457524660407,
+            "p_value": 3.2365261806113446e-22,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.581,
+            "treatment_mean": 2.431,
+            "effect": 0.8500000000000001,
+            "se": 0.08480489295948596,
+            "lower": 0.6597650286031521,
+            "upper": 1.0402349713968482,
+            "p_value": 4.5555679001265875e-23,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 82.84550570450907,
+            "treatment_mean": 126.35030331745128,
+            "effect": 43.50479761294221,
+            "se": 6.027206623433008,
+            "lower": 31.683586149199243,
+            "upper": 55.32600907668518,
+            "p_value": 7.798900059444153e-13,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.535,
+            "treatment_mean": 0.533,
+            "effect": -0.0020000000000000018,
+            "se": 0.022320039968247912,
+            "lower": -0.04577299135694648,
+            "upper": 0.041772991356946475,
+            "p_value": 0.9286096355119939,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.01476964464464465,
+              0.00015886386386386393
+            ],
+            [
+              0.00015886386386386393,
+              0.0004981841841841849
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.007191869869869865,
+              0.0001345765765765767
+            ],
+            [
+              0.0001345765765765767,
+              0.0004981841841841849
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.05676753106854448,
+          "viewing_days": 0.06893591405637557
+        }
+      },
+      {
+        "id": "validation-03",
+        "split": "validation",
+        "scenario": "misleading",
+        "strength": 0.6,
+        "seed": 3530295028,
+        "n": 2000,
+        "truth_return_effect": -0.036,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.521,
+            "treatment_mean": 2.951,
+            "effect": 1.4300000000000002,
+            "se": 0.10950867614098049,
+            "lower": 1.184321827417466,
+            "upper": 1.6756781725825343,
+            "p_value": 3.7556890238946402e-37,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.376,
+            "treatment_mean": 2.466,
+            "effect": 1.0900000000000003,
+            "se": 0.08078362454107883,
+            "lower": 0.9087794152459021,
+            "upper": 1.2712205847540985,
+            "p_value": 1.3648569420578774e-39,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 71.92581406989682,
+            "treatment_mean": 103.22136749179369,
+            "effect": 31.29555342189687,
+            "se": 4.710477791847523,
+            "lower": 22.05736573307408,
+            "upper": 40.53374111071966,
+            "p_value": 3.968190489633717e-11,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.54,
+            "treatment_mean": 0.491,
+            "effect": -0.049000000000000044,
+            "se": 0.022334229734150623,
+            "lower": -0.09280081988964893,
+            "upper": -0.0051991801103511565,
+            "p_value": 0.028354398224011985,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.011992150150150156,
+              5.377277277277269e-05
+            ],
+            [
+              5.377277277277269e-05,
+              0.0004988178178178177
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.006525993993993993,
+              5.7211211211211225e-05
+            ],
+            [
+              5.7211211211211225e-05,
+              0.0004988178178178177
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.007331256262104703,
+          "viewing_days": 0.016153052085720813
+        }
+      },
+      {
+        "id": "validation-04",
+        "split": "validation",
+        "scenario": "helpful",
+        "strength": 1.0,
+        "seed": 3555823343,
+        "n": 2000,
+        "truth_return_effect": 0.06,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.629,
+            "treatment_mean": 2.978,
+            "effect": 1.3490000000000002,
+            "se": 0.11279892995325178,
+            "lower": 1.0959412271831024,
+            "upper": 1.602058772816898,
+            "p_value": 1.1337873701080878e-31,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.45,
+            "treatment_mean": 2.454,
+            "effect": 1.0040000000000002,
+            "se": 0.08185404134240462,
+            "lower": 0.8203799729840513,
+            "upper": 1.1876200270159492,
+            "p_value": 2.755367388306259e-33,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 76.87201754287895,
+            "treatment_mean": 173.09430008648454,
+            "effect": 96.22228254360559,
+            "se": 6.8154420799267275,
+            "lower": 82.85345658549285,
+            "upper": 109.59110850171832,
+            "p_value": 1.3868584470790277e-42,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.499,
+            "treatment_mean": 0.601,
+            "effect": 0.10199999999999998,
+            "se": 0.022142454432340787,
+            "lower": 0.05857526946152125,
+            "upper": 0.1454247305384787,
+            "p_value": 4.352584992932104e-06,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.012723598598598597,
+              0.00017552652652652644
+            ],
+            [
+              0.00017552652652652644,
+              0.0004902882882882878
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.006700084084084084,
+              0.00012371971971971967
+            ],
+            [
+              0.00012371971971971967,
+              0.0004902882882882878
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.0940271368030302,
+          "viewing_days": 0.09260858540743114
+        }
+      },
+      {
+        "id": "validation-05",
+        "split": "validation",
+        "scenario": "unrelated",
+        "strength": 1.0,
+        "seed": 135407067,
+        "n": 2000,
+        "truth_return_effect": 0.0,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.749,
+            "treatment_mean": 3.448,
+            "effect": 1.6989999999999998,
+            "se": 0.1352019769625229,
+            "lower": 1.3956616966582938,
+            "upper": 2.002338303341706,
+            "p_value": 1.4959220976618364e-34,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.551,
+            "treatment_mean": 2.743,
+            "effect": 1.192,
+            "se": 0.09019137699627656,
+            "lower": 0.989673842753835,
+            "upper": 1.394326157246165,
+            "p_value": 4.117858464979899e-38,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 84.68031291481978,
+            "treatment_mean": 141.34767133153238,
+            "effect": 56.6673584167126,
+            "se": 6.484730005982502,
+            "lower": 43.94845596350996,
+            "upper": 69.38626086991525,
+            "p_value": 5.5527748574456616e-18,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.522,
+            "treatment_mean": 0.522,
+            "effect": 0.0,
+            "se": 0.022350202046772003,
+            "lower": -0.04383214377603437,
+            "upper": 0.04383214377603437,
+            "p_value": 1.0,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.01827957457457457,
+              0.00010026626626626623
+            ],
+            [
+              0.00010026626626626623,
+              0.0004995315315315318
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.008134484484484483,
+              6.960160160160168e-05
+            ],
+            [
+              6.960160160160168e-05,
+              0.0004995315315315318
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.03194275507520147,
+          "viewing_days": 0.03311108813174624
+        }
+      },
+      {
+        "id": "validation-06",
+        "split": "validation",
+        "scenario": "misleading",
+        "strength": 1.0,
+        "seed": 2105825259,
+        "n": 2000,
+        "truth_return_effect": -0.06,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.754,
+            "treatment_mean": 3.626,
+            "effect": 1.8719999999999999,
+            "se": 0.13696118561974543,
+            "lower": 1.5647204964478505,
+            "upper": 2.1792795035521495,
+            "p_value": 2.8592649252884326e-40,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.553,
+            "treatment_mean": 2.844,
+            "effect": 1.291,
+            "se": 0.09041587266641865,
+            "lower": 1.0881707134668328,
+            "upper": 1.493829286533167,
+            "p_value": 7.011471801371947e-44,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 80.10992320894314,
+            "treatment_mean": 100.11614046045375,
+            "effect": 20.006217251510606,
+            "se": 4.980425027649216,
+            "lower": 10.238845754472202,
+            "upper": 29.77358874854901,
+            "p_value": 6.113352828278786e-05,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.505,
+            "treatment_mean": 0.478,
+            "effect": -0.027000000000000024,
+            "se": 0.022360478326524925,
+            "lower": -0.07085229714522277,
+            "upper": 0.016852297145222725,
+            "p_value": 0.22738734173088018,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.018758366366366377,
+              0.0001861881881881882
+            ],
+            [
+              0.0001861881881881882,
+              0.0004999909909909907
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.008175030030030034,
+              0.00013543843843843837
+            ],
+            [
+              0.00013543843843843837,
+              0.0004999909909909907
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.05022091868056989,
+          "viewing_days": 0.055573999704340564
+        }
+      },
+      {
+        "id": "validation-07",
+        "split": "validation",
+        "scenario": "helpful",
+        "strength": 1.4,
+        "seed": 550026895,
+        "n": 2000,
+        "truth_return_effect": 0.08399999999999999,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.615,
+            "treatment_mean": 3.4,
+            "effect": 1.785,
+            "se": 0.12445989420397746,
+            "lower": 1.5057550839135674,
+            "upper": 2.0642449160864325,
+            "p_value": 8.17354997918468e-44,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.442,
+            "treatment_mean": 2.729,
+            "effect": 1.2870000000000001,
+            "se": 0.08565939838997547,
+            "lower": 1.0948364432639008,
+            "upper": 1.4791635567360994,
+            "p_value": 4.576631788061489e-48,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 75.71848226953504,
+            "treatment_mean": 207.91101909342257,
+            "effect": 132.1925368238875,
+            "se": 7.769002684070048,
+            "lower": 116.95192361172575,
+            "upper": 147.43315003604926,
+            "p_value": 5.577536020110503e-59,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.518,
+            "treatment_mean": 0.609,
+            "effect": 0.09099999999999997,
+            "se": 0.022097132919980438,
+            "lower": 0.04766414850710448,
+            "upper": 0.13433585149289545,
+            "p_value": 3.9743916396351986e-05,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.01549026526526526,
+              0.00011994994994994993
+            ],
+            [
+              0.00011994994994994993,
+              0.0004882832832832834
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.0073375325325325345,
+              8.917217217217225e-05
+            ],
+            [
+              8.917217217217225e-05,
+              0.0004882832832832834
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.06938326123622872,
+          "viewing_days": 0.07369744219756373
+        }
+      },
+      {
+        "id": "validation-08",
+        "split": "validation",
+        "scenario": "unrelated",
+        "strength": 1.4,
+        "seed": 1543823237,
+        "n": 2000,
+        "truth_return_effect": 0.0,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.71,
+            "treatment_mean": 4.056,
+            "effect": 2.346,
+            "se": 0.1505238234347687,
+            "lower": 2.008268461137967,
+            "upper": 2.683731538862033,
+            "p_value": 8.60519743323735e-51,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.506,
+            "treatment_mean": 3.161,
+            "effect": 1.655,
+            "se": 0.09403129736893395,
+            "lower": 1.444051023520753,
+            "upper": 1.865948976479247,
+            "p_value": 7.937507103673828e-64,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 77.81329372777427,
+            "treatment_mean": 157.09505453449424,
+            "effect": 79.28176080671997,
+            "se": 6.558661798052739,
+            "lower": 66.41756997040791,
+            "upper": 92.14595164303203,
+            "p_value": 2.7164136318226755e-32,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.538,
+            "treatment_mean": 0.525,
+            "effect": -0.013000000000000012,
+            "se": 0.022325533127552172,
+            "lower": -0.05678376434720141,
+            "upper": 0.030783764347201384,
+            "p_value": 0.560435089856663,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.022657421421421423,
+              0.0001447647647647649
+            ],
+            [
+              0.0001447647647647649,
+              0.0004984294294294298
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.008841884884884889,
+              0.00013137837837837844
+            ],
+            [
+              0.00013137837837837844,
+              0.0004984294294294298
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.03638421815516068,
+          "viewing_days": 0.05345314827860025
+        }
+      },
+      {
+        "id": "validation-09",
+        "split": "validation",
+        "scenario": "misleading",
+        "strength": 1.4,
+        "seed": 1356943870,
+        "n": 2000,
+        "truth_return_effect": -0.08399999999999999,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.654,
+            "treatment_mean": 3.8,
+            "effect": 2.146,
+            "se": 0.13220348619367706,
+            "lower": 1.8493745131252068,
+            "upper": 2.442625486874793,
+            "p_value": 1.2605355911195348e-54,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.475,
+            "treatment_mean": 2.983,
+            "effect": 1.508,
+            "se": 0.08885933818109373,
+            "lower": 1.3086529029538823,
+            "upper": 1.7073470970461178,
+            "p_value": 9.015105648898391e-60,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 77.3423563979307,
+            "treatment_mean": 81.15911362113695,
+            "effect": 3.8167572232062525,
+            "se": 4.16738499511497,
+            "lower": -4.356210259609178,
+            "upper": 11.989724706021683,
+            "p_value": 0.35985089095767064,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.531,
+            "treatment_mean": 0.416,
+            "effect": -0.11500000000000005,
+            "se": 0.022191788469509966,
+            "lower": -0.15852147471860373,
+            "upper": -0.07147852528139637,
+            "p_value": 2.4151860259392036e-07,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.017477761761761766,
+              0.00012605205205205205
+            ],
+            [
+              0.00012605205205205205,
+              0.0004924754754754759
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.007895981981981976,
+              9.093793793793798e-05
+            ],
+            [
+              9.093793793793798e-05,
+              0.0004924754754754759
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.0008062916641248972,
+          "viewing_days": 0.0019502258075566883
+        }
+      },
+      {
+        "id": "heldout-01",
+        "split": "heldout",
+        "scenario": "helpful",
+        "strength": 0.6,
+        "seed": 2969964490,
+        "n": 2000,
+        "truth_return_effect": 0.036,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.541,
+            "treatment_mean": 2.487,
+            "effect": 0.9460000000000002,
+            "se": 0.10031057876521406,
+            "lower": 0.7209699075917443,
+            "upper": 1.1710300924082562,
+            "p_value": 1.2459053292457679e-20,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.399,
+            "treatment_mean": 2.083,
+            "effect": 0.6840000000000002,
+            "se": 0.07717425649700725,
+            "lower": 0.5108832626301857,
+            "upper": 0.8571167373698146,
+            "p_value": 1.760051426740629e-18,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 71.72180259138473,
+            "treatment_mean": 133.72957956171706,
+            "effect": 62.00777697033233,
+            "se": 5.856552606434135,
+            "lower": 50.52064819357335,
+            "upper": 73.49490574709131,
+            "p_value": 2.2024020653987192e-25,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.53,
+            "treatment_mean": 0.558,
+            "effect": 0.028000000000000025,
+            "se": 0.022276270608704508,
+            "lower": -0.015687153641506364,
+            "upper": 0.07168715364150641,
+            "p_value": 0.20892123675461866,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.01006221221221221,
+              8.861261261261265e-05
+            ],
+            [
+              8.861261261261265e-05,
+              0.0004962322322322327
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.005955865865865863,
+              8.430030030030027e-05
+            ],
+            [
+              8.430030030030027e-05,
+              0.0004962322322322327
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.044589009808217644,
+          "viewing_days": 0.05354758339652483
+        }
+      },
+      {
+        "id": "heldout-02",
+        "split": "heldout",
+        "scenario": "unrelated",
+        "strength": 0.6,
+        "seed": 2513806003,
+        "n": 2000,
+        "truth_return_effect": 0.0,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.716,
+            "treatment_mean": 3.032,
+            "effect": 1.316,
+            "se": 0.12128903920400652,
+            "lower": 1.0438855783750398,
+            "upper": 1.5881144216249603,
+            "p_value": 1.6360068779072123e-26,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.519,
+            "treatment_mean": 2.491,
+            "effect": 0.9720000000000002,
+            "se": 0.08377694537625836,
+            "lower": 0.7840664270883677,
+            "upper": 1.1599335729116327,
+            "p_value": 4.475096375120083e-30,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 81.20323518301343,
+            "treatment_mean": 130.88291446788952,
+            "effect": 49.67967928487609,
+            "se": 5.885341348374263,
+            "lower": 38.136706234371914,
+            "upper": 61.22265233538026,
+            "p_value": 6.450153908845693e-17,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.521,
+            "treatment_mean": 0.517,
+            "effect": -0.0040000000000000036,
+            "se": 0.02235553107778408,
+            "lower": -0.047842594818403965,
+            "upper": 0.03984259481840396,
+            "p_value": 0.858013447969151,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.014711031031031024,
+              6.148148148148152e-05
+            ],
+            [
+              6.148148148148152e-05,
+              0.00049976976976977
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.007018576576576575,
+              4.479879879879886e-05
+            ],
+            [
+              4.479879879879886e-05,
+              0.00049976976976977
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.021090229446923632,
+          "viewing_days": 0.022146677129000175
+        }
+      },
+      {
+        "id": "heldout-03",
+        "split": "heldout",
+        "scenario": "misleading",
+        "strength": 0.6,
+        "seed": 2130319431,
+        "n": 2000,
+        "truth_return_effect": -0.036,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.603,
+            "treatment_mean": 3.054,
+            "effect": 1.4509999999999998,
+            "se": 0.11232583003072844,
+            "lower": 1.1990053468465494,
+            "upper": 1.7029946531534503,
+            "p_value": 1.8696130296890304e-36,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.427,
+            "treatment_mean": 2.535,
+            "effect": 1.108,
+            "se": 0.0827423246730009,
+            "lower": 0.922387709908512,
+            "upper": 1.2936122900914881,
+            "p_value": 4.505107646780277e-39,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 77.17839600052855,
+            "treatment_mean": 106.17534291174057,
+            "effect": 28.99694691121202,
+            "se": 4.9636148245306595,
+            "lower": 19.262485077260195,
+            "upper": 38.73140874516385,
+            "p_value": 6.019840202529367e-09,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.538,
+            "treatment_mean": 0.464,
+            "effect": -0.07400000000000001,
+            "se": 0.022310485377009567,
+            "lower": -0.11775425335145655,
+            "upper": -0.030245746648543473,
+            "p_value": 0.0009267802214490148,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.012617092092092094,
+              0.00015768768768768777
+            ],
+            [
+              0.00015768768768768777,
+              0.0004977577577577575
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.006846292292292291,
+              9.81321321321321e-05
+            ],
+            [
+              9.81321321321321e-05,
+              0.0004977577577577575
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.0397386077619582,
+          "viewing_days": 0.02954653076770318
+        }
+      },
+      {
+        "id": "heldout-04",
+        "split": "heldout",
+        "scenario": "helpful",
+        "strength": 1.0,
+        "seed": 499813096,
+        "n": 2000,
+        "truth_return_effect": 0.06,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.654,
+            "treatment_mean": 3.106,
+            "effect": 1.452,
+            "se": 0.11442963839033199,
+            "lower": 1.1952713616757478,
+            "upper": 1.7087286383242521,
+            "p_value": 3.384331133944281e-35,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.506,
+            "treatment_mean": 2.55,
+            "effect": 1.0439999999999998,
+            "se": 0.08183006880212286,
+            "lower": 0.8604322985410495,
+            "upper": 1.2275677014589501,
+            "p_value": 9.437284041655138e-36,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 78.6585922966,
+            "treatment_mean": 177.5083264645329,
+            "effect": 98.8497341679329,
+            "se": 6.87324634714991,
+            "lower": 85.36711556415946,
+            "upper": 112.33235277170633,
+            "p_value": 6.262965575337913e-44,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.53,
+            "treatment_mean": 0.589,
+            "effect": 0.05899999999999994,
+            "se": 0.022173648113710802,
+            "lower": 0.015514099939821502,
+            "upper": 0.10248590006017838,
+            "p_value": 0.007857548647950283,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.013094142142142152,
+              5.500100100100104e-05
+            ],
+            [
+              5.500100100100104e-05,
+              0.0004916706706706705
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.006696160160160157,
+              5.792792792792787e-05
+            ],
+            [
+              5.792792792792787e-05,
+              0.0004916706706706705
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.03704341818485127,
+          "viewing_days": 0.04695444305142535
+        }
+      },
+      {
+        "id": "heldout-05",
+        "split": "heldout",
+        "scenario": "unrelated",
+        "strength": 1.0,
+        "seed": 896989644,
+        "n": 2000,
+        "truth_return_effect": 0.0,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.563,
+            "treatment_mean": 3.385,
+            "effect": 1.8219999999999998,
+            "se": 0.1301681595081906,
+            "lower": 1.5299372665829534,
+            "upper": 2.1140627334170463,
+            "p_value": 7.53430829769046e-42,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.419,
+            "treatment_mean": 2.685,
+            "effect": 1.266,
+            "se": 0.08691817283381403,
+            "lower": 1.0710101756049222,
+            "upper": 1.4609898243950779,
+            "p_value": 2.1264044740445814e-45,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 74.99684436110437,
+            "treatment_mean": 133.7314211865541,
+            "effect": 58.73457682544972,
+            "se": 6.1033380744275965,
+            "lower": 46.76324892998458,
+            "upper": 70.70590472091487,
+            "p_value": 2.364763594024478e-21,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.547,
+            "treatment_mean": 0.524,
+            "effect": -0.02300000000000002,
+            "se": 0.022309475850246074,
+            "lower": -0.06675227379972244,
+            "upper": 0.0207522737997224,
+            "p_value": 0.30268808331612,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.016943749749749746,
+              9.439339339339326e-05
+            ],
+            [
+              9.439339339339326e-05,
+              0.000497712712712713
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.007554768768768769,
+              6.4931931931932e-05
+            ],
+            [
+              6.4931931931932e-05,
+              0.000497712712712713
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.024120610872638556,
+          "viewing_days": 0.024685551769247728
+        }
+      },
+      {
+        "id": "heldout-06",
+        "split": "heldout",
+        "scenario": "misleading",
+        "strength": 1.0,
+        "seed": 1896093193,
+        "n": 2000,
+        "truth_return_effect": -0.06,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.597,
+            "treatment_mean": 3.689,
+            "effect": 2.092,
+            "se": 0.12950537302228676,
+            "lower": 1.8014330217323489,
+            "upper": 2.3825669782676515,
+            "p_value": 3.21771290097914e-54,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.423,
+            "treatment_mean": 2.94,
+            "effect": 1.517,
+            "se": 0.08731606435871406,
+            "lower": 1.321117935380776,
+            "upper": 1.7128820646192238,
+            "p_value": 2.0407243603513735e-62,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 77.1074327638449,
+            "treatment_mean": 101.06853818056051,
+            "effect": 23.96110541671561,
+            "se": 4.763394640996802,
+            "lower": 14.619345564441899,
+            "upper": 33.30286526898932,
+            "p_value": 5.337678400403078e-07,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.523,
+            "treatment_mean": 0.46,
+            "effect": -0.063,
+            "se": 0.022324187989025922,
+            "lower": -0.10678112637707404,
+            "upper": -0.019218873622925965,
+            "p_value": 0.0048189669224666404,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.016771641641641636,
+              7.790690690690698e-05
+            ],
+            [
+              7.790690690690698e-05,
+              0.0004983693693693695
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.007624095095095094,
+              5.7428428428428496e-05
+            ],
+            [
+              5.7428428428428496e-05,
+              0.0004983693693693695
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.003877296912090281,
+          "viewing_days": 0.004578931745959458
+        }
+      },
+      {
+        "id": "heldout-07",
+        "split": "heldout",
+        "scenario": "helpful",
+        "strength": 1.4,
+        "seed": 3113268779,
+        "n": 2000,
+        "truth_return_effect": 0.08399999999999999,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.573,
+            "treatment_mean": 3.465,
+            "effect": 1.892,
+            "se": 0.12705742634568665,
+            "lower": 1.606937497888562,
+            "upper": 2.1770625021114376,
+            "p_value": 5.489114913186803e-47,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.401,
+            "treatment_mean": 2.788,
+            "effect": 1.3869999999999998,
+            "se": 0.08903472458643415,
+            "lower": 1.1872640266355214,
+            "upper": 1.5867359733644781,
+            "p_value": 2.5809658449889857e-51,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 73.44027077520727,
+            "treatment_mean": 212.56908984898917,
+            "effect": 139.1288190737819,
+            "se": 8.164637523822213,
+            "lower": 123.1121053537475,
+            "upper": 155.1455327938163,
+            "p_value": 3.841513880508309e-59,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.512,
+            "treatment_mean": 0.617,
+            "effect": 0.10499999999999998,
+            "se": 0.022060227869486155,
+            "lower": 0.06173651931042429,
+            "upper": 0.14826348068957568,
+            "p_value": 2.078039998984013e-06,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.01614358958958959,
+              7.87977977977977e-05
+            ],
+            [
+              7.87977977977977e-05,
+              0.00048665365365365267
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.007927182182182186,
+              6.555755755755755e-05
+            ],
+            [
+              6.555755755755755e-05,
+              0.00048665365365365267
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.059987736083724055,
+          "viewing_days": 0.06618759713288133
+        }
+      },
+      {
+        "id": "heldout-08",
+        "split": "heldout",
+        "scenario": "unrelated",
+        "strength": 1.4,
+        "seed": 2173992882,
+        "n": 2000,
+        "truth_return_effect": 0.0,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.627,
+            "treatment_mean": 3.998,
+            "effect": 2.3710000000000004,
+            "se": 0.14442550233849188,
+            "lower": 2.04693473221789,
+            "upper": 2.6950652677821108,
+            "p_value": 1.632905870452882e-55,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.445,
+            "treatment_mean": 3.07,
+            "effect": 1.6249999999999998,
+            "se": 0.08961085372378227,
+            "lower": 1.4239680104292578,
+            "upper": 1.8260319895707418,
+            "p_value": 2.501004674492978e-67,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 75.6909617122187,
+            "treatment_mean": 157.5314521332959,
+            "effect": 81.84049042107719,
+            "se": 6.477541421241066,
+            "lower": 69.13467910208273,
+            "upper": 94.54630174007166,
+            "p_value": 7.06925554432002e-35,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.501,
+            "treatment_mean": 0.549,
+            "effect": 0.04800000000000004,
+            "se": 0.02231806658508071,
+            "lower": 0.0042308781322348,
+            "upper": 0.09176912186776529,
+            "p_value": 0.03161761616904669,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.020858725725725728,
+              0.00023820920920920928
+            ],
+            [
+              0.00023820920920920928,
+              0.0004980960960960952
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.008030105105105101,
+              0.00015477977977977988
+            ],
+            [
+              0.00015477977977977988,
+              0.0004980960960960952
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": 0.08586041402099748,
+          "viewing_days": 0.08969970980134044
+        }
+      },
+      {
+        "id": "heldout-09",
+        "split": "heldout",
+        "scenario": "misleading",
+        "strength": 1.4,
+        "seed": 1097823297,
+        "n": 2000,
+        "truth_return_effect": -0.08399999999999999,
+        "effects": {
+          "qualified_starts": {
+            "label": "Qualified starts",
+            "unit": "starts / household",
+            "role": "Primary candidate",
+            "causal": true,
+            "control_mean": 1.643,
+            "treatment_mean": 3.774,
+            "effect": 2.1310000000000002,
+            "se": 0.13083421797294692,
+            "lower": 1.8374575291320332,
+            "upper": 2.424542470867967,
+            "p_value": 4.149882501758359e-55,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "viewing_days": {
+            "label": "Distinct viewing days",
+            "unit": "days / household",
+            "role": "Predefined alternative",
+            "causal": true,
+            "control_mean": 1.448,
+            "treatment_mean": 2.986,
+            "effect": 1.5380000000000003,
+            "se": 0.08862818375074012,
+            "lower": 1.3391738848054882,
+            "upper": 1.7368261151945124,
+            "p_value": 2.8387941890400035e-62,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.025
+          },
+          "watch_minutes": {
+            "label": "Watch time",
+            "unit": "minutes / household",
+            "role": "Diagnostic",
+            "causal": true,
+            "control_mean": 76.9653720868944,
+            "treatment_mean": 80.80554338186033,
+            "effect": 3.840171294965927,
+            "se": 4.348326155149882,
+            "lower": -4.68775447440016,
+            "upper": 12.368097064332014,
+            "p_value": 0.377272107242964,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          },
+          "returned_d29_56": {
+            "label": "Return during days 29-56",
+            "unit": "proportion of households",
+            "role": "Primary target",
+            "causal": true,
+            "control_mean": 0.527,
+            "treatment_mean": 0.44,
+            "effect": -0.08700000000000002,
+            "se": 0.02227481014884677,
+            "lower": -0.13068428969185658,
+            "upper": -0.04331571030814346,
+            "p_value": 9.705252086124657e-05,
+            "n_control": 1000,
+            "n_treatment": 1000,
+            "alpha": 0.05
+          }
+        },
+        "effect_covariance": {
+          "qualified_starts": [
+            [
+              0.017117592592592577,
+              6.764664664664657e-05
+            ],
+            [
+              6.764664664664657e-05,
+              0.0004961671671671673
+            ]
+          ],
+          "viewing_days": [
+            [
+              0.007854954954954954,
+              5.4118118118118204e-05
+            ],
+            [
+              5.4118118118118204e-05,
+              0.0004961671671671673
+            ]
+          ]
+        },
+        "prediction": {
+          "qualified_starts": -0.00807580730700359,
+          "viewing_days": -0.006045652828366437
+        }
+      }
+    ],
+    "agreement": {
+      "train": {
+        "qualified_starts": {
+          "observed_agreement": 0.6666666666666666,
+          "lower": 0.3333333333333333,
+          "upper": 0.8888888888888888,
+          "noise_lower": 0.2222222222222222,
+          "noise_upper": 0.8888888888888888,
+          "n_experiments": 9,
+          "resolved_target_experiments": 5,
+          "oracle_nonnull_agreement": 0.5,
+          "oracle_null_proxy_positive": 3,
+          "oracle_null_experiments": 3,
+          "draws": 1000,
+          "warning": "Experiment bootstrap interval is descriptive with only nine experiments. Correlated Gaussian effect draws propagate household covariance, but are a measurement-error sensitivity analysis, not a definitive surrogate test. Null-target signs are unstable; oracle non-null agreement is reported separately."
+        },
+        "viewing_days": {
+          "observed_agreement": 0.6666666666666666,
+          "lower": 0.3333333333333333,
+          "upper": 0.8888888888888888,
+          "noise_lower": 0.2222222222222222,
+          "noise_upper": 0.8888888888888888,
+          "n_experiments": 9,
+          "resolved_target_experiments": 5,
+          "oracle_nonnull_agreement": 0.5,
+          "oracle_null_proxy_positive": 3,
+          "oracle_null_experiments": 3,
+          "draws": 1000,
+          "warning": "Experiment bootstrap interval is descriptive with only nine experiments. Correlated Gaussian effect draws propagate household covariance, but are a measurement-error sensitivity analysis, not a definitive surrogate test. Null-target signs are unstable; oracle non-null agreement is reported separately."
+        }
+      },
+      "validation": {
+        "qualified_starts": {
+          "observed_agreement": 0.3333333333333333,
+          "lower": 0.0,
+          "upper": 0.6666666666666666,
+          "noise_lower": 0.1111111111111111,
+          "noise_upper": 0.7777777777777778,
+          "n_experiments": 9,
+          "resolved_target_experiments": 5,
+          "oracle_nonnull_agreement": 0.5,
+          "oracle_null_proxy_positive": 3,
+          "oracle_null_experiments": 3,
+          "draws": 1000,
+          "warning": "Experiment bootstrap interval is descriptive with only nine experiments. Correlated Gaussian effect draws propagate household covariance, but are a measurement-error sensitivity analysis, not a definitive surrogate test. Null-target signs are unstable; oracle non-null agreement is reported separately."
+        },
+        "viewing_days": {
+          "observed_agreement": 0.3333333333333333,
+          "lower": 0.0,
+          "upper": 0.6666666666666666,
+          "noise_lower": 0.1111111111111111,
+          "noise_upper": 0.7777777777777778,
+          "n_experiments": 9,
+          "resolved_target_experiments": 5,
+          "oracle_nonnull_agreement": 0.5,
+          "oracle_null_proxy_positive": 3,
+          "oracle_null_experiments": 3,
+          "draws": 1000,
+          "warning": "Experiment bootstrap interval is descriptive with only nine experiments. Correlated Gaussian effect draws propagate household covariance, but are a measurement-error sensitivity analysis, not a definitive surrogate test. Null-target signs are unstable; oracle non-null agreement is reported separately."
+        }
+      },
+      "heldout": {
+        "qualified_starts": {
+          "observed_agreement": 0.4444444444444444,
+          "lower": 0.1111111111111111,
+          "upper": 0.7777777777777778,
+          "noise_lower": 0.2222222222222222,
+          "noise_upper": 0.7777777777777778,
+          "n_experiments": 9,
+          "resolved_target_experiments": 6,
+          "oracle_nonnull_agreement": 0.5,
+          "oracle_null_proxy_positive": 3,
+          "oracle_null_experiments": 3,
+          "draws": 1000,
+          "warning": "Experiment bootstrap interval is descriptive with only nine experiments. Correlated Gaussian effect draws propagate household covariance, but are a measurement-error sensitivity analysis, not a definitive surrogate test. Null-target signs are unstable; oracle non-null agreement is reported separately."
+        },
+        "viewing_days": {
+          "observed_agreement": 0.4444444444444444,
+          "lower": 0.1111111111111111,
+          "upper": 0.7777777777777778,
+          "noise_lower": 0.2222222222222222,
+          "noise_upper": 0.7777777777777778,
+          "n_experiments": 9,
+          "resolved_target_experiments": 6,
+          "oracle_nonnull_agreement": 0.5,
+          "oracle_null_proxy_positive": 3,
+          "oracle_null_experiments": 3,
+          "draws": 1000,
+          "warning": "Experiment bootstrap interval is descriptive with only nine experiments. Correlated Gaussian effect draws propagate household covariance, but are a measurement-error sensitivity analysis, not a definitive surrogate test. Null-target signs are unstable; oracle non-null agreement is reported separately."
+        }
+      }
+    },
+    "unique_households": 54000,
+    "leakage_check": true,
+    "learned_weights": null,
+    "frozen_candidates": [
+      "qualified_starts",
+      "viewing_days"
+    ],
+    "decision": "Reject qualified starts as a universal surrogate; viewing days also requires independent validation. No candidate is authorized to replace the target."
+  },
+  "operating": {
+    "seed": 20261031,
+    "repetitions": 1000,
+    "n": 2000,
+    "rows": [
+      {
+        "true_effect": 0.0,
+        "coverage": {
+          "rate": 0.946,
+          "lower": 0.9302078451539475,
+          "upper": 0.9583786862769372
+        },
+        "rejection_rate": {
+          "rate": 0.054,
+          "lower": 0.04162131372306273,
+          "upper": 0.06979215484605245
+        },
+        "practical_success": {
+          "rate": 0.001,
+          "lower": 0.00017654637062607809,
+          "upper": 0.0056425585979579355
+        },
+        "bias": -0.0003130000000000007,
+        "bias_mc_se": 0.0007110686673238038,
+        "sampling_variance": 0.0005056186496496504,
+        "mean_interval_width": 0.08759444912308759
+      },
+      {
+        "true_effect": 0.02,
+        "coverage": {
+          "rate": 0.944,
+          "lower": 0.9279766518502689,
+          "upper": 0.956625186614558
+        },
+        "rejection_rate": {
+          "rate": 0.177,
+          "lower": 0.1545933794855418,
+          "upper": 0.20187870649612683
+        },
+        "practical_success": {
+          "rate": 0.038,
+          "lower": 0.027809004509302633,
+          "upper": 0.05172692033135031
+        },
+        "bias": 0.001191000000000001,
+        "bias_mc_se": 0.0007261017440708587,
+        "sampling_variance": 0.0005272237427427428,
+        "mean_interval_width": 0.08747954846001474
+      },
+      {
+        "true_effect": 0.04,
+        "coverage": {
+          "rate": 0.931,
+          "lower": 0.9135852797713627,
+          "upper": 0.9451160544140887
+        },
+        "rejection_rate": {
+          "rate": 0.438,
+          "lower": 0.40754465643825316,
+          "upper": 0.4689298616139557
+        },
+        "practical_success": {
+          "rate": 0.152,
+          "lower": 0.13108250256297901,
+          "upper": 0.17558092134296735
+        },
+        "bias": -0.00010000000000002368,
+        "bias_mc_se": 0.0007449059570743708,
+        "sampling_variance": 0.0005548848848848843,
+        "mean_interval_width": 0.08727387753208564
+      },
+      {
+        "true_effect": 0.06,
+        "coverage": {
+          "rate": 0.947,
+          "lower": 0.9313253831625082,
+          "upper": 0.9592534947514054
+        },
+        "rejection_rate": {
+          "rate": 0.777,
+          "lower": 0.7501681060278987,
+          "upper": 0.8017118697711035
+        },
+        "practical_success": {
+          "rate": 0.432,
+          "lower": 0.40161609445686075,
+          "upper": 0.4629043446971748
+        },
+        "bias": -0.00021600000000004949,
+        "bias_mc_se": 0.0006950427529500819,
+        "sampling_variance": 0.00048308442842842864,
+        "mean_interval_width": 0.08701016190590956
+      },
+      {
+        "true_effect": 0.1,
+        "coverage": {
+          "rate": 0.945,
+          "lower": 0.9290916123226243,
+          "upper": 0.9575025726252315
+        },
+        "rejection_rate": {
+          "rate": 0.994,
+          "lower": 0.9869718317581478,
+          "upper": 0.9972473308581237
+        },
+        "practical_success": {
+          "rate": 0.937,
+          "lower": 0.9202050762953538,
+          "upper": 0.9504503367882708
+        },
+        "bias": -0.001489000000000032,
+        "bias_mc_se": 0.0007110340698225713,
+        "sampling_variance": 0.0005055694484484493,
+        "mean_interval_width": 0.08628244487880303
+      }
+    ],
+    "calibration_flags": [
+      "At true effect 4 pp, the Monte Carlo coverage interval excludes nominal 95% coverage. Investigate in a new, prospectively specified simulation study; do not tune this run to pass."
+    ],
+    "scope": "Target inference only, using the same household return DGP. Null rejection is false-positive rate; non-null rejection is two-sided power. Wilson intervals quantify Monte Carlo uncertainty. Candidate-surrogacy certification is not implied."
+  }
+}
