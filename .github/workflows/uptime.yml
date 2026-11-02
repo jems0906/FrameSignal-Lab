@@ -1,0 +1,38 @@
+name: Public demo health
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: public-demo-health
+  cancel-in-progress: false
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check public API health and read-only mode
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          check_health() {
+            local name="$1" url="$2" require_read_only="$3" response
+            response="$(curl --fail --silent --show-error --retry 2 --retry-delay 5 \
+              --connect-timeout 10 --max-time 30 "$url")"
+            jq -e '.status == "ok"' <<< "$response" > /dev/null
+            if [[ "$require_read_only" == "true" ]]; then
+              jq -e '.read_only == true' <<< "$response" > /dev/null
+            fi
+            printf '%s: healthy\n' "$name"
+          }
+
+          check_health FrameSignal \
+            https://framesignal-frontend-production.up.railway.app/api/health false
+          check_health MetricSteward \
+            https://metricsteward-frontend-production.up.railway.app/api/steward/health true

@@ -1,6 +1,6 @@
 # FrameSignal Lab Railway Deployment Plan
 
-**Status:** Deployed and verified on Railway from commit `fe3b7a5` in the user's Pro workspace. All four services are healthy. MetricSteward is public read-only, with its catalog snapshot seeded and verified.
+**Status:** Deployed and verified on Railway from commit `6dd03a2` in the user's Pro workspace; its full CI passed. All four services are healthy. MetricSteward is public read-only, with its catalog snapshot seeded and verified.
 
 ## Goal and Access Model
 
@@ -76,8 +76,20 @@ All four local Compose services remain running and healthy; local MetricSteward 
 - FrameSignal Lab: https://framesignal-frontend-production.up.railway.app
 - MetricSteward: https://metricsteward-frontend-production.up.railway.app
 - Railway project: https://railway.com/project/e1099ee7-3d42-426e-8d77-fe7bf7ac3cc6?environmentId=504f5280-055f-45dc-aa75-4fb9f1421481
-- GitHub CI for deployed commit: https://github.com/jems0906/FrameSignal-Lab/actions/runs/41511031044 (all three jobs passed)
+- GitHub CI for deployed commit: https://github.com/jems0906/FrameSignal-Lab/actions/runs/41526791405 (all three jobs passed)
 
 Both sites and API health routes return successfully. MetricSteward shows five definitions and one preserved review with reviewer details redacted. Public import, export, and review-write routes return `403`. Its `/data/catalog.sqlite3` volume contains the verified workspace snapshot (1 import, 1 review; SQLite integrity `ok`; SHA-256 `1f6be3c33659660964a568b188bc6fffc37f922951b2ee9dafce40f6f94ae041`). The separate Compose volume was not used.
 
 The MetricSteward catalog remains a single-replica SQLite read-only demo. Railway Pro is billed at the current published $20/month base with $20 of included resource usage; excess usage is metered. Public deployment does not add authentication or constitute independent review, real-world approval, or production suitability. If the demo later needs writes, multiple replicas, or higher availability, add authentication and migrate to PostgreSQL first.
+
+## Monitoring and Spending Controls
+
+The `Public demo health` workflow in `.github/workflows/uptime.yml` checks both public API health URLs at 00:17, 06:17, 12:17, and 18:17 UTC. It requires HTTP success and JSON `status=ok` from both APIs, plus `read_only=true` from MetricSteward. Requests have bounded retries and timeouts, and the job has a five-minute limit. It does not import evidence, write reviews, or export catalog data.
+
+Run the check on demand with `gh workflow run uptime.yml --repo jems0906/FrameSignal-Lab`. Review results in GitHub Actions under `Public demo health`. Enable Actions failure notifications in [GitHub notification settings](https://github.com/settings/notifications) for the account that triggers or schedules the workflow. Email delivery has not been configured or verified by this setup; a failed check alone does not guarantee an email alert.
+
+The private repository's Actions minute allowance applies. One job runs every six hours, approximately 120 runs per 30 days, without an external uptime account or monitoring secrets. Scheduled Actions can be delayed or dropped and are not an availability guarantee; failures between checks may go undetected.
+
+Railway's workspace usage controls were inspected on November 2, 2026. Compute soft limits send email alerts; hard limits stop all workspace resources, including unrelated projects. At the user's direction, spending alerts and hard limits were left unchanged. No paid monitoring service was added.
+
+Both nginx proxies refresh private-service DNS through Railway's container resolver every ten seconds. This prevents a frontend started before a backend redeploy from retaining the backend's previous IP address. After any deployment, verify the API routes as well as the frontend pages; a healthy static page does not prove its API upstream is reachable.
