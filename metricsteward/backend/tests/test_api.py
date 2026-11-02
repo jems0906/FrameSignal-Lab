@@ -59,3 +59,26 @@ def test_bad_evidence_and_missingness_fail_closed(tmp_path):
     assert api.post("/api/steward/imports/framesignal").status_code == 422
     assert api.get("/api/steward/imports").json() == []
     assert api.post("/api/steward/calculate", json={"households": [], "events": [], "exposures": []}).status_code == 422
+
+
+def test_read_only_mode_preserves_catalog_and_rejects_writes(tmp_path):
+    database_path = tmp_path / "catalog.sqlite3"
+    writable = TestClient(create_app(database_path, ROOT))
+    import_id = writable.post("/api/steward/imports/framesignal").json()["import_id"]
+    review = {"import_id": import_id, "reviewer": "Private reviewer name", "review_kind": "self", "decision": "defer", "notes": "Private review notes remain preserved.", "evidence_reference": "private-reference", "attested": True}
+    assert writable.post("/api/steward/metrics/qualified_starts/reviews", json=review).status_code == 200
+
+    read_only = TestClient(create_app(database_path, ROOT, read_only=True))
+    assert read_only.get("/api/steward/health").json()["read_only"] is True
+    assert len(read_only.get(f"/api/steward/metrics?import_id={import_id}").json()) == 5
+    reviews = read_only.get(f"/api/steward/reviews?import_id={import_id}").json()
+    assert len(reviews) == 1
+    assert reviews[0]["reviewer"] == "Withheld"
+    assert "Private" not in reviews[0]["notes"]
+    assert reviews[0]["evidence_reference"] == ""
+    detail = read_only.get(f"/api/steward/metrics/qualified_starts?import_id={import_id}").json()
+    assert detail["reviews"] == reviews
+    assert read_only.get(f"/api/steward/exports/{import_id}").status_code == 403
+    assert read_only.post("/api/steward/imports/framesignal").status_code == 403
+    assert read_only.post("/api/steward/metrics/qualified_starts/reviews", json=review).status_code == 403
+    assert len(read_only.get(f"/api/steward/reviews?import_id={import_id}").json()) == 1
