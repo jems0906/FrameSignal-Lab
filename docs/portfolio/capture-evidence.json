@@ -1,0 +1,22 @@
+{
+  "screenshots": [
+    "framesignal-helpful.png",
+    "framesignal-unrelated.png",
+    "framesignal-misleading.png",
+    "framesignal-heldout-validation.png",
+    "metricsteward-rejected-catalog.png",
+    "metricsteward-promotion-blocked.png",
+    "metricsteward-mobile.png"
+  ],
+  "scenarios": {
+    "helpful": "Evidence insufficient to advance\n\nThe fixed-horizon target interval does not establish a practically worthwhile benefit. Non-significance is not equivalence.\n\nPractical threshold\n+2 pp",
+    "unrelated": "Evidence insufficient to advance\n\nThe fixed-horizon target interval does not establish a practically worthwhile benefit. Non-significance is not equivalence.\n\nPractical threshold\n+2 pp",
+    "misleading": "Evidence insufficient to advance\n\nThe fixed-horizon target interval does not establish a practically worthwhile benefit. Non-significance is not equivalence.\n\nPractical threshold\n+2 pp"
+  },
+  "review_status": "self-review only",
+  "mobile": {
+    "content": 390,
+    "viewport": 390
+  },
+  "browser_runtime_errors": []
+}

@@ -8,6 +8,8 @@ The primary estimand is the household-level intention-to-treat effect of a prese
 
 Three registered scenarios: helpful (+6 pp true return), unrelated (0), misleading (-6 pp). Policies can increase starts in all three. Every registered household remains in the ITT denominator, including non-viewers and zero-exposure households.
 
+For the completed portfolio walkthrough, see the [case study, screenshots, and short demo](docs/portfolio_case_study.md). The portfolio release is educational and self-reviewed, not proxy or production approval.
+
 ## Run Locally
 
 Requires Python 3.11-3.13 and Node.js 22 (or a Vite-compatible Node 20). These commands assume a terminal at the repository root.
