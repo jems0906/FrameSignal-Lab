@@ -62,6 +62,22 @@ The single Railway volume is chosen to reuse the current SQLite store and avoid 
 
 Rollback by redeploying the previous application images and restoring the verified SQLite backup to the Railway volume if necessary. Do not delete the source catalog or backup until migration verification is complete.
 
+## Isolated Restore Drill
+
+On November 2, 2026, the saved deployment snapshot at `%TEMP%\framesignal-railway-catalog.sqlite3` was restored by copying it into a fresh temporary directory. The source snapshot and both previously downloaded Railway verification copies matched SHA-256 `1f6be3c33659660964a568b188bc6fffc37f922951b2ee9dafce40f6f94ae041`.
+
+The restored database passed SQLite `integrity_check` (`ok`) and `foreign_key_check` (zero violations). Every row in `imports`, `metrics`, `reviews`, and `sqlite_sequence` matched the source, preserving 1 import, 5 metrics, and 1 self-review, including the review sequence. These comparisons were repeated after the API checks.
+
+The API was pointed at the temporary database before importing the application module and exercised with FastAPI TestClient in read-only mode. Health, import/metric/review listings, and all five metric-detail routes passed. Reviewer identity, notes, and references were redacted; import, review-write, and export requests returned `403`. Real-world promotion remained blocked. No review was added.
+
+The temporary database was removed after testing. SHA-256 checks confirmed the saved snapshot and workspace catalog were unchanged. The live Railway database was not accessed or replaced during this drill.
+
+This verifies local recovery from the saved snapshot, not an actual Railway-volume replacement or an off-machine backup.
+
+After the drill, a retained copy was saved outside Git and temporary storage at `%LOCALAPPDATA%\FrameSignalLab\Backups\catalog-2026-11-02-1f6be3c33659.sqlite3`. Its SHA-256 matches the tested snapshot above; an independent read-only SQLite check passed integrity, foreign keys, and counts (1 import, 5 metrics, 1 self-review). Folder inheritance is disabled, with folder and file access limited to the current Windows user and SYSTEM. The temporary source snapshots were not deleted or changed.
+
+This is private, non-temporary local retention, not protection against loss of the machine. No encryption or off-machine replication was configured. Retain a separately verified, encrypted off-machine copy when an appropriate destination is selected. Do not commit the unredacted catalog to Git.
+
 ## Current Local Preparation
 
 Both frontend Dockerfiles now copy nginx configuration as a startup template and accept runtime upstream variables, retaining Compose defaults. Both nginx frontends apply API request-rate limiting. Both images rebuilt successfully. MetricSteward read-only mode is implemented in the API and UI; API tests verify writes/exports are blocked and public review details are redacted. The frontend build passes, the runtime banner was browser-checked, and these proxied health checks passed:

@@ -37,6 +37,12 @@ Optional learned-score and observational follow-ups remain separate, exploratory
 
 MetricSteward consumes the shared calculation package and a versioned educational evidence handoff. Evidence hashes, persistent versions, review provenance, and promotion guards preserve rejected/descriptive statuses. Educational catalog availability is not approval to replace the return target.
 
+## Live Demo
+
+Open the [FrameSignal Lab workbench](https://framesignal-frontend-production.up.railway.app) and the [MetricSteward evidence registry](https://metricsteward-frontend-production.up.railway.app). These Railway-hosted apps use synthetic data and are educational and self-reviewed only. Public MetricSteward is read-only, with reviewer details redacted and evidence imports, review writes, and exports blocked. Public availability is not independent peer review or production approval.
+
+The [operational runbook](railway-deployment-plan.md) records deployment safeguards, six-hourly API health checks, the isolated restore drill, and private local backup retention. Off-machine backup and email-alert delivery are not configured by this setup.
+
 ## Demo (About Two Minutes)
 
 The [31-second silent screen recording](portfolio/framesignal-metricsteward-demo.webm) shows the default scenarios, held-out view, and MetricSteward safeguards. The following script provides a longer narrated walkthrough; the recording itself has no narration.
@@ -88,6 +94,6 @@ Screenshots and video are written to `docs/portfolio/`. This script is an option
 
 ## Limitations and Review
 
-Synthetic data, limited constructed policies, nine held-out experiments, a demonstration-sized sample, and conditional uncertainty limit generalization. No Netflix data, internal metric claims, real-data validation, cloud deployment, or production authorization is claimed.
+Synthetic data, limited constructed policies, nine held-out experiments, a demonstration-sized sample, and conditional uncertainty limit generalization. No Netflix data, internal metric claims, real-data validation, or production authorization is claimed. The Railway deployment is an educational demo, not a production service.
 
 Review status: **self-review only**. No independent peer feedback has occurred. This portfolio is an educational engineering/research deliverable, not scientific certification.

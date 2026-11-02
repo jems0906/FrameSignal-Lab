@@ -10,6 +10,13 @@ Three registered scenarios: helpful (+6 pp true return), unrelated (0), misleadi
 
 For the completed portfolio walkthrough, see the [case study, screenshots, and short demo](docs/portfolio_case_study.md). The portfolio release is educational and self-reviewed, not proxy or production approval.
 
+## Live Demo
+
+- [FrameSignal Lab measurement workbench](https://framesignal-frontend-production.up.railway.app)
+- [MetricSteward evidence registry](https://metricsteward-frontend-production.up.railway.app)
+
+Both apps use synthetic data and are educational, self-reviewed portfolio demos, not production services or independently reviewed research. Hosted MetricSteward is read-only: evidence imports, review writes, and catalog exports are disabled; existing review details are redacted. See the [deployment, monitoring, and recovery runbook](docs/railway-deployment-plan.md).
+
 ## Run Locally
 
 Requires Python 3.11-3.13 and Node.js 22 (or a Vite-compatible Node 20). These commands assume a terminal at the repository root.
