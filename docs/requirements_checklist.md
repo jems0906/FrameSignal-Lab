@@ -30,6 +30,6 @@
 | Portable MetricSteward educational handoff | Versioned wheel, report/plan/wheel hashes, fail-closed consumer validator, preserved rejected/descriptive statuses; `docs/metricsteward_handoff.md` |
 | Actual integration in MetricSteward | Separate `metricsteward/` app in this monorepo; validated persistent catalog, import history, review log, export and shared calculation endpoint; cross-app parity tests for all scenarios/windows |
 
-Deployment recipes and GitHub Actions are provided. Their actual verification status is recorded separately in `docs/verification.md`; no cloud deployment, executed remote CI, external peer review, or real-data validation is claimed.
+Deployment recipes and GitHub Actions are provided. Remote CI has executed successfully for the commits cited in [the verification record](verification.md); those results apply only to their cited commits. No cloud deployment, external peer review, or real-data validation is claimed. Review status remains self-review only.
 
 Educational calculation availability does not confer surrogate approval. The scientific rejection and calibration flags are valid study outcomes, not failures to implement a promised feature. Genuine peer review and real-world approval cannot be replaced by generated documentation.
