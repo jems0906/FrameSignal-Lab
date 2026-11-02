@@ -1,6 +1,6 @@
 # FrameSignal Lab Railway Deployment Plan
 
-**Status:** Private Railway project configured and initial deployment attempted. The MetricSteward image build failed because the ignored wheel was missing from the GitHub checkout. The Dockerfile fix now builds the wheel and matching handoff inside the image; that fix still needs to be pushed so Railway can redeploy.
+**Status:** Deployed and verified on Railway from commit `fe3b7a5` in the user's Pro workspace. All four services are healthy. MetricSteward is public read-only, with its catalog snapshot seeded and verified.
 
 ## Goal and Access Model
 
@@ -27,6 +27,7 @@ Set the runtime nginx variables to Railway private-network addresses:
 - `METRICSTEWARD_API_UPSTREAM=http://metricsteward-backend.railway.internal:8001`
 
 Leave backend services without public domains. Confirm Railway's assigned target ports for public nginx services and ensure the service listens on the configured port.
+Set `PORT=8000` on `framesignal-backend`, `PORT=8001` on `metricsteward-backend`, and `PORT=80` on both nginx frontends. Railway uses `PORT` for deployment health checks; each value must match the port the container actually listens on.
 Attach one Railway volume to `metricsteward-backend` at `/data`; the existing container path is `/data/catalog.sqlite3`. Keep this service to one replica. Railway volumes do not support replicas and redeploys can cause short downtime, which is acceptable for this read-only portfolio demo.
 
 ## Access and Data Safeguards
@@ -47,7 +48,7 @@ The single Railway volume is chosen to reuse the current SQLite store and avoid 
 
 1. **Prepare the app.** Runtime-configurable nginx upstreams, an opt-in MetricSteward read-only mode, reviewer-detail redaction, blocked imports/reviews/exports, nginx API rate limits (10 requests/second with a burst of 40 per frontend proxy), and in-image shared-wheel/handoff generation are implemented and tested locally.
 2. **Prepare source/builds.** The Railway GitHub App has access to this repository only in addition to the two previously selected repositories; all-repository access remains disabled. Commit `5c0a61d` is pushed and all three CI jobs passed. Railway services build from the repository root with service-specific Dockerfile paths; deployments use commit-pinned images.
-3. **Create Railway configuration.** A private `FrameSignal Lab` project exists in the Pro workspace. Four GitHub-backed services are configured with the correct Dockerfile paths, private upstreams, and health checks; both backends have no public domain, MetricSteward is read-only, one replica is selected, and its volume is mounted at `/data`. Generated domains are configured for both frontends. The initial MetricSteward build failed because the ignored `dist` wheel was absent from the source checkout. The Dockerfile now builds the wheel and regenerates the matching handoff in-image, following the CI packaging command.
+3. **Create Railway configuration.** A private `FrameSignal Lab` project exists in the Pro workspace. Four GitHub-backed services are configured with the correct Dockerfile paths, private upstreams, health checks, and explicit `PORT` values; both backends have no public domain, MetricSteward is read-only, one replica is selected, and its volume is mounted at `/data`. Generated domains are configured for both frontends. The first MetricSteward build failed because the ignored `dist` wheel was absent from the source checkout; the Dockerfile now builds the wheel and regenerates the matching handoff in-image. Its corrected image built successfully, started Uvicorn on `0.0.0.0:8001`, and reached the health check; deployment is retrying with `PORT=8001`.
 4. **Preserve data.** Back up the workspace SQLite catalog and review history, upload the consistent snapshot to the MetricSteward Railway volume, and verify counts/checksums through the read-only API. The workspace database has 1 import and 1 review; the separate Compose volume has 1 import and 0 reviews and is not the migration source.
 5. **Deploy and validate.** Railway applies this environment as one staged batch, so generated frontend domains may become public before data is seeded. The app is read-only and has no catalog writes; upload the verified snapshot immediately after the MetricSteward backend becomes healthy. Verify health/private DNS/read-only behavior and the 1-import/1-review catalog before sharing the generated URLs. Validate rate limits, calculations, mobile layout, redaction, and absence of secrets in logs. Exercise rollback before sharing the URL.
 
@@ -68,8 +69,15 @@ Both frontend Dockerfiles now copy nginx configuration as a startup template and
 - `http://127.0.0.1:8080/api/health`
 - `http://127.0.0.1:8082/api/steward/health`
 
-All four local Compose services remain running and healthy; local MetricSteward remains writable by default. The MetricSteward image builds without a preexisting `dist/` directory, and its generated wheel SHA-256 matches the generated handoff. The Dockerfile fix is local and uncommitted. Railway configuration has been applied, but the initial MetricSteward build failed; no app has passed live health verification yet.
+All four local Compose services remain running and healthy; local MetricSteward remains writable by default. The MetricSteward image builds without a preexisting `dist/` directory, and its generated wheel SHA-256 matches the generated handoff. The fix is committed and pushed as `fe3b7a5`; its GitHub CI and Railway deployment are in progress.
 
-## Next Gate
+## Live Deployment
 
-The user approved deployment of a public read-only demo and the Railway Pro workspace is confirmed. Next, commit and push the verified Dockerfile fix, let CI and Railway rebuild, confirm both APIs pass health checks, upload the consistent workspace SQLite snapshot through the authenticated Railway CLI, and verify 1 import/1 review with public redaction. Then validate both generated domains. The workspace SQLite database is the migration source; do not use the separate Compose volume.
+- FrameSignal Lab: https://framesignal-frontend-production.up.railway.app
+- MetricSteward: https://metricsteward-frontend-production.up.railway.app
+- Railway project: https://railway.com/project/e1099ee7-3d42-426e-8d77-fe7bf7ac3cc6?environmentId=504f5280-055f-45dc-aa75-4fb9f1421481
+- GitHub CI for deployed commit: https://github.com/jems0906/FrameSignal-Lab/actions/runs/41511031044 (all three jobs passed)
+
+Both sites and API health routes return successfully. MetricSteward shows five definitions and one preserved review with reviewer details redacted. Public import, export, and review-write routes return `403`. Its `/data/catalog.sqlite3` volume contains the verified workspace snapshot (1 import, 1 review; SQLite integrity `ok`; SHA-256 `1f6be3c33659660964a568b188bc6fffc37f922951b2ee9dafce40f6f94ae041`). The separate Compose volume was not used.
+
+The MetricSteward catalog remains a single-replica SQLite read-only demo. Railway Pro is billed at the current published $20/month base with $20 of included resource usage; excess usage is metered. Public deployment does not add authentication or constitute independent review, real-world approval, or production suitability. If the demo later needs writes, multiple replicas, or higher availability, add authentication and migrate to PostgreSQL first.
